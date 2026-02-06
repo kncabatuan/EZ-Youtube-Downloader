@@ -1,4 +1,5 @@
 from colorama import Fore
+import re
 import sys
 import time
 
@@ -33,11 +34,6 @@ Please enter Youtube URL (copy-paste it below)
 DELAY = 1.5
 
 
-def exit_program() -> None:
-    print(Fore.GREEN + "\nThank you for using EZ Youtube Downloader!")
-    sys.exit()
-
-
 def get_user_choice() -> str:
     while True:
         try:
@@ -54,6 +50,26 @@ def validate_choice(choice: str) -> str:
     return choice
 
 
+def get_url() -> str:
+    while True:
+        try:
+            return validate_url(input(Fore.WHITE + URL_PROMPT)).strip()
+        except ValueError:
+            #Edit exception here
+            print(Fore.RED + "\nInvalid URL. Please copy-paste Youtube URL")
+
+
+def validate_url(url: str) -> str:
+    pattern = r"^(?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/"
+    if url.lower() != "exit" and not re.search(pattern, url):
+        raise ValueError
+    
+    if url == "":
+        raise ValueError
+
+    return url
+
+
 def get_type() -> str:
     while True:
         try:
@@ -66,19 +82,24 @@ def get_type() -> str:
 def validate_type(type: str) -> str:
     if type != "exit" and int(type) not in range(1,3):
         raise ValueError
-    return type
+    
+    if type == "exit":
+        return type
+    if int(type) == 1:
+        return "video"
+    if int(type) == 2:
+        return "audio"
+    
+
+def print_success():
+    print(Fore.GREEN + "\nDownload successful!")
 
 
-def get_url() -> str:
-    while True:
-        try:
-            return validate_url(input(Fore.WHITE + URL_PROMPT)).strip()
-        except ValueError:
-            #Edit exception here
-            print(Fore.RED + "\nInvalid URL. Please copy-paste Youtube URL")
+def print_failure():
+    print(Fore.RED + "\nDownload failed!")
 
 
-def validate_url(url: str) -> str:
-    if url.lower() != "exit" and url == "":
-        raise ValueError
-    return url
+def exit_program() -> None:
+    print(Fore.GREEN + "\nThank you for using EZ Youtube Downloader!")
+    sys.exit()
+

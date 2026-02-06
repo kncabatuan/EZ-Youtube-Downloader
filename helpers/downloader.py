@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 
 # Class for Youtube URL
@@ -14,8 +15,10 @@ class Download:
 
     @url.setter
     def url(self, url: str) -> None:
-        pattern = r"^(?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/
-        # Insert validation here for URL
+        pattern = r"^((?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch?v=)?[/w-]{11}).*$)"
+        if match := re.search(pattern, url):
+            url = match.group(1)
+
         self._url = url
 
 

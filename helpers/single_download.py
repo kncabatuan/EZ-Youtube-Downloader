@@ -1,19 +1,14 @@
-from cli import menu
 from helpers import downloader
 
-download_mode = "single"
-
-def download():
-    URL = menu.get_url()
-    type = menu.get_type()
-
-    if URL == "exit" or type == "exit":
-        menu.exit_program()
-
+def download(url: str, type: str, mode: str):
     try:
-        download = downloader.Download(URL, type, download_mode)
-    except:
-        ...
+        download = downloader.Download(url, type, mode)
+        print(download.url)
+        print(download.type)
+        print(download.mode)
+        return True
+    except Exception:
+        return False
 
 
 #Function to ask user for directory or save at default
