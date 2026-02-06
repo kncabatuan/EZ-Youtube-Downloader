@@ -5,7 +5,6 @@ import time
 #Time used for delay using time.sleep (in seconds)
 DELAY = 1.5
 
-
 def main() -> None:
     """
     Main function for Youtube Downloader project
