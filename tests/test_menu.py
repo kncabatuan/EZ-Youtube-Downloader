@@ -46,3 +46,15 @@ def test_url_validation():
         assert menu.validate_url(url) == url
 
     assert menu.validate_url("exit") == "exit"
+
+
+def test_type_validation():
+    invalid_types = ["0", "3", "", "    ", "test", "123", "-1", "---"]
+
+    for _type in invalid_types:
+        with pytest.raises(ValueError):
+            menu.validate_type(_type)
+
+    assert menu.validate_type("exit") == "exit"
+    assert menu.validate_type("1") == "video"
+    assert menu.validate_type("2") == "audio"
