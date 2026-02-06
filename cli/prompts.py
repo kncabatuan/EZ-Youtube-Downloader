@@ -28,3 +28,18 @@ URL_PROMPT = """
 Please enter Youtube URL (copy-paste it below)
 
 """
+
+#Prompt for getting user input of Filepath
+PATH_PROMPT = """
+Do you want to save your download to a specific folder?
+
+
+If yes, please enter the filepath with double backslashes
+or forward slash
+    ex. C:\\Users\\Name\\Videos\\
+        C:/Users/Name/Videos/
+
+        
+Enter "no" or leave blank to save in the current directory
+
+"""

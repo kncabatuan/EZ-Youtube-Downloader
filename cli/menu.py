@@ -117,8 +117,26 @@ def validate_type(file_type: str) -> str:
     if int(file_type) == 2:
         return "audio"
     
-def get_filepath():
-    ...
+
+def get_filepath() -> str:
+    while True:
+        try:
+            return validate_filepath(input(Fore.WHITE + prompts.PATH_PROMPT).strip())
+        except ValueError:
+            print(
+                Fore.RED + "\nInvalid filepath. Please follow correct format",
+                Fore.RED + "\nC:\\... or C:/..."
+                )
+
+
+def validate_filepath(filepath: str) -> str:
+    if filepath == "exit":
+        return filepath
+    if filepath == "" or filepath == "no":
+        return "default"
+    if not re.search(r"^[a-zA-Z]:[\\/].*$", filepath):
+        raise ValueError
+    return filepath
 
 
 def print_success() -> None:
