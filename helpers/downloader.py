@@ -2,8 +2,8 @@ from pathlib import Path
 import re
 
 
-# Class for Youtube URL
 class Download:
+    """Handles downloading of Youtube video or audio"""
     def __init__(self, url: str, file_type: str, mode: str) -> None:
         self.url = url
         self.file_type = file_type
@@ -24,5 +24,6 @@ class Download:
 
 # Class for file-name
 class Save_Directory:
+    """Handles validation of entered filepath if any"""
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath

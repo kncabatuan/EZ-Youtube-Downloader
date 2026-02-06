@@ -1,11 +1,19 @@
 from helpers import downloader
 
-def download(url: str, file_type: str, mode: str):
+def download(url: str, file_type: str, mode: str) -> bool:
+    """
+    Calls downloader for only one video or audio
+    
+    Args:
+        url (str): The url validated at the UI level
+        file_type(str): The file type (either "video" or "audio")
+        mode (str): Either "single", "batch", or "playlist"
+    
+    Returns:
+        bool: True if download is successful, False otherwise
+    """
     try:
         download = downloader.Download(url, file_type, mode)
-        print(download.url)
-        print(download.file_type)
-        print(download.mode)
         return True
     except Exception:
         return False
