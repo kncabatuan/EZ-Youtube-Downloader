@@ -58,3 +58,17 @@ def test_type_validation():
     assert menu.validate_type("exit") == "exit"
     assert menu.validate_type("1") == "video"
     assert menu.validate_type("2") == "audio"
+
+
+# Test for UI level validation only
+def test_filepath_validation():
+    invalid_filepaths = ["test", "123", "---", "1:/test", "-:/test"]
+
+    for filepath in invalid_filepaths:
+        with pytest.raises(ValueError):
+            menu.validate_filepath(filepath)
+
+    assert menu.validate_filepath("") == "default"
+    assert menu.validate_filepath("no") == "default"
+
+
