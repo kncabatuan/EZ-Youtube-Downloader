@@ -22,7 +22,6 @@ class Download:
         self._url = url
 
 
-# Class for file-name
 class Save_Directory:
     """Handles validation of entered filepath if any"""
     def __init__(self, filepath: Path) -> None:
