@@ -4,9 +4,9 @@ import re
 
 # Class for Youtube URL
 class Download:
-    def __init__(self, url: str, type: str, mode: str) -> None:
+    def __init__(self, url: str, file_type: str, mode: str) -> None:
         self.url = url
-        self.type = type
+        self.file_type = file_type
         self.mode = mode
 
     @property
@@ -15,7 +15,7 @@ class Download:
 
     @url.setter
     def url(self, url: str) -> None:
-        pattern = r"^((?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch?v=)?[/w-]{11}).*$)"
+        pattern = r"^((?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch?v=)?[/w-]{11}).*$"
         if match := re.search(pattern, url):
             url = match.group(1)
 

@@ -1,10 +1,10 @@
 from helpers import downloader
 
-def download(url: str, type: str, mode: str):
+def download(url: str, file_type: str, mode: str):
     try:
-        download = downloader.Download(url, type, mode)
+        download = downloader.Download(url, file_type, mode)
         print(download.url)
-        print(download.type)
+        print(download.file_type)
         print(download.mode)
         return True
     except Exception:

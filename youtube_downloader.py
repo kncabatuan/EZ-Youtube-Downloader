@@ -9,9 +9,9 @@ def main() -> None:
     while True:
         match menu.get_user_choice():
             case "1":
-                url, type = get_user_inputs()
+                url, file_type = get_user_inputs()
                 download_mode = "single"
-                if single_download.download(url, type, download_mode):
+                if single_download.download(url, file_type, download_mode):
                     menu.print_success()
                 else:
                     menu.print_failure()
@@ -30,11 +30,11 @@ def get_user_inputs() -> tuple:
     if url == "exit":
         menu.exit_program()
     
-    type = menu.get_type()
+    file_type = menu.get_type()
     if type == "exit":
         menu.exit_program()
 
-    return url, type
+    return url, file_type
 
 
 
