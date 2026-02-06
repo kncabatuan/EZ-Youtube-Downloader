@@ -1,38 +1,8 @@
+from cli import prompts
 from colorama import Fore
 import re
 import sys
 import time
-
-#Prompt used as Main Menu
-MAIN_PROMPT = """
-
-Welcome to EZ Youtube Downloader!
-
-To get started, choose among the options below:
-
-1. Single Download
-2. Batch Download
-3. Playlist Download
-
-
-Note: You can type "exit" anytime to close the program :)
-
-"""
-
-#Prompt for getting user input on type
-TYPE_PROMPT = """
-What format do you want to download?
-
-1. Video
-2. Audio only
-
-"""
-
-#Prompt for getting user input on URL
-URL_PROMPT = """
-Please enter Youtube URL (copy-paste it below)
-
-"""
 
 #Time used for delay using time.sleep (in seconds)
 DELAY = 1.5
@@ -47,7 +17,7 @@ def get_user_choice() -> str:
     """
     while True:
         try:
-            return validate_choice(input(Fore.WHITE + MAIN_PROMPT).strip().lower())
+            return validate_choice(input(Fore.WHITE + prompts.MAIN_PROMPT).strip().lower())
         except ValueError:
             print(Fore.RED + '\nInvalid input. Please enter from value 1-3 or "exit"')
             time.sleep(DELAY)
@@ -81,7 +51,7 @@ def get_url() -> str:
     """
     while True:
         try:
-            return validate_url(input(Fore.WHITE + URL_PROMPT)).strip()
+            return validate_url(input(Fore.WHITE + prompts.URL_PROMPT)).strip()
         except ValueError:
             print(Fore.RED + "\nInvalid URL. Please copy-paste Youtube URL")
 
@@ -118,7 +88,7 @@ def get_type() -> str:
     """
     while True:
         try:
-            return validate_type(input(Fore.WHITE + TYPE_PROMPT).strip().lower())
+            return validate_type(input(Fore.WHITE + prompts.TYPE_PROMPT).strip().lower())
         except ValueError:
             print(Fore.RED + "\nInvalid input. Please enter 1, 2, or exit")
             time.sleep(DELAY)
@@ -147,6 +117,9 @@ def validate_type(file_type: str) -> str:
     if int(file_type) == 2:
         return "audio"
     
+def get_filepath():
+    ...
+
 
 def print_success() -> None:
     """Prints success"""
