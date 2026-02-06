@@ -15,11 +15,11 @@ class Download:
 
     @url.setter
     def url(self, url: str) -> None:
-        pattern = r"^((?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch?v=)?[/w-]{11}).*$"
+        pattern = r"^((?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch\?v=)?[\w-]{11}).*$"
         if match := re.search(pattern, url):
-            url = match.group(1)
-
-        self._url = url
+            self._url = match.group(1)
+        else:
+            raise ValueError
 
 
 class Save_Directory:
