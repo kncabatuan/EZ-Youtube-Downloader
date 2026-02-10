@@ -28,20 +28,20 @@ class Download:
         
 
     def ytdlp_handler(self):
+        if self.mode in ("single", "batch"):
+            with yt_dlp.YoutubeDL(Download.GENERAL_OPTS) as yld:
+                return yld
+        elif self.mode == "playlist":
+            with yt_dlp.YoutubeDL(Download.PLAYLIST_OPTS) as yld:
+                return yld
+
+    
+    def set_title(self):
         try:
-            if self.mode in ("single", "batch"):
-                with yt_dlp.YoutubeDL(Download.GENERAL_OPTS) as yld:
-                    return yld
-            elif self.mode == "playlist":
-                with yt_dlp.YoutubeDL(Download.PLAYLIST_OPTS) as yld:
-                    return yld
+            info = self.ytdlp_handler().extract_info(self.url, download=False)
+            self.title = info["title"]
         except (yt_dlp.utils.ExtractorError, yt_dlp.utils.DownloadError):
             raise ValueError
-    
-
-    def set_title(self):
-        info = self.ytdlp_handler().extract_info(self.url, download=False)
-        self.title = info["title"]
 
 
 class Save_Directory:

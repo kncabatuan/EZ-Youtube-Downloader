@@ -139,6 +139,24 @@ def validate_filepath(filepath: str) -> str:
     return filepath
 
 
+def print_checking():
+    print(Fore.YELLOW + "\nChecking. . .\n")
+
+
+def print_obj_success(title):
+    print(
+        Fore.GREEN + "Video Found!",
+        Fore.GREEN + f"\n{title}"
+        )
+    
+
+def print_obj_fail():
+    print(
+            Fore.RED
+            + "\nThe URL that you entered is invalid. Please copy-paste the Youtube URL using your mouse for better results"
+        )
+
+
 def print_success() -> None:
     """Prints success"""
     print(Fore.GREEN + "\nDownload successful!")

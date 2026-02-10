@@ -1,8 +1,9 @@
 from colorama import Fore
 from helpers import downloader
+from typing import Union
 
 
-def download(url: str, file_type: str, mode: str) -> bool:
+def create_obj(url: str, file_type: str, mode: str) -> object:
     """
     Calls downloader for only one video or audio
 
@@ -17,14 +18,9 @@ def download(url: str, file_type: str, mode: str) -> bool:
     try:
         dl_object = downloader.Download(url, file_type, mode)
         dl_object.set_title()
-        print(dl_object.title)
-        return True
+        return dl_object
     except ValueError:
-        print(
-            Fore.RED
-            + "\nThe URL that you enterd is invalid. Please copy-paste the Youtube URL using your mouse for better results"
-        )
-        return False
+        pass
 
 
 # Function to ask user for directory or save at default

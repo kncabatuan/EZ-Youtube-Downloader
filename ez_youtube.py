@@ -16,10 +16,19 @@ def main() -> None:
             case "1":
                 url, file_type = get_user_inputs()
                 download_mode = "single"
-                if single_download.download(url, file_type, download_mode):
-                    menu.print_success()
+                menu.print_checking()
+
+                if dl_obj := single_download.create_obj(url, file_type, download_mode):
+                    menu.print_obj_success(dl_obj.title)
                 else:
-                    menu.print_failure()
+                    menu.print_obj_fail()
+                    continue
+
+                time.sleep(DELAY)
+
+                print(menu.get_filepath())
+
+                
             case "2":
                 print("Go to batch download")
             case "3":
