@@ -36,7 +36,7 @@ Do you want to save your download to a specific folder?
 
 If yes, please enter the filepath with double backslashes
 or forward slash
-    ex. C:\\Users\\Name\\Videos\\
+    ex. C:\\\\Users\\\\Name\\\\Videos\\\\
         C:/Users/Name/Videos/
 
         
