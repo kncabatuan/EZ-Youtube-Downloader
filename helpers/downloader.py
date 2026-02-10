@@ -49,5 +49,25 @@ class Download:
 
 class Save_Directory:
     """Handles validation of entered filepath if any"""
-    def __init__(self, filepath: Path) -> None:
+    def __init__(self, filepath: str) -> None:
         self.filepath = filepath
+
+    @property
+    def filepath(self) -> Path:
+        return self._filepath
+    
+    @filepath.setter
+    def filepath(self, filepath: str) -> None:
+        if filepath in ("", "no"):
+            self._filepath = Path.cwd()
+        elif not re.search(r"^[a-zA-Z]:[\\/].*$", filepath):
+            raise ValueError
+        elif not Path(filepath).exists():
+            raise ValueError
+        else:
+            self._filepath = Path(filepath)
+        
+
+        
+
+

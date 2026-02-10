@@ -1,5 +1,7 @@
 from cli import prompts
 from colorama import Fore
+from helpers import downloader
+from pathlib import Path
 import re
 import sys
 import time
@@ -120,7 +122,7 @@ def validate_type(file_type: str) -> str:
     raise ValueError
     
 
-def get_filepath() -> str:
+def get_filepath() -> str | Path:
     """
     Prompts user for file path to save the downloaded file, if any
     
@@ -137,9 +139,10 @@ def get_filepath() -> str:
                 Fore.RED + "\nInvalid filepath. Please follow correct format",
                 Fore.RED + "\nC:\\... or C:/..."
                 )
+            time.sleep(DELAY)
 
 
-def validate_filepath(filepath: str) -> str:
+def validate_filepath(filepath: str) -> str | Path:
     """
     Validates user input for file path
     
@@ -154,11 +157,9 @@ def validate_filepath(filepath: str) -> str:
     """
     if filepath == "exit":
         return filepath
-    if filepath == "" or filepath == "no":
-        return "default"
-    if not re.search(r"^[a-zA-Z]:[\\/].*$", filepath):
-        raise ValueError
-    return filepath
+
+    valid_path = downloader.Save_Directory(filepath)
+    return valid_path.filepath
 
 
 def print_checking() -> None:
