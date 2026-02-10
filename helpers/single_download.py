@@ -1,9 +1,8 @@
 from colorama import Fore
 from helpers import downloader
-from typing import Union
 
 
-def create_obj(url: str, file_type: str, mode: str) -> object:
+def create_obj(url: str, file_type: str, mode: str) -> downloader.Download | bool:
     """
     Calls downloader for only one video or audio
 
@@ -20,7 +19,7 @@ def create_obj(url: str, file_type: str, mode: str) -> object:
         dl_object.set_title()
         return dl_object
     except ValueError:
-        pass
+        return False
 
 
 # Function to ask user for directory or save at default

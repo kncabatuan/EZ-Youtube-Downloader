@@ -1,11 +1,12 @@
 from pathlib import Path
+from typing import Any
 import re
 import yt_dlp
 
 
 class Download:
     GENERAL_OPTS = {"quiet": True, "no_warnings": True, "format": "bestvideo[height<=1080]+bestaudio/best[height<=1080]"}
-    PLAYLIST_OPTS = {}
+    PLAYLIST_OPTS: dict[str, Any] = {}
 
 
     """Handles downloading of Youtube video or audio"""
@@ -27,16 +28,18 @@ class Download:
             raise ValueError
         
 
-    def ytdlp_handler(self):
+    def ytdlp_handler(self) -> yt_dlp.YoutubeDL:
         if self.mode in ("single", "batch"):
-            with yt_dlp.YoutubeDL(Download.GENERAL_OPTS) as yld:
+            with yt_dlp.YoutubeDL(Download.GENERAL_OPTS) as yld: # type: ignore[arg-type]
                 return yld
         elif self.mode == "playlist":
-            with yt_dlp.YoutubeDL(Download.PLAYLIST_OPTS) as yld:
+            with yt_dlp.YoutubeDL(Download.PLAYLIST_OPTS) as yld: # type: ignore[arg-type]
                 return yld
+        else:
+            raise ValueError
 
     
-    def set_title(self):
+    def set_title(self) -> None:
         try:
             info = self.ytdlp_handler().extract_info(self.url, download=False)
             self.title = info["title"]

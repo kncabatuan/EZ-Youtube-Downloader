@@ -117,6 +117,8 @@ def validate_type(file_type: str) -> str:
     if int(file_type) == 2:
         return "audio"
     
+    raise ValueError
+    
 
 def get_filepath() -> str:
     while True:
@@ -139,21 +141,21 @@ def validate_filepath(filepath: str) -> str:
     return filepath
 
 
-def print_checking():
+def print_checking() -> None:
     print(Fore.YELLOW + "\nChecking. . .\n")
 
 
-def print_obj_success(title):
+def print_obj_success(title: str) -> None:
     print(
         Fore.GREEN + "Video Found!",
         Fore.GREEN + f"\n{title}"
         )
     
 
-def print_obj_fail():
+def print_obj_fail() -> None:
     print(
             Fore.RED
-            + "\nThe URL that you entered is invalid. Please copy-paste the Youtube URL using your mouse for better results"
+            + "\nSomething went wrong. Please check if all inputs are valid, especially the URL"
         )
 
 
