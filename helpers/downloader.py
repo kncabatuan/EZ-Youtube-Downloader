@@ -66,7 +66,7 @@ class Save_Directory:
             self._filepath = Path.cwd()
         elif not re.search(r"^[a-zA-Z]:[\\/].*$", filepath):
             raise ValueError
-        elif not Path(filepath).exists():
+        elif not Path(filepath).is_dir():
             raise ValueError
         else:
             self._filepath = Path(filepath)
