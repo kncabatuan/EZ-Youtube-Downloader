@@ -145,7 +145,7 @@ def print_checking() -> None:
     print(Fore.YELLOW + "\nChecking. . .\n")
 
 
-def print_obj_success(title: str) -> None:
+def print_obj_success(title: str | None) -> None:
     print(
         Fore.GREEN + "Video Found!",
         Fore.GREEN + f"\n{title}"
