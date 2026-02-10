@@ -15,9 +15,9 @@ def download(url: str, file_type: str, mode: str) -> bool:
         bool: True if download is successful, False otherwise
     """
     try:
-        download = downloader.Download(url, file_type, mode)
-        download.set_video_name()
-        print(download.video_name)
+        dl_object = downloader.Download(url, file_type, mode)
+        dl_object.set_title()
+        print(dl_object.title)
         return True
     except ValueError:
         print(
