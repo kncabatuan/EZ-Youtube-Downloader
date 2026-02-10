@@ -20,11 +20,11 @@ def main() -> None:
 
                 if dl_obj := single_download.create_obj(url, file_type, download_mode):
                     menu.print_obj_success(dl_obj.title)
+                    time.sleep(DELAY)
                 else:
                     menu.print_obj_fail()
+                    time.sleep(DELAY)
                     continue
-
-                time.sleep(DELAY)
 
                 print(menu.get_filepath())
 

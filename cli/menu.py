@@ -121,6 +121,14 @@ def validate_type(file_type: str) -> str:
     
 
 def get_filepath() -> str:
+    """
+    Prompts user for file path to save the downloaded file, if any
+    
+    Loops until a valid path is obtained
+    
+    Returns:
+        str: The validated file path
+    """
     while True:
         try:
             return validate_filepath(input(Fore.WHITE + prompts.PATH_PROMPT).strip())
@@ -132,6 +140,18 @@ def get_filepath() -> str:
 
 
 def validate_filepath(filepath: str) -> str:
+    """
+    Validates user input for file path
+    
+    Args:
+        filepath (str): The user input for file path
+        
+    Returns:
+        str: The valid file path
+    
+    Raises:
+        ValueError: If the user input is invalid
+    """
     if filepath == "exit":
         return filepath
     if filepath == "" or filepath == "no":
@@ -142,10 +162,12 @@ def validate_filepath(filepath: str) -> str:
 
 
 def print_checking() -> None:
+    """Prints "checking" for psuedo-loading status"""
     print(Fore.YELLOW + "\nChecking. . .\n")
 
 
 def print_obj_success(title: str | None) -> None:
+    """Prints success with corresponding video title on successful object creation"""
     print(
         Fore.GREEN + "Video Found!",
         Fore.GREEN + f"\n{title}"
@@ -153,6 +175,7 @@ def print_obj_success(title: str | None) -> None:
     
 
 def print_obj_fail() -> None:
+    """Prints failure on failed object creation"""
     print(
             Fore.RED
             + "\nSomething went wrong. Please check if all inputs are valid, especially the URL"
