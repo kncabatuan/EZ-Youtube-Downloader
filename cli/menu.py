@@ -133,7 +133,8 @@ def get_filepath() -> str | Path:
     Loops until a valid path is obtained
 
     Returns:
-        str: The validated file path
+        Path: The validated file path (object)
+        str: "exit" if the user wants to close the program
     """
     while True:
         try:
@@ -154,7 +155,8 @@ def validate_filepath(filepath: str) -> str | Path:
         filepath (str): The user input for file path
 
     Returns:
-        str: The valid file path
+        Path: The validated file path (object)
+        str: "exit" if the user wants to close the program
 
     Raises:
         ValueError: If the user input is invalid
@@ -166,7 +168,21 @@ def validate_filepath(filepath: str) -> str | Path:
     return valid_path.filepath
 
 
-def get_final_decision(mode, title, file_type, filepath):
+def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) -> str:
+    """
+    Prompts user for decision to proceed/cancel download
+    
+    Loops until a valid input is made
+    
+    Args:
+        mode (str): Either "single", "batch", or "playlist"
+        title (str): The title of the video or playlist
+        file_type (str): Either "video" or "audio"
+        filepath (Path): The valid directory to save the downloaded file/s
+
+    Returns:
+        str: "y", "n", or "exit"    
+    """
     while True:
         print(
             Fore.GREEN + prompts.FINAL_DECISION.format(
@@ -183,7 +199,18 @@ def get_final_decision(mode, title, file_type, filepath):
             time.sleep(DELAY)
     
 
-def validate_final_decision(decision):
+def validate_final_decision(decision: str) -> str:
+    """Validates the user's final decision
+    
+    Args:
+        decision (str): The user's input
+        
+    Returns:
+        str: The validated input. Either "y", "n", or "exit"
+        
+    Raises:
+        ValueError: If input is not "y", "n" or "exit"
+    """
     if not re.search(r"^([yn]|exit)$", decision):
         raise ValueError
     return decision

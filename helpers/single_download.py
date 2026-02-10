@@ -1,4 +1,3 @@
-from colorama import Fore
 from helpers import downloader
 
 
@@ -20,10 +19,3 @@ def create_obj(url: str, file_type: str, mode: str) -> downloader.Download | Non
         return dl_object
     except ValueError:
         return None
-
-
-# Function to ask user for directory or save at default
-
-# Function to Download corresponding video or audio (with loading bar)
-
-# Return to Main Menu

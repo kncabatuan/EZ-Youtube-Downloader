@@ -5,6 +5,8 @@ import yt_dlp
 
 
 class Download:
+    """Handles downloading of Youtube video or audio"""
+
     GENERAL_OPTS = {
         "quiet": True,
         "no_warnings": True,
@@ -12,7 +14,6 @@ class Download:
     }
     PLAYLIST_OPTS: dict[str, Any] = {}
 
-    """Handles downloading of Youtube video or audio"""
 
     def __init__(self, url: str, file_type: str, mode: str) -> None:
         self.url = url
