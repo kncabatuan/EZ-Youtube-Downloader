@@ -2,13 +2,14 @@ from cli import menu
 from helpers import single_download
 import time
 
-#Time used for delay using time.sleep (in seconds)
+# Time used for delay using time.sleep (in seconds)
 DELAY = 1.5
+
 
 def main() -> None:
     """
     Main function for Youtube Downloader project
-    
+
     Controls the flow of the program based on user answers on prompt
     """
     while True:
@@ -26,9 +27,21 @@ def main() -> None:
                     time.sleep(DELAY)
                     continue
 
-                print(menu.get_filepath())
-
+                filepath = menu.get_filepath()
+                if filepath == "exit":
+                    menu.exit_program()
                 
+                menu.print_checking()
+                time.sleep(DELAY)
+
+                decision = menu.get_final_decision(download_mode, dl_obj.title, file_type, filepath)
+                if decision == "y":
+                    menu.print_dl_success()
+                elif decision == "n":
+                    menu.print_dl_fail()
+                else:
+                    menu.exit_program()
+
             case "2":
                 print("Go to batch download")
             case "3":
@@ -42,7 +55,7 @@ def main() -> None:
 def get_user_inputs() -> tuple:
     """
     Calls functions from menu module to get and validate user input
-    
+
     Returns:
         tuple: The validated url and file type
     """
@@ -50,13 +63,12 @@ def get_user_inputs() -> tuple:
     url = menu.get_url()
     if url == "exit":
         menu.exit_program()
-    
+
     file_type = menu.get_type()
     if file_type == "exit":
         menu.exit_program()
 
     return url, file_type
-
 
 
 if __name__ == "__main__":

@@ -6,40 +6,41 @@ import re
 import sys
 import time
 
-#Time used for delay using time.sleep (in seconds)
+# Time used for delay using time.sleep (in seconds)
 DELAY = 1.5
 
 
 def get_user_choice() -> str:
     """
     Gets user input for Main Menu and calls validator function
-    
+
     Returns:
-        str: The validated user input   
+        str: The validated user input
     """
     while True:
         try:
-            return validate_choice(input(Fore.WHITE + prompts.MAIN_PROMPT).strip().lower())
+            return validate_choice(
+                input(Fore.WHITE + prompts.MAIN_PROMPT).strip().lower()
+            )
         except ValueError:
             print(Fore.RED + '\nInvalid input. Please enter from value 1-3 or "exit"')
             time.sleep(DELAY)
-            continue
 
 
 def validate_choice(choice: str) -> str:
     """
     Validates user input from caller
-    
+
     Args:
         choice (str): The user input
-    
+
     Returns:
         str: The validated choice ("1", "2", "3", or "exit")
-    
+
     Raises:
         ValueError: If choice is not "1", "2", "3", or "exit"
     """
-    if choice != "exit" and int(choice) not in range(1,4):
+    if choice != "exit" and int(choice) not in range(1, 4):
         raise ValueError
     return choice
 
@@ -56,25 +57,26 @@ def get_url() -> str:
             return validate_url(input(Fore.WHITE + prompts.URL_PROMPT)).strip()
         except ValueError:
             print(Fore.RED + "\nInvalid URL. Please copy-paste Youtube URL")
+            time.sleep(DELAY)
 
 
 def validate_url(url: str) -> str:
     """
     Validates user input from caller
-    
+
     Args:
         url (str): The user's URL input
-        
+
     Returns:
         str: The validated URL or "exit"
-    
+
     Raises:
         ValueError: If input is empty, regex is not recognized in input, or input is not exit
     """
     pattern = r"^(?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/"
     if url.lower() != "exit" and not re.search(pattern, url):
         raise ValueError
-    
+
     if url == "":
         raise ValueError
 
@@ -84,13 +86,15 @@ def validate_url(url: str) -> str:
 def get_type() -> str:
     """
     Gets user input for File Type and calls validator function
-    
+
     Returns:
         str: The validated input for file type
     """
     while True:
         try:
-            return validate_type(input(Fore.WHITE + prompts.TYPE_PROMPT).strip().lower())
+            return validate_type(
+                input(Fore.WHITE + prompts.TYPE_PROMPT).strip().lower()
+            )
         except ValueError:
             print(Fore.RED + "\nInvalid input. Please enter 1, 2, or exit")
             time.sleep(DELAY)
@@ -99,35 +103,35 @@ def get_type() -> str:
 def validate_type(file_type: str) -> str:
     """
     Validates user input from caller
-    
+
     Args:
         file_type (str): The user's file_type input
-    
+
     Returns:
         str: The validated file_type ("video" or "audio") or "exit"
-    
+
     Raises:
         ValueError: If input is not "1", "2", or "exit"
     """
-    if file_type != "exit" and int(file_type) not in range(1,3):
+    if file_type != "exit" and int(file_type) not in range(1, 3):
         raise ValueError
-    
+
     if file_type == "exit":
         return file_type
     if int(file_type) == 1:
         return "video"
     if int(file_type) == 2:
         return "audio"
-    
+
     raise ValueError
-    
+
 
 def get_filepath() -> str | Path:
     """
     Prompts user for file path to save the downloaded file, if any
-    
+
     Loops until a valid path is obtained
-    
+
     Returns:
         str: The validated file path
     """
@@ -137,21 +141,21 @@ def get_filepath() -> str | Path:
         except ValueError:
             print(
                 Fore.RED + "\nInvalid filepath. Please follow correct format",
-                Fore.RED + "\nC:\\... or C:/..."
-                )
+                Fore.RED + "\nC:\\... or C:/...",
+            )
             time.sleep(DELAY)
 
 
 def validate_filepath(filepath: str) -> str | Path:
     """
     Validates user input for file path
-    
+
     Args:
         filepath (str): The user input for file path
-        
+
     Returns:
         str: The valid file path
-    
+
     Raises:
         ValueError: If the user input is invalid
     """
@@ -162,6 +166,29 @@ def validate_filepath(filepath: str) -> str | Path:
     return valid_path.filepath
 
 
+def get_final_decision(mode, title, file_type, filepath):
+    while True:
+        print(
+            Fore.GREEN + prompts.FINAL_DECISION.format(
+                mode = mode.upper(),
+                title = title,
+                file_type = file_type.title(),
+                filepath = filepath
+            ))
+        try:
+            final_decision = input(Fore.WHITE + "\nProceed download? y/n\n\n").strip().lower() 
+            return validate_final_decision(final_decision)
+        except ValueError:
+            print(Fore.RED + '\nInvalid input. Please input "y", "n", or "exit"')
+            time.sleep(DELAY)
+    
+
+def validate_final_decision(decision):
+    if not re.search(r"^([yn]|exit)$", decision):
+        raise ValueError
+    return decision
+
+
 def print_checking() -> None:
     """Prints "checking" for psuedo-loading status"""
     print(Fore.YELLOW + "\nChecking. . .\n")
@@ -169,18 +196,15 @@ def print_checking() -> None:
 
 def print_obj_success(title: str | None) -> None:
     """Prints success with corresponding video title on successful object creation"""
-    print(
-        Fore.GREEN + "Video Found!",
-        Fore.GREEN + f"\n{title}"
-        )
-    
+    print(Fore.GREEN + "Video Found!", Fore.GREEN + f"\n{title}")
+
 
 def print_obj_fail() -> None:
     """Prints failure on failed object creation"""
     print(
-            Fore.RED
-            + "\nSomething went wrong. Please check if all inputs are valid, especially the URL"
-        )
+        Fore.RED
+        + "\nSomething went wrong. Please check if all inputs are valid, especially the URL"
+    )
 
 
 def print_success() -> None:
@@ -193,8 +217,17 @@ def print_failure() -> None:
     print(Fore.RED + "\nDownload failed!")
 
 
+def print_dl_success() -> None:
+    """Prints returning to Menu when success"""
+    print(Fore.RED + "\nDownload success! Returning to Main Menu . . .")
+
+
+def print_dl_fail() -> None:
+    """Prints returning to Menu when fail"""
+    print(Fore.RED + "\nDownload failed. Returning to Main Menu . . .")
+
+
 def exit_program() -> None:
     """Prints and closes the program"""
     print(Fore.GREEN + "\nThank you for using EZ Youtube Downloader!")
     sys.exit()
-

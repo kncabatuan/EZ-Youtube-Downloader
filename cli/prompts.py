@@ -43,3 +43,15 @@ or forward slash
 Enter "no" or leave blank to save in the current directory
 
 """
+
+#Prompt for user's final decision
+FINAL_DECISION = """
+
+{mode} DOWNLOAD
+
+Title: {title}
+Type: {file_type}
+Path: {filepath}
+
+
+"""
