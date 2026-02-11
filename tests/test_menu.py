@@ -1,4 +1,5 @@
 from cli import menu
+from pathlib import Path
 import pytest
 
 
@@ -60,15 +61,21 @@ def test_type_validation():
     assert menu.validate_type("2") == "audio"
 
 
-# Test for UI level validation only
-def test_filepath_validation():
+# Test for filepath validation
+def test_filepath_validation(tmp_path):
     invalid_filepaths = ["test", "123", "---", "1:/test", "-:/test"]
 
     for filepath in invalid_filepaths:
         with pytest.raises(ValueError):
             menu.validate_filepath(filepath)
 
-    assert menu.validate_filepath("") == "default"
-    assert menu.validate_filepath("no") == "default"
+    assert menu.validate_filepath("") == Path.cwd()
+    assert menu.validate_filepath("no") == Path.cwd()
+
+    temp_dir = tmp_path / "my_temp_dir"
+    temp_dir.mkdir()
+
+    assert menu.validate_filepath(str(temp_dir)) == temp_dir
+    
 
 
