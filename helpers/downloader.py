@@ -35,10 +35,24 @@ class Download:
         opts = Download.BASE_OPTS
 
         if self.file_type == "video":
-            if self.mode == "single":
-                opts["noplaylist"] = True
-                opts["format"] = "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
+            match self.mode:
+                case "single":
+                    opts["noplaylist"] = True
+                    opts["format"] = "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
+                case "batch":
+                    ...
+                case "playlist":
+                    ...
+        elif self.file_type == "audio":
+            match self.mode:
+                case "single":
+                    ...
+                case "batch":
+                    ...
+                case "playlist":
+                    ...
 
+        return opts
 
     def ytdlp_handler(self, caller: str) -> yt_dlp.YoutubeDL:
         if caller == "set_title":
