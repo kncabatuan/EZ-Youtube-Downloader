@@ -1,5 +1,5 @@
 from cli import menu
-from helpers import single_download
+from helpers import downloader
 import time
 
 # Time used for delay using time.sleep (in seconds)
@@ -19,7 +19,7 @@ def main() -> None:
                 download_mode = "single"
                 menu.print_checking()
 
-                if dl_obj := single_download.create_obj(url, file_type, download_mode):
+                if dl_obj := downloader.create_obj(url, file_type, download_mode):
                     menu.print_obj_success(dl_obj.title)
                     time.sleep(DELAY)
                 else:
@@ -36,7 +36,6 @@ def main() -> None:
 
                 decision = menu.get_final_decision(download_mode, dl_obj.title, file_type, filepath)
                 if decision == "y":
-                    single_download
                     menu.print_dl_success()
                 elif decision == "n":
                     menu.print_dl_fail()

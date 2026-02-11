@@ -25,9 +25,10 @@ class Download:
     def url(self, url: str) -> None:
         pattern = r"^(?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch\?v=)?[\w-]{11}.*$"
         if match := re.search(pattern, url):
-            self._url = match
+            self._url = match.group()
         else:
             raise ValueError
+
 
     def opts_builder(self) -> dict:
         opts = Download.BASE_OPTS
@@ -36,7 +37,6 @@ class Download:
             if self.mode == "single":
                 opts["noplaylist"] = True
                 opts["format"] = "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
-
 
 
     def ytdlp_handler(self, caller: str) -> yt_dlp.YoutubeDL:
@@ -59,7 +59,7 @@ class Download:
 
     def download_vid(self, ) -> None:
         ...
-        
+
 
 class Save_Directory:
     """Handles validation of entered filepath if any"""
@@ -81,3 +81,23 @@ class Save_Directory:
             raise ValueError
         else:
             self._filepath = Path(filepath)
+
+
+def create_obj(url: str, file_type: str, mode: str) -> Download | None:
+    """
+    Calls downloader for only one video or audio
+
+    Args:
+        url (str): The url validated at the UI level
+        file_type(str): The file type (either "video" or "audio")
+        mode (str): Either "single", "batch", or "playlist"
+
+    Returns:
+        bool: True if download is successful, False otherwise
+    """
+    try:
+        dl_object = Download(url, file_type, mode)
+        dl_object.set_title()
+        return dl_object
+    except ValueError:
+        return None
