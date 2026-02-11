@@ -10,6 +10,7 @@ class Download:
     BASE_OPTS = {
         "quiet": True,
         "no_warnings": True,
+        "windowsfilenames": True
     }
 
     def __init__(self, url: str, file_type: str, mode: str) -> None:
