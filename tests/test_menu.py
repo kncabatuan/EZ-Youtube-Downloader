@@ -78,4 +78,15 @@ def test_filepath_validation(tmp_path):
     assert menu.validate_filepath(str(temp_dir)) == temp_dir
     
 
+# Test for final decision validation
+def test_decision_validation():
+    invalid_decisions = ["", "      ", "test", "123", "---", "-a1"]
 
+    for decision in invalid_decisions:
+        with pytest.raises(ValueError):
+            menu.validate_final_decision(decision)
+
+    valid_decisions =  ["y", "n", "exit"]
+
+    for decision in valid_decisions:
+        assert menu.validate_final_decision(decision) == decision
