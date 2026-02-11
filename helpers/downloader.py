@@ -7,13 +7,10 @@ import yt_dlp
 class Download:
     """Handles downloading of Youtube video or audio"""
 
-    GENERAL_OPTS = {
+    BASE_OPTS = {
         "quiet": True,
         "no_warnings": True,
-        "format": "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
     }
-    PLAYLIST_OPTS: dict[str, Any] = {}
-
 
     def __init__(self, url: str, file_type: str, mode: str) -> None:
         self.url = url
@@ -26,29 +23,43 @@ class Download:
 
     @url.setter
     def url(self, url: str) -> None:
-        pattern = r"^((?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch\?v=)?[\w-]{11}).*$"
+        pattern = r"^(?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch\?v=)?[\w-]{11}.*$"
         if match := re.search(pattern, url):
-            self._url = match.group(1)
+            self._url = match
         else:
             raise ValueError
 
-    def ytdlp_handler(self) -> yt_dlp.YoutubeDL:
-        if self.mode in ("single", "batch"):
-            with yt_dlp.YoutubeDL(Download.GENERAL_OPTS) as yld:  # type: ignore[arg-type]
+    def opts_builder(self) -> dict:
+        opts = Download.BASE_OPTS
+
+        if self.file_type == "video":
+            if self.mode == "single":
+                opts["noplaylist"] = True
+                opts["format"] = "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
+
+
+
+    def ytdlp_handler(self, caller: str) -> yt_dlp.YoutubeDL:
+        if caller == "set_title":
+            with yt_dlp.YoutubeDL(Download.BASE_OPTS) as yld:  # type: ignore[arg-type]
                 return yld
-        elif self.mode == "playlist":
-            with yt_dlp.YoutubeDL(Download.PLAYLIST_OPTS) as yld:  # type: ignore[arg-type]
+        if caller == "download_vid":
+            with yt_dlp.YoutubeDL(Download.opts_builder) as yld:  # type: ignore[arg-type]
                 return yld
-        else:
-            raise ValueError
+            
 
     def set_title(self) -> None:
+        caller = "set_title"
         try:
-            info = self.ytdlp_handler().extract_info(self.url, download=False)
+            info = self.ytdlp_handler(caller).extract_info(self.url, download=False)
             self.title = info["title"]
         except (yt_dlp.utils.ExtractorError, yt_dlp.utils.DownloadError):
             raise ValueError
 
+
+    def download_vid(self, ) -> None:
+        ...
+        
 
 class Save_Directory:
     """Handles validation of entered filepath if any"""

@@ -36,6 +36,7 @@ def main() -> None:
 
                 decision = menu.get_final_decision(download_mode, dl_obj.title, file_type, filepath)
                 if decision == "y":
+                    single_download
                     menu.print_dl_success()
                 elif decision == "n":
                     menu.print_dl_fail()
