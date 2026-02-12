@@ -50,7 +50,7 @@ class Download:
         Returns:
             dict: The updated options (started from base opts) depending on download mode and type
         """
-        opts = Download.BASE_OPTS
+        opts = Download.BASE_OPTS.copy()
 
         if self.file_type == "video":
             match self.mode:
@@ -59,7 +59,6 @@ class Download:
                     opts["format"] = (
                         "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
                     )
-                    opts["windowsfilenames"] = True
                     opts["merge_output_format"] = "mp4"
                     opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
                 case "batch":
@@ -71,7 +70,6 @@ class Download:
                 case "single":
                     opts["noplaylist"] = True
                     opts["format"] = "bestaudio/best"
-                    opts["windowsfilenames"] = True
                     opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
                     opts["postprocessors"] = [{
                         "key": "FFmpegExtractAudio",
