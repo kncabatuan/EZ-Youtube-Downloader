@@ -53,5 +53,4 @@ Title: {title}
 Type: {file_type}
 Path: {filepath}
 
-
 """

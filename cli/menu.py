@@ -88,7 +88,7 @@ def get_type() -> str:
     Gets user input for File Type and calls validator function
 
     Returns:
-        str: The validated input for file type
+        str: The file type ("video"/"audio") or "exit"
     """
     while True:
         try:
@@ -147,7 +147,8 @@ def get_filepath() -> str | Path:
             time.sleep(DELAY)
         except NotADirectoryError:
             print(
-                Fore.RED + "\nFilepath provided is not a directory. Please enter a valid one",
+                Fore.RED
+                + "\nFilepath provided is not a directory. Please enter a valid one",
             )
             time.sleep(DELAY)
         except PermissionError:
@@ -175,6 +176,9 @@ def validate_filepath(filepath: str) -> str | Path:
 
     Raises:
         ValueError: If the user input is invalid
+        NotADirectoryError: If the path is not a directory
+        PermissionError: If the user does not have permission to access the directory
+        OSError: If other OS-related error occurred
     """
     if filepath == "exit":
         return filepath
@@ -186,9 +190,9 @@ def validate_filepath(filepath: str) -> str | Path:
 def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) -> str:
     """
     Prompts user for decision to proceed/cancel download
-    
+
     Loops until a valid input is made
-    
+
     Args:
         mode (str): Either "single", "batch", or "playlist"
         title (str): The title of the video or playlist
@@ -196,33 +200,37 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
         filepath (Path): The valid directory to save the downloaded file/s
 
     Returns:
-        str: "y", "n", or "exit"    
+        str: "y", "n", or "exit"
     """
     while True:
         print(
-            Fore.GREEN + prompts.FINAL_DECISION.format(
-                mode = mode.upper(),
-                title = title,
-                file_type = file_type.title(),
-                filepath = filepath
-            ))
+            Fore.GREEN
+            + prompts.FINAL_DECISION.format(
+                mode=mode.upper(),
+                title=title,
+                file_type=file_type.title(),
+                filepath=filepath,
+            )
+        )
         try:
-            final_decision = input(Fore.WHITE + "\nProceed download? y/n\n\n").strip().lower() 
+            final_decision = (
+                input(Fore.WHITE + "\nProceed download? y/n\n\n").strip().lower()
+            )
             return validate_final_decision(final_decision)
         except ValueError:
             print(Fore.RED + '\nInvalid input. Please input "y", "n", or "exit"')
             time.sleep(DELAY)
-    
+
 
 def validate_final_decision(decision: str) -> str:
     """Validates the user's final decision
-    
+
     Args:
         decision (str): The user's input
-        
+
     Returns:
         str: The validated input. Either "y", "n", or "exit"
-        
+
     Raises:
         ValueError: If input is not "y", "n" or "exit"
     """
@@ -267,13 +275,20 @@ def print_dl_success() -> None:
 def print_dl_fail() -> None:
     """Prints returning to Menu when fail"""
     print(Fore.RED + "\nDownload failed. Returning to Main Menu . . .")
-        
+
 
 def print_exception(_exception: str) -> None:
+    """Prints message depending on exception"""
     if _exception == "ExtractorError":
-        print(Fore.RED + "\nSomething went wrong when trying to extract metadata from URL")
+        print(
+            Fore.RED + "\nSomething went wrong when trying to extract metadata from URL"
+        )
     if _exception == "DownloadError":
-        print(Fore.RED + "\nSomething went wrong when trying to download. Please check your internet connection")
+        print(
+            Fore.RED
+            + "\nSomething went wrong when trying to download. Please check your internet connection"
+        )
+
 
 def exit_program() -> None:
     """Prints and closes the program"""
