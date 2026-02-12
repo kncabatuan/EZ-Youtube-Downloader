@@ -4,19 +4,19 @@ import pytest
 
 
 def test_choice_validation():
-    invalid_choices = ["", "0", "4", "-1", "test", "     "]
+    invalid_choices = ("", "0", "4", "-1", "test", "     ")
     for choice in invalid_choices:
         with pytest.raises(ValueError):
             menu.validate_choice(choice)
 
-    valid_choices = ["1", "2", "3", "exit"]
+    valid_choices = ("1", "2", "3", "exit")
     for choice in valid_choices:
         assert menu.validate_choice(choice) == choice
 
 
 # Test for UI level validation only
 def test_url_validation():
-    invalid_url = [
+    invalid_url = (
         "",
         "     ",
         "test",
@@ -27,12 +27,12 @@ def test_url_validation():
         "https://.youtube.com/",
         "https://you.tube.com/",
         "https://youtube.com./",
-    ]
+    )
     for url in invalid_url:
         with pytest.raises(ValueError):
             menu.validate_url(url)
 
-    valid_url = [
+    valid_url = (
         "https://www.youtube.com/",
         "http://www.youtube.com/",
         "https://youtube.com/",
@@ -41,7 +41,7 @@ def test_url_validation():
         "http://m.youtube.com/",
         "https://youtu.be/",
         "http://youtu.be/"
-    ]
+    )
 
     for url in valid_url:
         assert menu.validate_url(url) == url
@@ -50,7 +50,7 @@ def test_url_validation():
 
 
 def test_type_validation():
-    invalid_types = ["0", "3", "", "    ", "test", "123", "-1", "---"]
+    invalid_types = ("0", "3", "", "    ", "test", "123", "-1", "---")
 
     for _type in invalid_types:
         with pytest.raises(ValueError):
@@ -63,7 +63,7 @@ def test_type_validation():
 
 # Test for filepath validation
 def test_filepath_validation(tmp_path):
-    invalid_filepaths = ["test", "123", "---", "1:/test", "-:/test"]
+    invalid_filepaths = ("test", "123", "---", "1:/test", "-:/test")
 
     for filepath in invalid_filepaths:
         with pytest.raises(ValueError):
@@ -80,13 +80,13 @@ def test_filepath_validation(tmp_path):
 
 # Test for final decision validation
 def test_decision_validation():
-    invalid_decisions = ["", "      ", "test", "123", "---", "-a1"]
+    invalid_decisions = ("", "      ", "test", "123", "---", "-a1")
 
     for decision in invalid_decisions:
         with pytest.raises(ValueError):
             menu.validate_final_decision(decision)
 
-    valid_decisions =  ["y", "n", "exit"]
+    valid_decisions =  ("y", "n", "exit")
 
     for decision in valid_decisions:
         assert menu.validate_final_decision(decision) == decision
