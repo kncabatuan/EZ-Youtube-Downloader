@@ -157,7 +157,7 @@ def get_filepath() -> str | Path:
             time.sleep(DELAY)
         except OSError:
             print(
-                Fore.RED + "\nSomething went wrong when accessing the folder.",
+                Fore.RED + "\nSomething went wrong when accessing the folder",
             )
             time.sleep(DELAY)
 
@@ -261,13 +261,19 @@ def print_failure() -> None:
 
 def print_dl_success() -> None:
     """Prints returning to Menu when success"""
-    print(Fore.RED + "\nDownload success! Returning to Main Menu . . .")
+    print(Fore.GREEN + "\nDownload success! Returning to Main Menu . . .")
 
 
 def print_dl_fail() -> None:
     """Prints returning to Menu when fail"""
     print(Fore.RED + "\nDownload failed. Returning to Main Menu . . .")
+        
 
+def print_exception(_exception: str) -> None:
+    if _exception == "ExtractorError":
+        print(Fore.RED + "\nSomething went wrong when trying to extract metadata from URL")
+    if _exception == "DownloadError":
+        print(Fore.RED + "\nSomething went wrong when trying to download. Please check your internet connection")
 
 def exit_program() -> None:
     """Prints and closes the program"""

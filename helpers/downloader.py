@@ -14,9 +14,10 @@ class Download:
     }
 
     def __init__(self, url: str, file_type: str, mode: str) -> None:
+        self.mode = mode
         self.url = url
         self.file_type = file_type
-        self.mode = mode
+        
 
     @property
     def url(self) -> str:
@@ -24,9 +25,12 @@ class Download:
 
     @url.setter
     def url(self, url: str) -> None:
-        pattern = r"^(?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch\?v=)?[\w-]{11}.*$"
+        pattern = r"^((?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch\?v=)?[\w-]{11}).*$"
         if match := re.search(pattern, url):
-            self._url = match.group()
+            if self.mode in ("single", "batch"):
+                self._url = match.group(1)
+            if self.mode == "playlist":
+                self._url = match.group(0)
         else:
             raise ValueError
 
@@ -41,6 +45,7 @@ class Download:
                     opts["format"] = "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
                     opts["windowsfilenames"] = True
                     opts["merge_output_format"] = "mp4"
+                    opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
                 case "batch":
                     ...
                 case "playlist":
@@ -58,25 +63,32 @@ class Download:
 
     def ytdlp_handler(self, caller: str) -> yt_dlp.YoutubeDL:
         if caller == "set_title":
-            with yt_dlp.YoutubeDL(Download.BASE_OPTS) as yld:  # type: ignore[arg-type]
-                return yld
+            with yt_dlp.YoutubeDL(Download.BASE_OPTS) as ydl:  # type: ignore[arg-type]
+                return ydl
         if caller == "download_vid":
-            with yt_dlp.YoutubeDL(Download.opts_builder) as yld:  # type: ignore[arg-type]
-                return yld
+            with yt_dlp.YoutubeDL(self.opts_builder()) as ydl:  # type: ignore[arg-type]
+                return ydl
             
 
     def set_title(self) -> None:
         caller = "set_title"
         try:
-            info = self.ytdlp_handler(caller).extract_info(self.url, download=False)
+            info = self.ytdlp_handler(caller).extract_info(self.url, download=False, process=False)
             self.title = info["title"]
-        except (yt_dlp.utils.ExtractorError, yt_dlp.utils.DownloadError):
+        except yt_dlp.utils.ExtractorError:
             raise ValueError
+        
+
+    def save_path(self, filepath: Path) -> None:
+        self.filepath = filepath
 
 
-    def download_vid(self, ) -> None:
+    def download_vid(self) -> None:
         caller = "download_vid"
-        ...
+        try:
+            self.ytdlp_handler(caller).download(self.url)
+        except (yt_dlp.utils.ExtractorError, yt_dlp.utils.DownloadError, yt_dlp.utils.PostProcessingError):
+            raise
 
 
 class Save_Directory:
@@ -109,7 +121,7 @@ class Save_Directory:
                     test_file.unlink()
 
 
-def create_obj(url: str, file_type: str, mode: str) -> Download | None:
+def create_download_obj(url: str, file_type: str, mode: str) -> Download | None:
     """
     Calls downloader for only one video or audio
 
@@ -122,8 +134,8 @@ def create_obj(url: str, file_type: str, mode: str) -> Download | None:
         bool: True if download is successful, False otherwise
     """
     try:
-        dl_object = Download(url, file_type, mode)
-        dl_object.set_title()
-        return dl_object
+        download_obj = Download(url, file_type, mode)
+        download_obj.set_title()
+        return download_obj
     except ValueError:
         return None

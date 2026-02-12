@@ -1,6 +1,7 @@
 from cli import menu
 from helpers import downloader
 import time
+import yt_dlp
 
 # Time used for delay using time.sleep (in seconds)
 DELAY = 1.5
@@ -15,12 +16,12 @@ def main() -> None:
     while True:
         match menu.get_user_choice():
             case "1":
-                url, file_type = get_user_inputs()
                 download_mode = "single"
+                url, file_type = get_user_inputs()
                 menu.print_checking()
 
-                if dl_obj := downloader.create_obj(url, file_type, download_mode):
-                    menu.print_obj_success(dl_obj.title)
+                if download_object := downloader.create_download_obj(url, file_type, download_mode):
+                    menu.print_obj_success(download_object.title)
                     time.sleep(DELAY)
                 else:
                     menu.print_obj_fail()
@@ -30,13 +31,22 @@ def main() -> None:
                 filepath = menu.get_filepath()
                 if filepath == "exit":
                     menu.exit_program()
+                download_object.save_path(filepath)
                 
                 menu.print_checking()
                 time.sleep(DELAY)
 
-                decision = menu.get_final_decision(download_mode, dl_obj.title, file_type, filepath)
+                decision = menu.get_final_decision(download_mode, download_object.title, file_type, download_object.filepath)
                 if decision == "y":
-                    menu.print_dl_success()
+                    try: 
+                        download_object.download_vid()
+                        menu.print_dl_success()
+                    except yt_dlp.utils.ExtractorError:
+                        menu.print_exception("ExtractorError")
+                        menu.print_dl_fail()
+                    except (yt_dlp.utils.DownloadError, yt_dlp.utils.PostProcessingError):
+                        menu.print_exception("DownloadError")
+                        menu.print_dl_fail()
                 elif decision == "n":
                     menu.print_dl_fail()
                 else:
