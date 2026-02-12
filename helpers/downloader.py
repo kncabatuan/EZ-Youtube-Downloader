@@ -69,7 +69,15 @@ class Download:
         elif self.file_type == "audio":
             match self.mode:
                 case "single":
-                    ...
+                    opts["noplaylist"] = True
+                    opts["format"] = "bestaudio/best"
+                    opts["windowsfilenames"] = True
+                    opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
+                    opts["postprocessors"] = [{
+                        "key": "FFmpegExtractAudio",
+                        "preferredcodec": "mp3",
+                        "preferredquality": "192"
+                    }]
                 case "batch":
                     ...
                 case "playlist":
