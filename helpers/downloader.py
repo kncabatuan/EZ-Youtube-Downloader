@@ -39,6 +39,8 @@ class Download:
                 case "single":
                     opts["noplaylist"] = True
                     opts["format"] = "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
+                    opts["windowsfilenames"] = True
+                    opts["merge_output_format"] = "mp4"
                 case "batch":
                     ...
                 case "playlist":
@@ -73,6 +75,7 @@ class Download:
 
 
     def download_vid(self, ) -> None:
+        caller = "download_vid"
         ...
 
 
@@ -93,9 +96,17 @@ class Save_Directory:
         elif not re.search(r"^[a-zA-Z]:[\\/].*$", filepath):
             raise ValueError
         elif not Path(filepath).is_dir():
-            raise ValueError
+            raise NotADirectoryError
         else:
-            self._filepath = Path(filepath)
+            test_file = Path(filepath) / "test_file.txt"
+            try:
+                test_file.touch()
+                self._filepath = Path(filepath)
+            except PermissionError:
+                raise
+            finally:
+                if test_file.exists():
+                    test_file.unlink()
 
 
 def create_obj(url: str, file_type: str, mode: str) -> Download | None:

@@ -145,6 +145,21 @@ def get_filepath() -> str | Path:
                 Fore.RED + "\nC:\\... or C:/...",
             )
             time.sleep(DELAY)
+        except NotADirectoryError:
+            print(
+                Fore.RED + "\nFilepath provided is not a directory. Please enter a valid one",
+            )
+            time.sleep(DELAY)
+        except PermissionError:
+            print(
+                Fore.RED + "\nYou don't have enough permission to access this folder.",
+            )
+            time.sleep(DELAY)
+        except OSError:
+            print(
+                Fore.RED + "\nSomething went wrong when accessing the folder.",
+            )
+            time.sleep(DELAY)
 
 
 def validate_filepath(filepath: str) -> str | Path:
