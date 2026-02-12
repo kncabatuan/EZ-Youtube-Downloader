@@ -1,5 +1,6 @@
 from helpers import downloader
 from pathlib import Path
+from unittest.mock import patch, MagicMock
 import pytest
 
 def test_download_init():
@@ -67,3 +68,37 @@ def test_opts_builder():
         }]
     }
 
+
+def test_data_extraction():
+    valid_url = "https://www.youtube.com/watch?v=testtesttes"
+    valid_type = "video"
+    valid_mode = "single"
+
+    with patch("helpers.downloader.yt_dlp.YoutubeDL") as mock_ydl:
+        mock_instance = MagicMock()
+        mock_ydl.return_value.__enter__.return_value = mock_instance
+
+        mock_instance.extract_info.return_value = {"title": "Test Title"}
+
+        test_obj = downloader.Download(valid_url, valid_type, valid_mode)
+        test_obj.set_title()
+
+        mock_instance.extract_info.assert_called_once_with(valid_url, download=False, process=False)
+        assert test_obj.title == "Test Title"
+
+
+def test_download():
+    valid_url = "https://www.youtube.com/watch?v=testtesttes"
+    valid_type = "video"
+    valid_mode = "single"
+    valid_filepath = Path("test_filepath")
+
+    with patch("helpers.downloader.yt_dlp.YoutubeDL") as mock_ydl:
+        mock_instance = MagicMock()
+        mock_ydl.return_value.__enter__.return_value = mock_instance
+
+        test_obj = downloader.Download(valid_url, valid_type, valid_mode)
+        test_obj.filepath = valid_filepath
+        test_obj.download_vid()
+
+        mock_instance.download.assert_called_once_with(valid_url)

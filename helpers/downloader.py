@@ -92,6 +92,9 @@ class Download:
 
         Returns:
             yt_dlp.YoutubeDL: The YoutubeDL object
+
+        Raises:
+            ValueError: If caller not in set tuple (not applicable)
         """
         if not caller in ("set_title", "download_vid"):
             raise ValueError
