@@ -201,6 +201,34 @@ class Save_Directory:
                     test_file.unlink()
 
 
+class URL_List_File:
+    def __init__(self, filepath: Path) -> None:
+        self.filepath = filepath
+    
+    @property
+    def filepath(self):
+        return self._filepath
+    
+    @filepath.setter
+    def filepath(self, filepath):
+        if not filepath.exists():
+            raise FileNotFoundError
+        elif filepath.is_dir():
+            raise IsADirectoryError
+        elif filepath.suffix.lower() != ".txt":
+            raise ValueError
+        else:
+            try:
+                with filepath.open("r"):
+                    pass
+            except PermissionError:
+                raise
+            except OSError:
+                raise
+        
+        self._filepath = filepath
+
+
 def create_download_obj(url: str, file_type: str, mode: str) -> Download | None:
     """
     Calls downloader for only one video or audio

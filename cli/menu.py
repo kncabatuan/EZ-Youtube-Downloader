@@ -18,9 +18,10 @@ def get_user_choice() -> str:
         str: The validated user input
     """
     while True:
+        print(Fore.YELLOW + prompts.MAIN_PROMPT_1)
         try:
             return validate_choice(
-                input(Fore.WHITE + prompts.MAIN_PROMPT).strip().lower()
+                input(Fore.WHITE + prompts.MAIN_PROMPT_2).strip().lower()
             )
         except ValueError:
             print(Fore.RED + '\nInvalid input. Please enter from value 1-3 or "exit"')
@@ -53,8 +54,9 @@ def get_url() -> str:
         str: The validated URL
     """
     while True:
+        print(Fore.YELLOW + prompts.URL_PROMPT)
         try:
-            return validate_url(input(Fore.WHITE + prompts.URL_PROMPT)).strip()
+            return validate_url(input(Fore.WHITE + "")).strip()
         except ValueError:
             print(Fore.RED + "\nInvalid URL. Please copy-paste Youtube URL")
             time.sleep(DELAY)
@@ -91,9 +93,10 @@ def get_type() -> str:
         str: The file type ("video"/"audio") or "exit"
     """
     while True:
+        print(Fore.YELLOW + prompts.TYPE_PROMPT_1)
         try:
             return validate_type(
-                input(Fore.WHITE + prompts.TYPE_PROMPT).strip().lower()
+                input(Fore.WHITE + prompts.TYPE_PROMPT_2).strip().lower()
             )
         except ValueError:
             print(Fore.RED + "\nInvalid input. Please enter 1, 2, or exit")
@@ -137,8 +140,9 @@ def get_filepath() -> str | Path:
         str: "exit" if the user wants to close the program
     """
     while True:
+        print(Fore.YELLOW + prompts.PATH_PROMPT_1)
         try:
-            return validate_filepath(input(Fore.WHITE + prompts.PATH_PROMPT).strip())
+            return validate_filepath(input(Fore.WHITE + prompts.PATH_PROMPT_2).strip())
         except ValueError:
             print(
                 Fore.RED + "\nInvalid filepath. Please follow correct format",
@@ -205,7 +209,7 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
     while True:
         print(
             Fore.GREEN
-            + prompts.FINAL_DECISION.format(
+            + prompts.FINAL_DECISION_PROMPT.format(
                 mode=mode.upper(),
                 title=title,
                 file_type=file_type.title(),
@@ -237,6 +241,48 @@ def validate_final_decision(decision: str) -> str:
     if not re.search(r"^([yn]|exit)$", decision):
         raise ValueError
     return decision
+
+
+def get_url_list_file() -> Path | str:
+    while True:
+        print(Fore.YELLOW + prompts.GET_URL_LIST_PROMPT_1)
+        try:
+            return validate_url_list_file(input(Fore.WHITE + prompts.GET_URL_LIST_PROMPT_2).strip())
+        except ValueError:
+            print(
+                Fore.RED + "\nInvalid file. Please enter a valid file or filepath",
+            )
+            time.sleep(DELAY)
+        except FileNotFoundError:
+            print(Fore.RED + "\nFile was not found. Please enter a valid file or filepath")
+            time.sleep(DELAY)
+        except IsADirectoryError:
+            print(
+                Fore.RED
+                + "\nFile or filepath provided is a directory. Please enter a valid file or filepath",
+            )
+            time.sleep(DELAY)
+        except PermissionError:
+            print(
+                Fore.RED + "\nYou don't have enough permission to access this file.",
+            )
+            time.sleep(DELAY)
+        except OSError:
+            print(
+                Fore.RED + "\nSomething went wrong when accessing the file",
+            )
+            time.sleep(DELAY)
+            
+
+
+def validate_url_list_file(url_list_file) -> Path | str:
+    if url_list_file == "exit":
+        return url_list_file
+    elif url_list_file == "":
+        raise ValueError
+    else:
+        path = Path(url_list_file)
+        return downloader.URL_List_File(path).filepath
 
 
 def print_checking() -> None:

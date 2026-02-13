@@ -19,35 +19,31 @@ def main() -> None:
             case "1":
                 single_download()
             case "2":
-                print("Go to batch download")
+                batch_download()
             case "3":
                 print("Go to playlist download")
             case "exit":
                 menu.exit_program()
 
 
-def get_user_inputs() -> tuple:
-    """
-    Calls functions from menu module to get and validate user input
-
-    Returns:
-        tuple: The validated url and file type
-    """
-
-    url = menu.get_url()
-    if url == "exit":
-        menu.exit_program()
+def get_user_inputs(download_mode) -> tuple:
 
     file_type = menu.get_type()
     if file_type == "exit":
         menu.exit_program()
 
-    return url, file_type
+    if download_mode in ("single", "playlist"):
+        url = menu.get_url()
+        if url == "exit":
+            menu.exit_program()
+        return url, file_type
+    else:
+        return file_type
 
 
 def single_download():
     download_mode = "single"
-    url, file_type = get_user_inputs()
+    url, file_type = get_user_inputs(download_mode)
 
     menu.print_checking()
 
@@ -92,6 +88,15 @@ def single_download():
 
     time.sleep(DELAY)
     return
+
+
+def batch_download():
+    download_mode = "batch"
+    file_type = get_user_inputs(download_mode)
+
+    url_list_file = menu.get_url_list_file()
+    if url_list_file == "exit":
+        menu.exit_program()
 
 
 if __name__ == "__main__":
