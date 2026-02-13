@@ -34,12 +34,18 @@ class Download:
         Raises:
             ValueError: If input URL does not match regex pattern
         """
-        pattern = r"^((?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch\?v=)?[\w-]{11}).*$"
+        pattern = r"^((https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch\?v=)?[\w-]{11}).*$"
         if match := re.search(pattern, url):
             if self.mode in ("single", "batch"):
-                self._url = match.group(1)
+                if match.group(2) == None:
+                    self._url = "https://" + match.group(1)
+                else:
+                    self._url = match.group(1)
             if self.mode == "playlist":
-                self._url = match.group(0)
+                if match.group(2) == None:
+                    self._url = "https://" + match.group(0)
+                else:
+                    self._url = match.group(0)
         else:
             raise ValueError
 
@@ -118,8 +124,10 @@ class Download:
             info = self.ytdlp_handler(caller).extract_info(
                 self.url, download=False, process=False
             )
+            if "title" not in info.keys():
+                raise ValueError
             self.title = info["title"]
-        except yt_dlp.utils.ExtractorError:
+        except (yt_dlp.utils.ExtractorError, yt_dlp.utils.DownloadError):
             raise ValueError
 
     def save_path(self, filepath: Path) -> None:
