@@ -50,10 +50,10 @@ def single_download():
     if download_object := downloader.create_download_obj(
         url, file_type, download_mode
     ):
-        menu.print_obj_success(download_object.title)
+        menu.print_obj_success(download_object.title, download_mode)
         time.sleep(DELAY)
     else:
-        menu.print_obj_fail()
+        menu.print_obj_fail(download_mode)
         time.sleep(DELAY)
         return
 
@@ -98,6 +98,19 @@ def batch_download():
     if url_list_file == "exit":
         menu.exit_program()
 
+    
+    with open(url_list_file, "r") as file:
+        url_list = [line.strip() for line in file]
+
+    for url in url_list:
+        if download_object := downloader.create_download_obj(
+            url, file_type, download_mode
+        ):
+            menu.print_obj_success(download_object.title, download_mode)
+        else:
+            menu.print_obj_fail(download_mode)
+            continue
+        
 
 if __name__ == "__main__":
     main()

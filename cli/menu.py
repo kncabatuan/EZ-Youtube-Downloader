@@ -283,24 +283,32 @@ def validate_url_list_file(url_list_file) -> Path | str:
     else:
         path = Path(url_list_file)
         return downloader.URL_List_File(path).filepath
-
+    
 
 def print_checking() -> None:
     """Prints "checking" for psuedo-loading status"""
     print(Fore.YELLOW + "\nChecking. . .\n")
 
 
-def print_obj_success(title: str | None) -> None:
+def print_obj_success(title: str | None, download_mode: str) -> None:
     """Prints success with corresponding video title on successful object creation"""
-    print(Fore.GREEN + "Video Found!", Fore.GREEN + f"\n{title}")
+    if download_mode == "single":
+        print(Fore.GREEN + "Video Found!", Fore.GREEN + f"\n{title}")
+    if download_mode == "batch":
+        print(Fore.GREEN + f"Video Found: {title}")
+    if download_mode == "playlist":
+        print(Fore.GREEN + "Playlist Found!", Fore.GREEN + f"\n{title}")
+        
 
-
-def print_obj_fail() -> None:
+def print_obj_fail(download_mode: str) -> None:
     """Prints failure on failed object creation"""
-    print(
-        Fore.RED
-        + "\nSomething went wrong. Please check if all inputs are valid, especially the URL"
-    )
+    if download_mode in ("single", "playlist"):
+        print(
+            Fore.RED
+            + "\nSomething went wrong. Please check if all inputs are valid, especially the URL"
+        )
+    if download_mode == "batch":
+        print(Fore.RED + "\nFailed to find video")
 
 
 def print_success() -> None:
