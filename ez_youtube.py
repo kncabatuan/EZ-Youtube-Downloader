@@ -70,6 +70,7 @@ def single_download():
     )
     if decision == "y":
         try:
+            menu.print_checking()
             download_object.download_vid()
             menu.print_dl_success()
         except yt_dlp.utils.ExtractorError:
@@ -77,6 +78,9 @@ def single_download():
             menu.print_dl_fail()
         except (yt_dlp.utils.DownloadError, yt_dlp.utils.PostProcessingError):
             menu.print_exception("DownloadError")
+            menu.print_dl_fail()
+        except KeyboardInterrupt:
+            menu.print_exception("KeyboardInterrupt")
             menu.print_dl_fail()
     elif decision == "n":
         menu.print_dl_fail()

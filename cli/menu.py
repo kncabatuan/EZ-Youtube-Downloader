@@ -220,6 +220,7 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
             final_decision = (
                 input(Fore.WHITE + "\nProceed download? y/n\n\n").strip().lower()
             )
+            print("")
             return validate_final_decision(final_decision)
         except ValueError:
             print(Fore.RED + '\nInvalid input. Please input "y", "n", or "exit"')
@@ -340,9 +341,13 @@ def print_exception(_exception: str) -> None:
     if _exception == "DownloadError":
         print(
             Fore.RED
-            + "\nSomething went wrong when trying to download. Please check your internet connection"
+            + "\n\nSomething went wrong when trying to download. Please check your internet connection"
         )
-
+    if _exception == "KeyboardInterrupt":
+        print(
+            Fore.RED
+            + "\n\nDownload has been interrupted"
+        )
 
 def exit_program() -> None:
     """Prints and closes the program"""

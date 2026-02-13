@@ -7,10 +7,8 @@ import yt_dlp
 class MyLogger:
     def debug(self, msg):
         pass
-    
     def warning(self, msg):
         pass
-
     def error(self, msg):
         pass
 
@@ -18,13 +16,13 @@ def my_hook(d):
     if d["status"] == "error":
         pass
     if d["status"] == "downloading":
-        filename = Path(d.get("filename")).name
+        filename = Path(d.get("filename")).stem
         total = d.get("total_bytes") or d.get("total_bytes_estimate")
         downloaded = d.get("downloaded_bytes", 0)
 
         if total:
             percent = downloaded / total * 100
-            print(f"\rDownloading {filename}: {percent:.2f}%", end="")
+            print(f"\rDownloading {filename}: {percent:.2f}%", end="", flush=True)
 
 class Download:
     """Handles downloading of Youtube video or audio"""
@@ -181,6 +179,7 @@ class Download:
             yt_dlp.utils.ExtractorError,
             yt_dlp.utils.DownloadError,
             yt_dlp.utils.PostProcessingError,
+            KeyboardInterrupt
         ):
             raise
 
