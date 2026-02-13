@@ -47,15 +47,12 @@ def single_download():
 
     menu.print_checking()
 
-    if download_object := downloader.create_download_obj(
-        url, file_type, download_mode
-    ):
-        menu.print_obj_success(download_object.title, download_mode)
-        time.sleep(DELAY)
+    if download_object := object_create(url, file_type, download_mode):
+        pass
     else:
-        menu.print_obj_fail(download_mode)
-        time.sleep(DELAY)
         return
+    
+    time.sleep(DELAY)
 
     filepath = menu.get_filepath()
     if filepath == "exit":
@@ -98,19 +95,46 @@ def batch_download():
     if url_list_file == "exit":
         menu.exit_program()
 
+    menu.print_checking()
     
     with open(url_list_file, "r") as file:
         url_list = [line.strip() for line in file]
 
+    download_object_list = []
     for url in url_list:
-        if download_object := downloader.create_download_obj(
-            url, file_type, download_mode
-        ):
-            menu.print_obj_success(download_object.title, download_mode)
+        if download_object := (object_create(url, file_type, download_mode)):
+            download_object_list.append(download_object)
         else:
-            menu.print_obj_fail(download_mode)
             continue
-        
+
+    filepath = menu.get_filepath()
+    if filepath == "exit":
+        menu.exit_program()
+    else:
+        assert isinstance(filepath, Path)
+        for download_object in download_object_list:
+            download_object.save_path(filepath)
+
+    filepath = menu.get_filepath()
+    if filepath == "exit":
+        menu.exit_program()
+    else:
+        assert isinstance(filepath, Path)
+        download_object.save_path(filepath)
+
+
+def object_create(url, file_type, download_mode):
+    try:
+        download_object = downloader.Download(url, file_type, download_mode)
+        download_object.set_title()
+        menu.print_obj_success(download_object.title, download_mode)
+        return download_object
+    except ValueError:
+        menu.print_obj_fail(download_mode, url)
+    
+
+
+
 
 if __name__ == "__main__":
     main()

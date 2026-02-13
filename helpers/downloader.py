@@ -4,6 +4,28 @@ import re
 import yt_dlp
 
 
+class MyLogger:
+    def debug(self, msg):
+        pass
+    
+    def warning(self, msg):
+        pass
+
+    def error(self, msg):
+        pass
+
+def my_hook(d):
+    if d["status"] == "error":
+        pass
+    if d["status"] == "downloading":
+        filename = Path(d.get("filename")).name
+        total = d.get("total_bytes") or d.get("total_bytes_estimate")
+        downloaded = d.get("downloaded_bytes", 0)
+
+        if total:
+            percent = downloaded / total * 100
+            print(f"\rDownloading {filename}: {percent:.2f}%", end="")
+
 class Download:
     """Handles downloading of Youtube video or audio"""
 
@@ -12,6 +34,8 @@ class Download:
         "quiet": True,
         "no_warnings": True,
         "windowsfilenames": True,
+        "logger": MyLogger(),
+        "progress_hooks": [my_hook]
     }
 
     def __init__(self, url: str, file_type: str, mode: str) -> None:
@@ -77,11 +101,13 @@ class Download:
                     opts["noplaylist"] = True
                     opts["format"] = "bestaudio/best"
                     opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
-                    opts["postprocessors"] = [{
-                        "key": "FFmpegExtractAudio",
-                        "preferredcodec": "mp3",
-                        "preferredquality": "192"
-                    }]
+                    opts["postprocessors"] = [
+                        {
+                            "key": "FFmpegExtractAudio",
+                            "preferredcodec": "mp3",
+                            "preferredquality": "192",
+                        }
+                    ]
                 case "batch":
                     ...
                 case "playlist":
@@ -204,11 +230,11 @@ class Save_Directory:
 class URL_List_File:
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
-    
+
     @property
     def filepath(self):
         return self._filepath
-    
+
     @filepath.setter
     def filepath(self, filepath):
         if not filepath.exists():
@@ -225,26 +251,5 @@ class URL_List_File:
                 raise
             except OSError:
                 raise
-        
+
         self._filepath = filepath
-
-
-def create_download_obj(url: str, file_type: str, mode: str) -> Download | None:
-    """
-    Calls downloader for only one video or audio
-
-    Args:
-        url (str): The url validated at the UI level
-        file_type(str): The file type (either "video" or "audio")
-        mode (str): Either "single", "batch", or "playlist"
-
-    Returns:
-        Download: the Download object
-        None: If ValueError occurs
-    """
-    try:
-        download_obj = Download(url, file_type, mode)
-        download_obj.set_title()
-        return download_obj
-    except ValueError:
-        return None
