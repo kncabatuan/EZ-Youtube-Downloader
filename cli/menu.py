@@ -300,7 +300,7 @@ def print_obj_success(title: str | None, download_mode: str) -> None:
         print(Fore.GREEN + "Playlist Found!", Fore.GREEN + f"\n{title}")
         
 
-def print_obj_fail(download_mode: str) -> None:
+def print_obj_fail(download_mode: str, url: str) -> None:
     """Prints failure on failed object creation"""
     if download_mode in ("single", "playlist"):
         print(
@@ -308,7 +308,7 @@ def print_obj_fail(download_mode: str) -> None:
             + "\nSomething went wrong. Please check if all inputs are valid, especially the URL"
         )
     if download_mode == "batch":
-        print(Fore.RED + "\nFailed to find video")
+        print(Fore.RED + f"Failed to find video from {url}")
 
 
 def print_success() -> None:
