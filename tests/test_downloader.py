@@ -42,31 +42,34 @@ def test_opts_builder():
 
     test_obj1 = downloader.Download(valid_url, valid_types[0], mode)
     test_obj1.filepath = filepath
-    assert test_obj1.opts_builder() == {
-        "quiet": True,
-        "no_warnings": True,
-        "windowsfilenames": True,
-        "noplaylist": True,
-        "format": "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
-        "merge_output_format": "mp4",
-        "outtmpl": str(test_obj1.filepath / "%(title)s.%(ext)s")
-    }
+    opts1 = test_obj1.opts_builder()
+
+    assert opts1["quiet"] == True
+    assert opts1["no_warnings"] == True
+    assert opts1["windowsfilenames"] == True
+    assert isinstance(opts1["logger"], downloader.MyLogger)
+    assert opts1["noplaylist"] == True
+    assert opts1["format"] == "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
+    assert opts1["merge_output_format"] == "mp4"
+    assert opts1["outtmpl"] == str(test_obj1.filepath / "%(title)s.%(ext)s")
+
 
     test_obj2 = downloader.Download(valid_url, valid_types[1], mode)
     test_obj2.filepath = filepath
-    assert test_obj2.opts_builder() == {
-        "quiet": True,
-        "no_warnings": True,
-        "windowsfilenames": True,
-        "noplaylist": True,
-        "format": "bestaudio/best",
-        "outtmpl": str(test_obj2.filepath / "%(title)s.%(ext)s"),
-        "postprocessors": [{
+    opts2 = test_obj2.opts_builder()
+
+    assert opts2["quiet"] == True
+    assert opts2["no_warnings"] == True
+    assert opts2["windowsfilenames"] == True
+    assert isinstance(opts2["logger"], downloader.MyLogger)
+    assert opts2["noplaylist"] == True
+    assert opts2["format"] == "bestaudio/best"
+    assert opts2["outtmpl"] == str(test_obj2.filepath / "%(title)s.%(ext)s")
+    assert opts2["postprocessors"] == [{
             "key": "FFmpegExtractAudio",
             "preferredcodec": "mp3",
             "preferredquality": "192"
         }]
-    }
 
 
 def test_data_extraction():
