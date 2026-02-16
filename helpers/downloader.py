@@ -5,18 +5,31 @@ import sys
 import yt_dlp
 
 
+# Used to override default yt-dlp printing to terminal
 class MyLogger:
     def debug(self, msg):
         pass
+
     def warning(self, msg):
         pass
+
     def error(self, msg):
         pass
+
 
 # Used for properly printing hook
 LAST_PERCENT = -1
 
-def my_hook(d):
+
+def my_hook(d: dict[str, Any]) -> None:
+    """
+    Progress hook used
+    
+    Args:
+        d (dict): The dictionary passed by yt-dlp
+    """
+
+    # Used for proper printing of hook
     global LAST_PERCENT
 
     if d["status"] == "error":
@@ -34,16 +47,22 @@ def my_hook(d):
                 if len(filename) > 40:
                     rewrite_line(f"Downloading {filename[:37]}...: {percent:.2f}%")
                 else:
-                    rewrite_line(f"Downloading {filename}...: {percent:.2f}%")
+                    rewrite_line(f"Downloading {filename}: {percent:.2f}%")
 
                 if percent == 100:
                     print("")
-            
+
 
 def rewrite_line(text: str) -> None:
-        sys.stdout.write("\r\033[K" + text)
-        sys.stdout.flush
+    """
+    Helper function for the progress hook
     
+    Args:
+        text (str): The message to print with the appropriate download progress and file name
+    """
+    sys.stdout.write("\r\033[K" + text)
+    sys.stdout.flush
+
 
 class Download:
     """Handles downloading of Youtube video or audio"""
@@ -54,7 +73,7 @@ class Download:
         "no_warnings": True,
         "windowsfilenames": True,
         "logger": MyLogger(),
-        "progress_hooks": [my_hook]
+        "progress_hooks": [my_hook],
     }
 
     def __init__(self, url: str, file_type: str, mode: str) -> None:
@@ -188,6 +207,7 @@ class Download:
             yt_dlp.utils.ExtractorError: If extraction of metadata fails
             yt_dlp.utils.DownloadError: If download fails due to connection errors or link issues
             yt_dlp.utils.PostProcessingError: If conversion, if any, fails
+            KeyboardInterrupt: If user uses Ctrl+C during the run
         """
         caller = "download_vid"
         try:
@@ -244,6 +264,7 @@ class Save_Directory:
 
 
 class URL_List_File:
+    """Handles validation of entered txt file for batch download, if any"""
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
 
@@ -253,6 +274,19 @@ class URL_List_File:
 
     @filepath.setter
     def filepath(self, filepath):
+        """
+        Txt file path validation.
+        
+        Args:
+            filepath (Path): The input path for the txt file
+        
+        Raises:
+            ValueError: If the file name or extension is invalid
+            FileNotFoundError: If the file cannot be found
+            IsADirectoryError: If the path points to a directory
+            PermissionError: If the user does not have permission to access that file
+            OSError: If other OS-related error occurred
+        """
         if not filepath.exists():
             raise FileNotFoundError
         elif filepath.is_dir():

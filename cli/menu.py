@@ -10,11 +10,15 @@ import time
 # Time used for delay using time.sleep (in seconds)
 DELAY = 1.5
 
+# Used for printing horizontal lines in terminal for UX
 COLUMNS = shutil.get_terminal_size().columns
+
 
 def get_user_choice() -> str:
     """
-    Gets user input for Main Menu and calls validator function
+    Gets user input for Main Menu and calls validator function.
+
+    Loops until a valid choice or "exit" is obtained.
 
     Returns:
         str: The validated user input
@@ -51,7 +55,9 @@ def validate_choice(choice: str) -> str:
 
 def get_url() -> str:
     """
-    Gets user input for URL and calls validator function
+    Gets user input for URL and calls validator function.
+
+    Loops until a valid (UI-level) url or "exit" is obtained.
 
     Returns:
         str: The validated URL
@@ -91,7 +97,9 @@ def validate_url(url: str) -> str:
 
 def get_type() -> str:
     """
-    Gets user input for File Type and calls validator function
+    Gets user input for File Type and calls validator function.
+
+    Loops until a valid type or "exit" is obtained.
 
     Returns:
         str: The file type ("video"/"audio") or "exit"
@@ -138,7 +146,7 @@ def get_filepath() -> str | Path:
     """
     Prompts user for file path to save the downloaded file, if any
 
-    Loops until a valid path is obtained
+    Loops until a valid path or "exit" is obtained
 
     Returns:
         Path: The validated file path (object)
@@ -230,7 +238,12 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
                 )
             else:
                 final_decision = (
-                    input(Fore.YELLOW + "\nProceed download? Videos that were not found will be skipped. y/n\n\n").strip().lower()
+                    input(
+                        Fore.YELLOW
+                        + "\nProceed download? Videos that were not found will be skipped. y/n\n\n"
+                    )
+                    .strip()
+                    .lower()
                 )
             print("")
             return validate_final_decision(final_decision)
@@ -240,7 +253,8 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
 
 
 def validate_final_decision(decision: str) -> str:
-    """Validates the user's final decision
+    """
+    Validates the user's final decision
 
     Args:
         decision (str): The user's input
@@ -257,18 +271,31 @@ def validate_final_decision(decision: str) -> str:
 
 
 def get_url_list_file() -> Path | str:
+    """
+    Gets the txt file that contains URL for batch downloading.
+
+    Loops until a valid file or "exit" is obtained.
+    
+    Returns:
+        Path: The validated filepath of the txt file
+        str: "exit" of the user wants to close the program
+    """
     while True:
         print(Fore.WHITE + ("\n\n" + ("-" * COLUMNS)))
         print(Fore.YELLOW + prompts.GET_URL_LIST_PROMPT_1)
         try:
-            return validate_url_list_file(input(Fore.WHITE + prompts.GET_URL_LIST_PROMPT_2).strip())
+            return validate_url_list_file(
+                input(Fore.WHITE + prompts.GET_URL_LIST_PROMPT_2).strip()
+            )
         except ValueError:
             print(
                 Fore.RED + "\nInvalid file. Please enter a valid file or filepath",
             )
             time.sleep(DELAY)
         except FileNotFoundError:
-            print(Fore.RED + "\nFile was not found. Please enter a valid file or filepath")
+            print(
+                Fore.RED + "\nFile was not found. Please enter a valid file or filepath"
+            )
             time.sleep(DELAY)
         except IsADirectoryError:
             print(
@@ -286,10 +313,26 @@ def get_url_list_file() -> Path | str:
                 Fore.RED + "\nSomething went wrong when accessing the file",
             )
             time.sleep(DELAY)
-            
 
 
-def validate_url_list_file(url_list_file) -> Path | str:
+def validate_url_list_file(url_list_file: str) -> Path | str:
+    """
+    Validates the user input for the url list txt file
+    
+    Args:
+        url_list_file (str): The user input for url list txt file
+        
+    Returns:
+        Path: The validated file path of the txt file
+        str: "exit" if the user wants to close the program
+        
+    Raises:
+        ValueError: If the file name or path is invalid
+        FileNotFoundError: If the file cannot be found
+        IsADirectoryError: If the path points to a directory
+        PermissionError: If the user does not have permission to access that file
+        OSError: If other OS-related error occurred
+    """
     if url_list_file == "exit":
         return url_list_file
     elif url_list_file == "":
@@ -297,7 +340,7 @@ def validate_url_list_file(url_list_file) -> Path | str:
     else:
         path = Path(url_list_file)
         return downloader.URL_List_File(path).filepath
-    
+
 
 def print_checking() -> None:
     """Prints "checking" for psuedo-loading status"""
@@ -312,7 +355,7 @@ def print_obj_success(title: str | None, download_mode: str) -> None:
         print(Fore.GREEN + f"Video Found: {title}")
     if download_mode == "playlist":
         print(Fore.GREEN + "Playlist Found!", Fore.GREEN + f"\n{title}")
-        
+
 
 def print_obj_fail(download_mode: str, url: str) -> None:
     """Prints failure on failed object creation"""
@@ -357,19 +400,22 @@ def print_exception(_exception: str) -> None:
             + "\n\nSomething went wrong when trying to download. Please check your internet connection"
         )
     if _exception == "KeyboardInterrupt":
-        print(
-            Fore.RED
-            + "\n\nDownload has been interrupted"
-        )
+        print(Fore.RED + "\n\nDownload has been interrupted")
 
 
 def print_duplicates(duplicates: list) -> None:
-    print(Fore.BLUE + "\n\nDuplicates detected! The following will only be downloaded once:\n")
+    """Prints message if duplicate titles are detected from batch downloading"""
+    print(
+        Fore.BLUE
+        + "\n\nDuplicates detected! The following will only be downloaded once:\n"
+    )
     for item in duplicates:
         print(Fore.BLUE + f"{item}")
-    
+
+
 def print_starting_download() -> None:
-    print(Fore.YELLOW + "\nStarting download. . .\n")
+    """Prints message that download is starting"""
+    print(Fore.YELLOW + "\nStarting download. Please be patient. . .\n")
 
 
 def exit_program() -> None:
