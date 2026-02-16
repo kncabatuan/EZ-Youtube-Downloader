@@ -2,6 +2,7 @@ from cli import prompts
 from colorama import Fore
 from helpers import downloader
 from pathlib import Path
+from typing import NoReturn
 import re
 import shutil
 import sys
@@ -418,7 +419,7 @@ def print_starting_download() -> None:
     print(Fore.YELLOW + "\nStarting download. Please be patient. . .\n")
 
 
-def exit_program() -> None:
+def exit_program() -> NoReturn:
     """Prints and closes the program"""
     print(Fore.GREEN + "\nThank you for using EZ Youtube Downloader!")
     sys.exit()

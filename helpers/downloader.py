@@ -35,7 +35,10 @@ def my_hook(d: dict[str, Any]) -> None:
     if d["status"] == "error":
         pass
     elif d["status"] == "downloading":
-        filename = Path(d.get("filename")).stem
+        raw_filename = d.get("filename")
+
+        assert isinstance(raw_filename, str)
+        filename = Path(raw_filename).stem
         total = d.get("total_bytes") or d.get("total_bytes_estimate")
         downloaded = d.get("downloaded_bytes", 0)
 

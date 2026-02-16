@@ -63,7 +63,7 @@ def single_download() -> None:
 def batch_download() -> None:
     """Handles flow of program for batch download mode"""
     download_mode = "batch"
-    file_type = get_user_inputs(download_mode)
+    file_type = get_user_inputs(download_mode)[1]
 
     url_list_file = menu.get_url_list_file()
     if url_list_file == "exit":
@@ -133,10 +133,10 @@ def get_user_inputs(download_mode: str) -> tuple:
             menu.exit_program()
         return url, file_type
     else:
-        return file_type
+        return None, file_type
 
 
-def object_create(url, file_type, download_mode) -> downloader.Download:
+def object_create(url, file_type, download_mode) -> downloader.Download | None:
     """
     Calls on helper to create object for download. Prints appropriate message
     
@@ -147,6 +147,7 @@ def object_create(url, file_type, download_mode) -> downloader.Download:
     
     Returns:
         downloader.Download: The Download instance that was created
+        None: If creation failed
     """
     try:
         download_object = downloader.Download(url, file_type, download_mode)
@@ -154,6 +155,7 @@ def object_create(url, file_type, download_mode) -> downloader.Download:
         return download_object
     except ValueError:
         menu.print_obj_fail(download_mode, url)
+        return None
 
 
 def save_path() -> Path:
@@ -167,6 +169,7 @@ def save_path() -> Path:
     if filepath == "exit":
         menu.exit_program()
     else:
+        assert isinstance(filepath, Path)
         return filepath
 
 
@@ -185,9 +188,11 @@ def download_video(
         try:
             menu.print_starting_download()
             if download_mode in ("single", "playlist"):
+                assert isinstance(objects, downloader.Download)
                 objects.download_vid()
             else:
                 downloaded_titles = []
+                assert isinstance(objects, list)
                 for object in objects:
                     if object.title not in downloaded_titles:
                         object.download_vid()
