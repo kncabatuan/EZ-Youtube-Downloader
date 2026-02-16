@@ -1,6 +1,5 @@
 # Prompt used as Main Menu
 MAIN_PROMPT_1= """
-
 Welcome to EZ Youtube Downloader!
 
 To get started, choose among the options below:
@@ -39,7 +38,6 @@ Please enter Youtube URL (copy-paste it below)
 
 #Prompt for getting user input of Filepath
 PATH_PROMPT_1= """
-
 Do you want to save your download to a specific folder?
 """
 
@@ -70,7 +68,6 @@ Path: {filepath}
 
 
 GET_URL_LIST_PROMPT_1= """
-
 Please enter the name of the text file (with .txt) that contains all URL for download
 (This should be located in the directory of this program)
 """

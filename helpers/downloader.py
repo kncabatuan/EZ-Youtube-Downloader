@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any
 import re
+import sys
 import yt_dlp
 
 
@@ -12,17 +13,37 @@ class MyLogger:
     def error(self, msg):
         pass
 
+# Used for properly printing hook
+LAST_PERCENT = -1
+
 def my_hook(d):
+    global LAST_PERCENT
+
     if d["status"] == "error":
         pass
     elif d["status"] == "downloading":
-        filename = Path(d.get("filename")).stem[:37]
+        filename = Path(d.get("filename")).stem
         total = d.get("total_bytes") or d.get("total_bytes_estimate")
         downloaded = d.get("downloaded_bytes", 0)
 
         if total:
             percent = downloaded / total * 100
-            print(f"\rDownloading {filename}...: {percent:.2f}%", end="", flush=True)
+
+            if percent != LAST_PERCENT:
+                LAST_PERCENT = percent
+                if len(filename) > 40:
+                    rewrite_line(f"Downloading {filename[:37]}...: {percent:.2f}%")
+                else:
+                    rewrite_line(f"Downloading {filename}...: {percent:.2f}%")
+
+                if percent == 100:
+                    print("")
+            
+
+def rewrite_line(text: str) -> None:
+        sys.stdout.write("\r\033[K" + text)
+        sys.stdout.flush
+    
 
 class Download:
     """Handles downloading of Youtube video or audio"""

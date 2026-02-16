@@ -3,12 +3,14 @@ from colorama import Fore
 from helpers import downloader
 from pathlib import Path
 import re
+import shutil
 import sys
 import time
 
 # Time used for delay using time.sleep (in seconds)
 DELAY = 1.5
 
+COLUMNS = shutil.get_terminal_size().columns
 
 def get_user_choice() -> str:
     """
@@ -18,6 +20,7 @@ def get_user_choice() -> str:
         str: The validated user input
     """
     while True:
+        print(Fore.WHITE + ("\n" + ("-" * COLUMNS)))
         print(Fore.YELLOW + prompts.MAIN_PROMPT_1)
         try:
             return validate_choice(
@@ -54,6 +57,7 @@ def get_url() -> str:
         str: The validated URL
     """
     while True:
+        print(Fore.WHITE + ("\n" + ("-" * COLUMNS)))
         print(Fore.YELLOW + prompts.URL_PROMPT)
         try:
             return validate_url(input(Fore.WHITE + "")).strip()
@@ -93,6 +97,7 @@ def get_type() -> str:
         str: The file type ("video"/"audio") or "exit"
     """
     while True:
+        print(Fore.WHITE + ("\n" + ("-" * COLUMNS)))
         print(Fore.YELLOW + prompts.TYPE_PROMPT_1)
         try:
             return validate_type(
@@ -140,6 +145,7 @@ def get_filepath() -> str | Path:
         str: "exit" if the user wants to close the program
     """
     while True:
+        print(Fore.WHITE + ("\n\n" + ("-" * COLUMNS)))
         print(Fore.YELLOW + prompts.PATH_PROMPT_1)
         try:
             return validate_filepath(input(Fore.WHITE + prompts.PATH_PROMPT_2).strip())
@@ -207,6 +213,7 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
         str: "y", "n", or "exit"
     """
     while True:
+        print(Fore.WHITE + ("\n" + ("-" * COLUMNS)))
         print(
             Fore.GREEN
             + prompts.FINAL_DECISION_PROMPT.format(
@@ -219,11 +226,11 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
         try:
             if mode in ("single", "playlist"):
                 final_decision = (
-                    input(Fore.WHITE + "\nProceed download? y/n\n\n").strip().lower()
+                    input(Fore.YELLOW + "\nProceed download? y/n\n\n").strip().lower()
                 )
             else:
                 final_decision = (
-                    input(Fore.WHITE + "\nProceed download? Videos that were not found will be skipped. y/n\n\n").strip().lower()
+                    input(Fore.YELLOW + "\nProceed download? Videos that were not found will be skipped. y/n\n\n").strip().lower()
                 )
             print("")
             return validate_final_decision(final_decision)
@@ -251,6 +258,7 @@ def validate_final_decision(decision: str) -> str:
 
 def get_url_list_file() -> Path | str:
     while True:
+        print(Fore.WHITE + ("\n\n" + ("-" * COLUMNS)))
         print(Fore.YELLOW + prompts.GET_URL_LIST_PROMPT_1)
         try:
             return validate_url_list_file(input(Fore.WHITE + prompts.GET_URL_LIST_PROMPT_2).strip())
@@ -359,6 +367,9 @@ def print_duplicates(duplicates: list) -> None:
     print(Fore.BLUE + "\n\nDuplicates detected! The following will only be downloaded once:\n")
     for item in duplicates:
         print(Fore.BLUE + f"{item}")
+    
+def print_starting_download() -> None:
+    print(Fore.YELLOW + "\nStarting download. . .\n")
 
 
 def exit_program() -> None:

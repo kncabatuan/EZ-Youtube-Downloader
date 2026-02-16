@@ -85,16 +85,12 @@ def batch_download():
         else:
             continue
 
-    time.sleep(DELAY)
-
     counts = Counter([download_object.title for download_object in download_object_list])
     if duplicates := [item for item, count in counts.items() if count > 1]:
         menu.print_duplicates(duplicates)
-    else:
-        pass
 
     time.sleep(DELAY)
-
+    
     filepath = save_path()
     for download_object in download_object_list:
         download_object.set_path(filepath)
@@ -149,7 +145,7 @@ def save_path() -> Path:
 def download_video(decision: str, download_mode: str, objects: downloader.Download | list) -> None:
     if decision == "y":
         try:
-            menu.print_checking()
+            menu.print_starting_download()
             if download_mode in ("single", "playlist"):
                 objects.download_vid()
             else:
