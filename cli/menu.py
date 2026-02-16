@@ -354,6 +354,13 @@ def print_exception(_exception: str) -> None:
             + "\n\nDownload has been interrupted"
         )
 
+
+def print_duplicates(duplicates: list) -> None:
+    print(Fore.BLUE + "\nDuplicates detected! The following will only be downloaded once:")
+    for item in duplicates:
+        print(Fore.BLUE + f"\n{item}")
+
+
 def exit_program() -> None:
     """Prints and closes the program"""
     print(Fore.GREEN + "\nThank you for using EZ Youtube Downloader!")

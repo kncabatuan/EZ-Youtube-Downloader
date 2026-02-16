@@ -1,4 +1,5 @@
 from cli import menu
+from collections import Counter
 from helpers import downloader
 from pathlib import Path
 import time
@@ -77,7 +78,15 @@ def batch_download():
             download_object_list.append(download_object)
         else:
             continue
-    
+
+    time.sleep(DELAY)
+
+    counts = Counter([download_object.title for download_object in download_object_list])
+    if duplicates := [item for item, count in counts.items() if count > 1]:
+        menu.print_duplicates(duplicates)
+    else:
+        pass
+
     time.sleep(DELAY)
 
     filepath = save_path()
@@ -139,8 +148,13 @@ def download_video(decision: str, download_mode: str, objects: downloader.Downlo
             if download_mode in ("single", "playlist"):
                 objects.download_vid()
             else:
+                downloaded_titles = []
                 for object in objects:
-                    object.download_vid()
+                    if object.title not in downloaded_titles:
+                        object.download_vid()
+                        downloaded_titles.append(object.title)
+                    else:
+                        continue
             menu.print_dl_success()
             return
         except yt_dlp.utils.ExtractorError:
