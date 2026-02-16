@@ -217,9 +217,14 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
             )
         )
         try:
-            final_decision = (
-                input(Fore.WHITE + "\nProceed download? y/n\n\n").strip().lower()
-            )
+            if mode in ("single", "playlist"):
+                final_decision = (
+                    input(Fore.WHITE + "\nProceed download? y/n\n\n").strip().lower()
+                )
+            else:
+                final_decision = (
+                    input(Fore.WHITE + "\nProceed download? Videos that were not found will be skipped. y/n\n\n").strip().lower()
+                )
             print("")
             return validate_final_decision(final_decision)
         except ValueError:
@@ -324,7 +329,7 @@ def print_failure() -> None:
 
 def print_dl_success() -> None:
     """Prints returning to Menu when success"""
-    print(Fore.GREEN + "\nDownload success! Returning to Main Menu . . .")
+    print(Fore.GREEN + "\n\nDownload success! Returning to Main Menu . . .")
 
 
 def print_dl_fail() -> None:

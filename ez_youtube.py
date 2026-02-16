@@ -15,30 +15,18 @@ def main() -> None:
     Controls the flow of the program based on user answers on prompt
     """
     while True:
-        match menu.get_user_choice():
-            case "1":
-                single_download()
-            case "2":
-                batch_download()
-            case "3":
-                print("Go to playlist download")
-            case "exit":
-                menu.exit_program()
-
-
-def get_user_inputs(download_mode) -> tuple:
-
-    file_type = menu.get_type()
-    if file_type == "exit":
-        menu.exit_program()
-
-    if download_mode in ("single", "playlist"):
-        url = menu.get_url()
-        if url == "exit":
+        try:
+            match menu.get_user_choice():
+                case "1":
+                    single_download()
+                case "2":
+                    batch_download()
+                case "3":
+                    print("Go to playlist download")
+                case "exit":
+                    menu.exit_program()
+        except KeyboardInterrupt:
             menu.exit_program()
-        return url, file_type
-    else:
-        return file_type
 
 
 def single_download():
@@ -54,12 +42,7 @@ def single_download():
     
     time.sleep(DELAY)
 
-    filepath = menu.get_filepath()
-    if filepath == "exit":
-        menu.exit_program()
-    else:
-        assert isinstance(filepath, Path)
-        download_object.save_path(filepath)
+    download_object.set_path(save_path())
 
     menu.print_checking()
     time.sleep(DELAY)
@@ -68,24 +51,8 @@ def single_download():
     decision = menu.get_final_decision(
         download_mode, download_object.title, file_type, download_object.filepath
     )
-    if decision == "y":
-        try:
-            menu.print_checking()
-            download_object.download_vid()
-            menu.print_dl_success()
-        except yt_dlp.utils.ExtractorError:
-            menu.print_exception("ExtractorError")
-            menu.print_dl_fail()
-        except (yt_dlp.utils.DownloadError, yt_dlp.utils.PostProcessingError):
-            menu.print_exception("DownloadError")
-            menu.print_dl_fail()
-        except KeyboardInterrupt:
-            menu.print_exception("KeyboardInterrupt")
-            menu.print_dl_fail()
-    elif decision == "n":
-        menu.print_dl_fail()
-    else:
-        menu.exit_program()
+
+    download_video(decision, download_mode, download_object)
 
     time.sleep(DELAY)
     return
@@ -110,21 +77,40 @@ def batch_download():
             download_object_list.append(download_object)
         else:
             continue
+    
+    time.sleep(DELAY)
 
-    filepath = menu.get_filepath()
-    if filepath == "exit":
-        menu.exit_program()
-    else:
-        assert isinstance(filepath, Path)
-        for download_object in download_object_list:
-            download_object.save_path(filepath)
+    filepath = save_path()
+    for download_object in download_object_list:
+        download_object.set_path(filepath)
 
-    filepath = menu.get_filepath()
-    if filepath == "exit":
+    menu.print_checking()
+    time.sleep(DELAY)
+
+    
+    decision = menu.get_final_decision(
+        mode=download_mode, title="Multiple", file_type=file_type, filepath=filepath
+    )
+
+    download_video(decision, download_mode, download_object_list)
+
+    time.sleep(DELAY)
+    return
+
+
+def get_user_inputs(download_mode) -> tuple:
+
+    file_type = menu.get_type()
+    if file_type == "exit":
         menu.exit_program()
+
+    if download_mode in ("single", "playlist"):
+        url = menu.get_url()
+        if url == "exit":
+            menu.exit_program()
+        return url, file_type
     else:
-        assert isinstance(filepath, Path)
-        download_object.save_path(filepath)
+        return file_type
 
 
 def object_create(url, file_type, download_mode):
@@ -135,9 +121,45 @@ def object_create(url, file_type, download_mode):
         return download_object
     except ValueError:
         menu.print_obj_fail(download_mode, url)
+
+
+def save_path() -> Path:
+    filepath = menu.get_filepath()
+    if filepath == "exit":
+        menu.exit_program()
+    else:
+        assert isinstance(filepath, Path)
+        return filepath
     
 
-
+def download_video(decision: str, download_mode: str, objects: downloader.Download | list) -> None:
+    if decision == "y":
+        try:
+            menu.print_checking()
+            if download_mode in ("single", "playlist"):
+                objects.download_vid()
+            else:
+                for object in objects:
+                    object.download_vid()
+            menu.print_dl_success()
+            return
+        except yt_dlp.utils.ExtractorError:
+            menu.print_exception("ExtractorError")
+            menu.print_dl_fail()
+            return
+        except (yt_dlp.utils.DownloadError, yt_dlp.utils.PostProcessingError):
+            menu.print_exception("DownloadError")
+            menu.print_dl_fail()
+            return
+        except KeyboardInterrupt:
+            menu.print_exception("KeyboardInterrupt")
+            menu.print_dl_fail()
+            return
+    elif decision == "n":
+        menu.print_dl_fail()
+        return
+    else:
+        menu.exit_program()
 
 
 if __name__ == "__main__":

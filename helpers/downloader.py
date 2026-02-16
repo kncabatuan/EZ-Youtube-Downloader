@@ -15,14 +15,14 @@ class MyLogger:
 def my_hook(d):
     if d["status"] == "error":
         pass
-    if d["status"] == "downloading":
-        filename = Path(d.get("filename")).stem
+    elif d["status"] == "downloading":
+        filename = Path(d.get("filename")).stem[:37]
         total = d.get("total_bytes") or d.get("total_bytes_estimate")
         downloaded = d.get("downloaded_bytes", 0)
 
         if total:
             percent = downloaded / total * 100
-            print(f"\rDownloading {filename}: {percent:.2f}%", end="", flush=True)
+            print(f"\rDownloading {filename}...: {percent:.2f}%", end="", flush=True)
 
 class Download:
     """Handles downloading of Youtube video or audio"""
@@ -82,20 +82,18 @@ class Download:
 
         if self.file_type == "video":
             match self.mode:
-                case "single":
+                case "single" | "batch":
                     opts["noplaylist"] = True
                     opts["format"] = (
                         "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
                     )
                     opts["merge_output_format"] = "mp4"
                     opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
-                case "batch":
-                    ...
                 case "playlist":
                     ...
         elif self.file_type == "audio":
             match self.mode:
-                case "single":
+                case "single" | "batch":
                     opts["noplaylist"] = True
                     opts["format"] = "bestaudio/best"
                     opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
@@ -106,8 +104,6 @@ class Download:
                             "preferredquality": "192",
                         }
                     ]
-                case "batch":
-                    ...
                 case "playlist":
                     ...
 
@@ -154,7 +150,7 @@ class Download:
         except (yt_dlp.utils.ExtractorError, yt_dlp.utils.DownloadError):
             raise ValueError
 
-    def save_path(self, filepath: Path) -> None:
+    def set_path(self, filepath: Path) -> None:
         """
         Adds filepath attribute to the created Download object
 
