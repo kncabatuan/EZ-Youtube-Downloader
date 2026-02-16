@@ -356,9 +356,9 @@ def print_exception(_exception: str) -> None:
 
 
 def print_duplicates(duplicates: list) -> None:
-    print(Fore.BLUE + "\nDuplicates detected! The following will only be downloaded once:")
+    print(Fore.BLUE + "\n\nDuplicates detected! The following will only be downloaded once:\n")
     for item in duplicates:
-        print(Fore.BLUE + f"\n{item}")
+        print(Fore.BLUE + f"{item}")
 
 
 def exit_program() -> None:

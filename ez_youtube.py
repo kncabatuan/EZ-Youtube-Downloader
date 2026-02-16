@@ -37,7 +37,7 @@ def single_download():
     menu.print_checking()
 
     if download_object := object_create(url, file_type, download_mode):
-        pass
+        menu.print_obj_success(download_object.title, download_mode)
     else:
         return
     
@@ -73,9 +73,15 @@ def batch_download():
         url_list = [line.strip() for line in file]
 
     download_object_list = []
+    detected_titles = []
     for url in url_list:
         if download_object := (object_create(url, file_type, download_mode)):
             download_object_list.append(download_object)
+            if download_object.title not in detected_titles:
+                menu.print_obj_success(download_object.title, download_mode)
+                detected_titles.append(download_object.title)
+            else:
+                continue
         else:
             continue
 
@@ -126,7 +132,6 @@ def object_create(url, file_type, download_mode):
     try:
         download_object = downloader.Download(url, file_type, download_mode)
         download_object.set_title()
-        menu.print_obj_success(download_object.title, download_mode)
         return download_object
     except ValueError:
         menu.print_obj_fail(download_mode, url)
