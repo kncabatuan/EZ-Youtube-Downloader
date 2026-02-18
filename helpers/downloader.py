@@ -276,7 +276,7 @@ class URL_List_File:
         return self._filepath
 
     @filepath.setter
-    def filepath(self, filepath):
+    def filepath(self, filepath: Path):
         """
         Txt file path validation.
         
@@ -290,12 +290,17 @@ class URL_List_File:
             PermissionError: If the user does not have permission to access that file
             OSError: If other OS-related error occurred
         """
-        if not filepath.exists():
+        pattern = r'[<>:"\s|?*]'
+        if re.search(pattern, filepath.stem):
+            raise ValueError
+        elif re.search(r"^\..*", filepath.stem) or re.search(r".*\.", filepath.stem):
+            raise ValueError
+        elif filepath.suffix.lower() == "" or filepath.suffix.lower() != ".txt":
+            raise ValueError
+        elif not filepath.exists():
             raise FileNotFoundError
         elif filepath.is_dir():
             raise IsADirectoryError
-        elif filepath.suffix.lower() != ".txt":
-            raise ValueError
         else:
             try:
                 with filepath.open("r"):

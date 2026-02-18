@@ -90,3 +90,24 @@ def test_decision_validation():
 
     for decision in valid_decisions:
         assert menu.validate_final_decision(decision) == decision
+
+
+def test_url_list_file_validation(tmp_path):
+    assert menu.validate_url_list_file("exit") == "exit"
+
+    invalid_filenames = ["", "filename", "filename.csv", "file name.txt", " filename.txt", "filename .txt", ".filename.txt", ".filename..txt"]
+
+    for filename in invalid_filenames:
+        with pytest.raises(ValueError):
+            menu.validate_url_list_file(filename)
+
+    with pytest.raises(FileNotFoundError):
+        menu.validate_url_list_file("missing_file.txt")
+
+    temp_dir = tmp_path / "my_temp_dir.txt"
+    temp_dir.mkdir()
+
+    with pytest.raises(IsADirectoryError):
+        menu.validate_url_list_file(str(temp_dir))
+
+    
