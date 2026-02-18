@@ -105,3 +105,17 @@ def test_download():
         test_obj.download_vid()
 
         mock_instance.download.assert_called_once_with(valid_url)
+
+
+def test_hook_printing(capsys):
+    test_total_bytes = 100
+    test_downloaded_bytes = 50
+    test_filename = "test_title"
+    d = {"status": "downloading", "filename": test_filename, "total_bytes": test_total_bytes, "downloaded_bytes": test_downloaded_bytes}
+    downloader.my_hook(d)
+
+    captured = capsys.readouterr()
+    assert captured.out == f"\r\x1b[KDownloading test_title: 50.00%"
+
+
+
