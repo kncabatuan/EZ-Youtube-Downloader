@@ -106,6 +106,9 @@ ex.
 1-15,20-35
 1,2,6-15,21,26-30
 
+
+Note:
 Duplicates will only be considered once
+If an index is not within range, it will be skipped
 
 """
