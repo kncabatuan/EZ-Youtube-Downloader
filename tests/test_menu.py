@@ -76,6 +76,12 @@ def test_filepath_validation(tmp_path):
     temp_dir.mkdir()
 
     assert menu.validate_filepath(str(temp_dir)) == temp_dir
+
+    temp_file = tmp_path / "temp_file.txt"
+    temp_file.touch()
+
+    with pytest.raises(NotADirectoryError):
+        menu.validate_filepath(str(temp_file))
     
 
 # Test for final decision validation

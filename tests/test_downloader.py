@@ -34,7 +34,7 @@ def test_url_extraction():
     assert test_obj.url == "https://www.youtube.com/watch?v=testtesttes&list=test&index=test"
 
 
-def test_opts_builder():
+def test_opts_builder_single_batch():
     valid_url = "https://www.youtube.com/watch?v=testtesttes&list=test&index=test"
     valid_types = ("video", "audio")
     mode = "single"
@@ -54,6 +54,7 @@ def test_opts_builder():
     assert opts1["outtmpl"] == str(test_obj1.filepath / "%(title)s.%(ext)s")
 
 
+    mode = "batch"
     test_obj2 = downloader.Download(valid_url, valid_types[1], mode)
     test_obj2.filepath = filepath
     opts2 = test_obj2.opts_builder()
