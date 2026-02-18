@@ -341,6 +341,58 @@ def validate_url_list_file(url_list_file: str) -> Path | str:
     else:
         path = Path(url_list_file)
         return downloader.URL_List_File(path).filepath
+    
+
+def get_playlist_option() -> str:
+    while True:
+        print(Fore.WHITE + ("\n\n" + ("-" * COLUMNS)))
+        print(Fore.YELLOW + prompts.PLAYLIST_OPTION_PROMPT_1)
+        try:
+            return validate_playlist_option(input(Fore.WHITE + prompts.PLAYLIST_OPTION_PROMPT_2).strip().lower())
+        except ValueError:
+            print(
+                Fore.RED + "\nInvalid input. Please enter 1, 2, or exit"
+            )
+            time.sleep(DELAY)
+
+
+def validate_playlist_option(option: str) -> str:
+    if option in ("1", "2", "exit"):
+        return option
+    else:
+        raise ValueError
+    
+
+def get_playlist_index() -> list[int]:
+    while True:
+        print(Fore.WHITE + ("\n\n" + ("-" * COLUMNS)))
+        print(Fore.YELLOW + prompts.GET_PLAYLIST_INDEX_PROMPT_1)
+        try:
+            return validate_playlist_index(input(Fore.WHITE + prompts.GET_PLAYLIST_INDEX_PROMPT_2).strip())
+        except:
+            ...
+
+
+def validate_playlist_index(index_str: str) -> list[int]:
+    index_str_list = [item.strip() for item in index_str.split(",")]
+    index_int_list = []
+
+    for item in index_str_list:
+        if match := re.search(r"^(?:\d*|(\d*)-(\d*))$", item):
+            try:
+                index_int_list.append(int(item))
+            except ValueError:
+                if int(match.group(1)) >= (match.group(2)):
+                    raise ValueError
+                else:
+                    for n in range(match.group(1), match.group(2)):
+                        
+        else:
+            raise ValueError
+
+            
+
+            
 
 
 def print_checking() -> None:
@@ -416,7 +468,8 @@ def print_duplicates(duplicates: list) -> None:
 
 def print_starting_download() -> None:
     """Prints message that download is starting"""
-    print(Fore.YELLOW + "\nStarting download. Please be patient. . .\n")
+    print(Fore.YELLOW + "\nStarting download. Please be patient. . .")
+    print(Fore.YELLOW + "\nYou can interrupt download with Ctrl + C\n")
 
 
 def exit_program() -> NoReturn:

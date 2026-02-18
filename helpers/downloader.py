@@ -223,6 +223,9 @@ class Download:
         ):
             raise
 
+    def set_playlist_option(self, option: str) -> None:
+        self.playlist_option = option
+
 
 class Save_Directory:
     """Handles validation of entered filepath if any"""

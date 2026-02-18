@@ -23,7 +23,7 @@ def main() -> None:
                 case "2":
                     batch_download()
                 case "3":
-                    print("Go to playlist download")
+                    playlist_download()
                 case "exit":
                     menu.exit_program()
         except KeyboardInterrupt:
@@ -110,6 +110,33 @@ def batch_download() -> None:
 
     time.sleep(DELAY)
     return
+
+
+def playlist_download() -> None:
+    download_mode = "playlist"
+    url, file_type = get_user_inputs(download_mode)
+
+    menu.print_checking()
+
+    if download_object := object_create(url, file_type, download_mode):
+        menu.print_obj_success(download_object.title, download_mode)
+    else:
+        return
+    
+    time.sleep(DELAY)
+
+    download_object.set_path(save_path())
+
+    menu.print_checking()
+    time.sleep(DELAY)
+
+    match menu.get_playlist_option():
+        case "1":
+            download_object.set_playlist_option()
+            vid_indices = menu.get_playlist_index()
+
+        case "2":
+            ...
 
 
 def get_user_inputs(download_mode: str) -> tuple:
