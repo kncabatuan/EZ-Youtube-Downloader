@@ -8,8 +8,8 @@ To get started, choose among the options below:
 # Prompt used as Main Menu
 MAIN_PROMPT_2= """
 1. Single Download
+
 2. Batch Download
-3. Playlist Download
 
 
 Note: You can type "exit" anytime to close the program :)
@@ -25,6 +25,7 @@ What format do you want to download?
 #Prompt for getting user input on type
 TYPE_PROMPT_2 = """
 1. Video
+
 2. Audio only
 
 """
@@ -80,35 +81,5 @@ Important Notes:
 
 ex. C:\\\\Users\\\\Name\\\\sample.txt
     C:/Users/Name/sample.txt
-
-"""
-
-PLAYLIST_OPTION_PROMPT_1 = """
-Please select an option for your playlist download:
-"""
-
-PLAYLIST_OPTION_PROMPT_2 = """
-1. Enter specific indices of videos in the playlist
-2. Download all
-
-"""
-
-GET_PLAYLIST_INDEX_PROMPT_1 = """
-Please enter the index/indices of the videos that you want to download from the playlist
-"""
-
-GET_PLAYLIST_INDEX_PROMPT_2 = """
-You may enter a number, a range, or mix of both.
-They must be separated by a comma (,)
-
-ex.
-1,3,5,7,9
-1-15,20-35
-1,2,6-15,21,26-30
-
-
-Note:
-Duplicates will only be considered once
-If an index is not within range, it will be skipped
 
 """

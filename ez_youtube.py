@@ -22,8 +22,6 @@ def main() -> None:
                     single_download()
                 case "2":
                     batch_download()
-                case "3":
-                    playlist_download()
                 case "exit":
                     menu.exit_program()
         except KeyboardInterrupt:
@@ -112,49 +110,22 @@ def batch_download() -> None:
     return
 
 
-def playlist_download() -> None:
-    download_mode = "playlist"
-    url, file_type = get_user_inputs(download_mode)
-
-    menu.print_checking()
-
-    if download_object := object_create(url, file_type, download_mode):
-        menu.print_obj_success(download_object.title, download_mode)
-    else:
-        return
-    
-    time.sleep(DELAY)
-
-    download_object.set_path(save_path())
-
-    menu.print_checking()
-    time.sleep(DELAY)
-
-    match menu.get_playlist_option():
-        case "1":
-            download_object.set_playlist_option()
-            vid_indices = menu.get_playlist_index()
-
-        case "2":
-            ...
-
-
 def get_user_inputs(download_mode: str) -> tuple:
     """
     Gets user input for url and file type
-    
+
     Args:
         download_mode (str): Mode of download to determine the return values
 
     Returns:
-        tuple: If single/playlist mode, returns url and file type. If batch mode, returns file type only
+        tuple: If single mode, returns url and file type. If batch mode, returns file type only
     """
 
     file_type = menu.get_type()
     if file_type == "exit":
         menu.exit_program()
 
-    if download_mode in ("single", "playlist"):
+    if download_mode == "single":
         url = menu.get_url()
         if url == "exit":
             menu.exit_program()
@@ -166,12 +137,12 @@ def get_user_inputs(download_mode: str) -> tuple:
 def object_create(url, file_type, download_mode) -> downloader.Download | None:
     """
     Calls on helper to create object for download. Prints appropriate message
-    
+
     Args:
         url (str): The input URL
         file_type (str): The input file_type ("video" or "audio")
-        download_mode (str): Either single, batch, or playlist (from the calling function)
-    
+        download_mode (str): Either single or batch (from the calling function)
+
     Returns:
         downloader.Download: The Download instance that was created
         None: If creation failed
@@ -188,7 +159,7 @@ def object_create(url, file_type, download_mode) -> downloader.Download | None:
 def save_path() -> Path:
     """
     Calls on cli to get the filepath to save the file, if any
-    
+
     Returns:
         Path: The filepath
     """
@@ -205,16 +176,16 @@ def download_video(
 ) -> None:
     """
     Calls on helper to download video or audio. Prints appropriate message
-    
+
     Args:
         decision (str): The user decision to start download, either "y", "n" or "exit"
-        download_mode (str): Either "single", "batch" or "playlist"
+        download_mode (str): Either "single" or "batch"
         objects (downloader.Download | list): Either a Download instance or a list of Download instances
     """
     if decision == "y":
         try:
             menu.print_starting_download()
-            if download_mode in ("single", "playlist"):
+            if download_mode == "single":
                 assert isinstance(objects, downloader.Download)
                 objects.download_vid()
             else:

@@ -3,6 +3,7 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 import pytest
 
+
 def test_download_init():
     valid_url = "https://www.youtube.com/watch?v=testtesttes"
     valid_type = "video"
@@ -31,7 +32,10 @@ def test_url_extraction():
     assert test_obj.url == "https://www.youtube.com/watch?v=testtesttes"
 
     test_obj = downloader.Download(valid_url, valid_type, modes[2])
-    assert test_obj.url == "https://www.youtube.com/watch?v=testtesttes&list=test&index=test"
+    assert (
+        test_obj.url
+        == "https://www.youtube.com/watch?v=testtesttes&list=test&index=test"
+    )
 
 
 def test_opts_builder_single_batch():
@@ -53,7 +57,6 @@ def test_opts_builder_single_batch():
     assert opts1["merge_output_format"] == "mp4"
     assert opts1["outtmpl"] == str(test_obj1.filepath / "%(title)s.%(ext)s")
 
-
     mode = "batch"
     test_obj2 = downloader.Download(valid_url, valid_types[1], mode)
     test_obj2.filepath = filepath
@@ -66,11 +69,13 @@ def test_opts_builder_single_batch():
     assert opts2["noplaylist"] == True
     assert opts2["format"] == "bestaudio/best"
     assert opts2["outtmpl"] == str(test_obj2.filepath / "%(title)s.%(ext)s")
-    assert opts2["postprocessors"] == [{
+    assert opts2["postprocessors"] == [
+        {
             "key": "FFmpegExtractAudio",
             "preferredcodec": "mp3",
-            "preferredquality": "192"
-        }]
+            "preferredquality": "192",
+        }
+    ]
 
 
 def test_data_extraction():
@@ -87,7 +92,9 @@ def test_data_extraction():
         test_obj = downloader.Download(valid_url, valid_type, valid_mode)
         test_obj.set_title()
 
-        mock_instance.extract_info.assert_called_once_with(valid_url, download=False, process=False)
+        mock_instance.extract_info.assert_called_once_with(
+            valid_url, download=False, process=False
+        )
         assert test_obj.title == "Test Title"
 
 
@@ -112,11 +119,13 @@ def test_hook_printing(capsys):
     test_total_bytes = 100
     test_downloaded_bytes = 50
     test_filename = "test_title"
-    d = {"status": "downloading", "filename": test_filename, "total_bytes": test_total_bytes, "downloaded_bytes": test_downloaded_bytes}
+    d = {
+        "status": "downloading",
+        "filename": test_filename,
+        "total_bytes": test_total_bytes,
+        "downloaded_bytes": test_downloaded_bytes,
+    }
     downloader.my_hook(d)
 
     captured = capsys.readouterr()
     assert captured.out == f"\r\x1b[KDownloading test_title: 50.00%"
-
-
-

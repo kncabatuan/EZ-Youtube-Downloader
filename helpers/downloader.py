@@ -24,7 +24,7 @@ LAST_PERCENT = -1
 def my_hook(d: dict[str, Any]) -> None:
     """
     Progress hook used
-    
+
     Args:
         d (dict): The dictionary passed by yt-dlp
     """
@@ -59,7 +59,7 @@ def my_hook(d: dict[str, Any]) -> None:
 def rewrite_line(text: str) -> None:
     """
     Helper function for the progress hook
-    
+
     Args:
         text (str): The message to print with the appropriate download progress and file name
     """
@@ -124,31 +124,22 @@ class Download:
         opts = Download.BASE_OPTS.copy()
 
         if self.file_type == "video":
-            match self.mode:
-                case "single" | "batch":
-                    opts["noplaylist"] = True
-                    opts["format"] = (
-                        "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
-                    )
-                    opts["merge_output_format"] = "mp4"
-                    opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
-                case "playlist":
-                    ...
+            opts["noplaylist"] = True
+            opts["format"] = "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
+            opts["merge_output_format"] = "mp4"
+            opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
+
         elif self.file_type == "audio":
-            match self.mode:
-                case "single" | "batch":
-                    opts["noplaylist"] = True
-                    opts["format"] = "bestaudio/best"
-                    opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
-                    opts["postprocessors"] = [
-                        {
-                            "key": "FFmpegExtractAudio",
-                            "preferredcodec": "mp3",
-                            "preferredquality": "192",
-                        }
-                    ]
-                case "playlist":
-                    ...
+            opts["noplaylist"] = True
+            opts["format"] = "bestaudio/best"
+            opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
+            opts["postprocessors"] = [
+                {
+                    "key": "FFmpegExtractAudio",
+                    "preferredcodec": "mp3",
+                    "preferredquality": "192",
+                }
+            ]
 
         return opts
 
@@ -168,7 +159,7 @@ class Download:
         if not caller in ("set_title", "download_vid"):
             raise ValueError
 
-        if caller == "set_title":
+        if caller in ("set_title"):
             with yt_dlp.YoutubeDL(Download.BASE_OPTS) as ydl:  # type: ignore[arg-type]
                 return ydl
         else:
@@ -219,12 +210,9 @@ class Download:
             yt_dlp.utils.ExtractorError,
             yt_dlp.utils.DownloadError,
             yt_dlp.utils.PostProcessingError,
-            KeyboardInterrupt
+            KeyboardInterrupt,
         ):
             raise
-
-    def set_playlist_option(self, option: str) -> None:
-        self.playlist_option = option
 
 
 class Save_Directory:
@@ -271,6 +259,7 @@ class Save_Directory:
 
 class URL_List_File:
     """Handles validation of entered txt file for batch download, if any"""
+
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
 
@@ -282,10 +271,10 @@ class URL_List_File:
     def filepath(self, filepath: Path):
         """
         Txt file path validation.
-        
+
         Args:
             filepath (Path): The input path for the txt file
-        
+
         Raises:
             ValueError: If the file name or extension is invalid
             FileNotFoundError: If the file cannot be found

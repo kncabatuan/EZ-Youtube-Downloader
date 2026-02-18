@@ -9,7 +9,7 @@ def test_choice_validation():
         with pytest.raises(ValueError):
             menu.validate_choice(choice)
 
-    valid_choices = ("1", "2", "3", "exit")
+    valid_choices = ("1", "2", "exit")
     for choice in valid_choices:
         assert menu.validate_choice(choice) == choice
 
@@ -40,7 +40,7 @@ def test_url_validation():
         "https://m.youtube.com/",
         "http://m.youtube.com/",
         "https://youtu.be/",
-        "http://youtu.be/"
+        "http://youtu.be/",
     )
 
     for url in valid_url:
@@ -82,7 +82,7 @@ def test_filepath_validation(tmp_path):
 
     with pytest.raises(NotADirectoryError):
         menu.validate_filepath(str(temp_file))
-    
+
 
 # Test for final decision validation
 def test_decision_validation():
@@ -92,7 +92,7 @@ def test_decision_validation():
         with pytest.raises(ValueError):
             menu.validate_final_decision(decision)
 
-    valid_decisions =  ("y", "n", "exit")
+    valid_decisions = ("y", "n", "exit")
 
     for decision in valid_decisions:
         assert menu.validate_final_decision(decision) == decision
@@ -101,7 +101,16 @@ def test_decision_validation():
 def test_url_list_file_validation(tmp_path):
     assert menu.validate_url_list_file("exit") == "exit"
 
-    invalid_filenames = ["", "filename", "filename.csv", "file name.txt", " filename.txt", "filename .txt", ".filename.txt", ".filename..txt"]
+    invalid_filenames = [
+        "",
+        "filename",
+        "filename.csv",
+        "file name.txt",
+        " filename.txt",
+        "filename .txt",
+        ".filename.txt",
+        ".filename..txt",
+    ]
 
     for filename in invalid_filenames:
         with pytest.raises(ValueError):
@@ -115,31 +124,3 @@ def test_url_list_file_validation(tmp_path):
 
     with pytest.raises(IsADirectoryError):
         menu.validate_url_list_file(str(temp_dir))
-
-
-def test_playlist_option_validation():
-    invalid_options = ["", "      ", "123", "test", "---", "a1-"]
-
-    for option in invalid_options:
-        with pytest.raises(ValueError):
-            menu.validate_playlist_option(option)
-
-    assert menu.validate_playlist_option("1") == "specific"
-    assert menu.validate_playlist_option("2") == "all"
-    assert menu.validate_playlist_option("exit") == "exit"
-
-
-def test_playlist_index_validation():
-    invalid_indices = ["", "test", "a,b,c", "5-3", "1,2,5-3,6", "1/2/3", "1 2 3", "1-2-3", "1.2.3"]
-
-    for index in invalid_indices:
-        with pytest.raises(ValueError):
-            menu.validate_playlist_index(index)
-
-    assert menu.validate_playlist_index("exit") == "exit"
-    assert menu.validate_playlist_index("1,2,3") == "1,2,3"
-    assert menu.validate_playlist_index("5,3,4,2,1") == "1,2,3,4,5"
-    assert menu.validate_playlist_index("1-5") == "1,2,3,4,5"
-    assert menu.validate_playlist_index("3,1,6,3-8,8,10-12") == "1,3,4,5,6,7,8,10,11,12"
-
-    

@@ -32,7 +32,7 @@ def get_user_choice() -> str:
                 input(Fore.WHITE + prompts.MAIN_PROMPT_2).strip().lower()
             )
         except ValueError:
-            print(Fore.RED + '\nInvalid input. Please enter from value 1-3 or "exit"')
+            print(Fore.RED + '\nInvalid input. Please enter "1", "2" or "exit"')
             time.sleep(DELAY)
 
 
@@ -44,12 +44,12 @@ def validate_choice(choice: str) -> str:
         choice (str): The user input
 
     Returns:
-        str: The validated choice ("1", "2", "3", or "exit")
+        str: The validated choice ("1", "2" or "exit")
 
     Raises:
-        ValueError: If choice is not "1", "2", "3", or "exit"
+        ValueError: If choice is not "1", "2" or "exit"
     """
-    if choice != "exit" and int(choice) not in range(1, 4):
+    if choice != "exit" and int(choice) not in (1, 2):
         raise ValueError
     return choice
 
@@ -213,8 +213,8 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
     Loops until a valid input is made
 
     Args:
-        mode (str): Either "single", "batch", or "playlist"
-        title (str): The title of the video or playlist
+        mode (str): Either "single" or "batch"
+        title (str): The title of the video
         file_type (str): Either "video" or "audio"
         filepath (Path): The valid directory to save the downloaded file/s
 
@@ -233,7 +233,7 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
             )
         )
         try:
-            if mode in ("single", "playlist"):
+            if mode == "single":
                 final_decision = (
                     input(Fore.YELLOW + "\nProceed download? y/n\n\n").strip().lower()
                 )
@@ -276,7 +276,7 @@ def get_url_list_file() -> Path | str:
     Gets the txt file that contains URL for batch downloading.
 
     Loops until a valid file or "exit" is obtained.
-    
+
     Returns:
         Path: The validated filepath of the txt file
         str: "exit" of the user wants to close the program
@@ -319,14 +319,14 @@ def get_url_list_file() -> Path | str:
 def validate_url_list_file(url_list_file: str) -> Path | str:
     """
     Validates the user input for the url list txt file
-    
+
     Args:
         url_list_file (str): The user input for url list txt file
-        
+
     Returns:
         Path: The validated file path of the txt file
         str: "exit" if the user wants to close the program
-        
+
     Raises:
         ValueError: If the file name or path is invalid
         FileNotFoundError: If the file cannot be found
@@ -341,58 +341,6 @@ def validate_url_list_file(url_list_file: str) -> Path | str:
     else:
         path = Path(url_list_file)
         return downloader.URL_List_File(path).filepath
-    
-
-def get_playlist_option() -> str:
-    while True:
-        print(Fore.WHITE + ("\n\n" + ("-" * COLUMNS)))
-        print(Fore.YELLOW + prompts.PLAYLIST_OPTION_PROMPT_1)
-        try:
-            return validate_playlist_option(input(Fore.WHITE + prompts.PLAYLIST_OPTION_PROMPT_2).strip().lower())
-        except ValueError:
-            print(
-                Fore.RED + "\nInvalid input. Please enter 1, 2, or exit"
-            )
-            time.sleep(DELAY)
-
-
-def validate_playlist_option(option: str) -> str:
-    if option in ("1", "2", "exit"):
-        return option
-    else:
-        raise ValueError
-    
-
-def get_playlist_index() -> list[int]:
-    while True:
-        print(Fore.WHITE + ("\n\n" + ("-" * COLUMNS)))
-        print(Fore.YELLOW + prompts.GET_PLAYLIST_INDEX_PROMPT_1)
-        try:
-            return validate_playlist_index(input(Fore.WHITE + prompts.GET_PLAYLIST_INDEX_PROMPT_2).strip())
-        except:
-            ...
-
-
-def validate_playlist_index(index_str: str) -> list[int]:
-    index_str_list = [item.strip() for item in index_str.split(",")]
-    index_int_list = []
-
-    for item in index_str_list:
-        if match := re.search(r"^(?:\d*|(\d*)-(\d*))$", item):
-            try:
-                index_int_list.append(int(item))
-            except ValueError:
-                if int(match.group(1)) >= (match.group(2)):
-                    raise ValueError
-                else:
-                    for n in range(match.group(1), match.group(2)):
-                        
-        else:
-            raise ValueError
-
-            
-
-            
 
 
 def print_checking() -> None:
@@ -406,13 +354,11 @@ def print_obj_success(title: str | None, download_mode: str) -> None:
         print(Fore.GREEN + "Video Found!", Fore.GREEN + f"\n{title}")
     if download_mode == "batch":
         print(Fore.GREEN + f"Video Found: {title}")
-    if download_mode == "playlist":
-        print(Fore.GREEN + "Playlist Found!", Fore.GREEN + f"\n{title}")
 
 
 def print_obj_fail(download_mode: str, url: str) -> None:
     """Prints failure on failed object creation"""
-    if download_mode in ("single", "playlist"):
+    if download_mode == "single":
         print(
             Fore.RED
             + "\nSomething went wrong. Please check if all inputs are valid, especially the URL"
