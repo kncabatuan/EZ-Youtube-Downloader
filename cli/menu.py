@@ -386,6 +386,7 @@ def print_obj_fail(download_mode: str, url: str) -> None:
 
 
 def print_dl_success(caller: str) -> None:
+    assert caller in ("system_check", "download")
     if caller == "system_check":
         print(Fore.GREEN + "\n\nDownload success!")
     else:
