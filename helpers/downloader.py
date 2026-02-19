@@ -1,4 +1,4 @@
-from helpers import system_check
+from helpers import ffmpeg_handler
 from pathlib import Path
 from typing import Any
 import re
@@ -79,7 +79,7 @@ class Download:
             "progress_hooks": [my_hook],
         }
     
-    if system_check.check_dependency():
+    if ffmpeg_handler.check_ffmpeg():
         pass
     else:
         program_dir = Path(__file__).parent.parent

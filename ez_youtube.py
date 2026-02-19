@@ -1,10 +1,11 @@
 from cli import menu
 from collections import Counter
-from helpers import downloader, system_check
+from helpers import downloader, ffmpeg_handler
 from pathlib import Path
 import requests
 import time
 import yt_dlp
+import zipfile
 
 # Time used for delay using time.sleep (in seconds)
 DELAY = 1.5
@@ -16,24 +17,8 @@ def main() -> None:
 
     Controls the flow of the program based on user answers on prompt
     """
-    menu.print_starting_program()
-
-    while True:
-        if system_check.check_dependency():
-            break
-        else:
-            match menu.get_dependency_decision():
-                case "y":
-                    menu.print_starting_download("system_check")
-                    if system_check.download_ffmpeg():
-                        menu.print_dl_success("system_check")
-                    else:
-                        ...
-                case "n":
-                    menu.print_dependency_message()
-                    menu.exit_program()
-                case "exit":
-                    menu.exit_program()
+    verify_ffmpeg()
+    time.sleep(DELAY)
 
     while True:
         try:
@@ -236,6 +221,43 @@ def download_video(
         return
     else:
         menu.exit_program()
+
+
+def verify_ffmpeg() -> None:
+    while True:
+        menu.print_starting_program()
+        if ffmpeg_handler.check_ffmpeg():
+            break
+        else:
+            match menu.get_dependency_decision():
+                case "y":
+                    menu.print_starting_download("system_check")
+                    try: 
+                        ffmpeg_handler.download_ffmpeg()
+                        menu.print_dl_success("system_check")
+                        break
+                    except PermissionError:
+                        menu.print_exception("PermissionError")
+                        time.sleep(DELAY)
+                        menu.exit_program()
+                    except OSError:
+                        menu.print_exception("OSError")
+                        time.sleep(DELAY)
+                        menu.exit_program()
+                    except requests.exceptions.RequestException:
+                        menu.print_exception("RequestException")
+                        time.sleep(DELAY)
+                        continue
+                    except zipfile.BadZipFile:
+                        menu.print_exception("zipfile.BadZipFile")
+                        time.sleep(DELAY)
+                        continue
+                case "n":
+                    menu.print_dependency_message()
+                    time.sleep(DELAY)
+                    menu.exit_program()
+                case "exit":
+                    menu.exit_program()
 
 
 if __name__ == "__main__":
