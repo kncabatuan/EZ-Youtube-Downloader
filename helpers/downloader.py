@@ -1,3 +1,4 @@
+from helpers import system_check
 from pathlib import Path
 from typing import Any
 import re
@@ -69,15 +70,36 @@ def rewrite_line(text: str) -> None:
 
 class Download:
     """Handles downloading of Youtube video or audio"""
-
     # Base options used for YoutubeDL
     BASE_OPTS: dict[str, Any] = {
-        "quiet": True,
-        "no_warnings": True,
-        "windowsfilenames": True,
-        "logger": MyLogger(),
-        "progress_hooks": [my_hook],
-    }
+            "quiet": True,
+            "no_warnings": True,
+            "windowsfilenames": True,
+            "logger": MyLogger(),
+            "progress_hooks": [my_hook],
+        }
+    
+    if system_check.check_dependency():
+        pass
+    else:
+        program_dir = Path(__file__).parent.parent
+        ffmpeg_dir = program_dir / "ffmpeg"
+        ffmpeg_bin = None
+
+        if ffmpeg_dir.exists():
+            for item in ffmpeg_dir.iterdir():
+                if item.is_dir() and "essentials" in item.name.lower():
+                    for sub_item in item.iterdir():
+                        if sub_item.name == "bin":
+                            ffmpeg_bin = sub_item
+                            if ffmpeg_bin is None:
+                                raise FileNotFoundError
+                            break
+                    break
+        else:
+            raise FileNotFoundError
+                
+        BASE_OPTS["ffmpeg_location"] = str(ffmpeg_bin)
 
     def __init__(self, url: str, file_type: str, mode: str) -> None:
         self.mode = mode
