@@ -8,7 +8,7 @@ import yt_dlp
 import zipfile
 
 # Time used for delay using time.sleep (in seconds)
-DELAY = 1.5
+DELAY_SHORT = 1.5
 
 
 def main() -> None:
@@ -18,7 +18,7 @@ def main() -> None:
     Controls the flow of the program based on user answers on prompt
     """
     verify_ffmpeg()
-    time.sleep(DELAY)
+    time.sleep(DELAY_SHORT)
 
     while True:
         try:
@@ -45,12 +45,12 @@ def single_download() -> None:
     else:
         return
 
-    time.sleep(DELAY)
+    time.sleep(DELAY_SHORT)
 
     download_object.set_path(save_path())
 
     menu.print_checking()
-    time.sleep(DELAY)
+    time.sleep(DELAY_SHORT)
 
     assert download_object.title is not None
     decision = menu.get_final_decision(
@@ -59,7 +59,7 @@ def single_download() -> None:
 
     download_video(decision, download_mode, download_object)
 
-    time.sleep(DELAY)
+    time.sleep(DELAY_SHORT)
     return
 
 
@@ -96,14 +96,14 @@ def batch_download() -> None:
     if duplicates := [item for item, count in counts.items() if count > 1]:
         menu.print_duplicates(duplicates)
 
-    time.sleep(DELAY)
+    time.sleep(DELAY_SHORT)
 
     filepath = save_path()
     for download_object in download_object_list:
         download_object.set_path(filepath)
 
     menu.print_checking()
-    time.sleep(DELAY)
+    time.sleep(DELAY_SHORT)
 
     decision = menu.get_final_decision(
         mode=download_mode, title="Multiple", file_type=file_type, filepath=filepath
@@ -111,7 +111,7 @@ def batch_download() -> None:
 
     download_video(decision, download_mode, download_object_list)
 
-    time.sleep(DELAY)
+    time.sleep(DELAY_SHORT)
     return
 
 
@@ -139,7 +139,9 @@ def get_user_inputs(download_mode: str) -> tuple:
         return None, file_type
 
 
-def object_create(url, file_type, download_mode) -> downloader.Download | None:
+def object_create(
+    url: str, file_type: str, download_mode: str
+) -> downloader.Download | None:
     """
     Calls on helper to create object for download. Prints appropriate message
 
@@ -224,6 +226,7 @@ def download_video(
 
 
 def verify_ffmpeg() -> None:
+    """Handles the verification of ffmpeg existence in user system"""
     while True:
         menu.print_starting_program()
         if ffmpeg_handler.check_ffmpeg():
@@ -232,29 +235,29 @@ def verify_ffmpeg() -> None:
             match menu.get_dependency_decision():
                 case "y":
                     menu.print_starting_download("system_check")
-                    try: 
+                    try:
                         ffmpeg_handler.download_ffmpeg()
                         menu.print_dl_success("system_check")
                         break
                     except PermissionError:
                         menu.print_exception("PermissionError")
-                        time.sleep(DELAY)
+                        time.sleep(DELAY_SHORT)
                         menu.exit_program()
                     except OSError:
                         menu.print_exception("OSError")
-                        time.sleep(DELAY)
+                        time.sleep(DELAY_SHORT)
                         menu.exit_program()
                     except requests.exceptions.RequestException:
                         menu.print_exception("RequestException")
-                        time.sleep(DELAY)
+                        time.sleep(DELAY_SHORT)
                         continue
                     except zipfile.BadZipFile:
                         menu.print_exception("zipfile.BadZipFile")
-                        time.sleep(DELAY)
+                        time.sleep(DELAY_SHORT)
                         continue
                 case "n":
                     menu.print_dependency_message()
-                    time.sleep(DELAY)
+                    time.sleep(DELAY_SHORT)
                     menu.exit_program()
                 case "exit":
                     menu.exit_program()

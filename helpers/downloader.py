@@ -70,15 +70,17 @@ def rewrite_line(text: str) -> None:
 
 class Download:
     """Handles downloading of Youtube video or audio"""
+
     # Base options used for YoutubeDL
     BASE_OPTS: dict[str, Any] = {
-            "quiet": True,
-            "no_warnings": True,
-            "windowsfilenames": True,
-            "logger": MyLogger(),
-            "progress_hooks": [my_hook],
-        }
-    
+        "quiet": True,
+        "no_warnings": True,
+        "windowsfilenames": True,
+        "logger": MyLogger(),
+        "progress_hooks": [my_hook],
+    }
+
+    # Adds option for ffmpeg location in base opts if ffmpeg is not detected in system
     if ffmpeg_handler.check_ffmpeg():
         pass
     else:
@@ -98,7 +100,7 @@ class Download:
                     break
         else:
             raise FileNotFoundError
-                
+
         BASE_OPTS["ffmpeg_location"] = str(ffmpeg_bin)
 
     def __init__(self, url: str, file_type: str, mode: str) -> None:

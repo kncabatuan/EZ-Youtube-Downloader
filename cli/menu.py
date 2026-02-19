@@ -9,7 +9,8 @@ import sys
 import time
 
 # Time used for delay using time.sleep (in seconds)
-DELAY = 1.5
+DELAY_SHORT = 1.5
+DELAY_LONG = 2.5
 
 # Used for printing horizontal lines in terminal for UX
 COLUMNS = shutil.get_terminal_size().columns
@@ -33,7 +34,7 @@ def get_user_choice() -> str:
             )
         except ValueError:
             print(Fore.RED + '\nInvalid input. Please enter "1", "2" or "exit"')
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
 
 
 def validate_choice(choice: str) -> str:
@@ -70,7 +71,7 @@ def get_url() -> str:
             return validate_url(input(Fore.WHITE + "")).strip()
         except ValueError:
             print(Fore.RED + "\nInvalid URL. Please copy-paste Youtube URL")
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
 
 
 def validate_url(url: str) -> str:
@@ -114,7 +115,7 @@ def get_type() -> str:
             )
         except ValueError:
             print(Fore.RED + "\nInvalid input. Please enter 1, 2, or exit")
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
 
 
 def validate_type(file_type: str) -> str:
@@ -163,23 +164,23 @@ def get_filepath() -> str | Path:
                 Fore.RED + "\nInvalid filepath. Please follow correct format",
                 Fore.RED + "\nC:\\... or C:/...",
             )
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
         except NotADirectoryError:
             print(
                 Fore.RED
                 + "\nFilepath provided is not a directory. Please enter a valid one",
             )
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
         except PermissionError:
             print(
                 Fore.RED + "\nYou don't have enough permission to access this folder.",
             )
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
         except OSError:
             print(
                 Fore.RED + "\nSomething went wrong when accessing the folder",
             )
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
 
 
 def validate_filepath(filepath: str) -> str | Path:
@@ -250,7 +251,7 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
             return validate_decision(final_decision)
         except ValueError:
             print(Fore.RED + '\nInvalid input. Please input "y", "n", or "exit"')
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
 
 
 def validate_decision(decision: str) -> str:
@@ -292,28 +293,28 @@ def get_url_list_file() -> Path | str:
             print(
                 Fore.RED + "\nInvalid file. Please enter a valid file or filepath",
             )
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
         except FileNotFoundError:
             print(
                 Fore.RED + "\nFile was not found. Please enter a valid file or filepath"
             )
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
         except IsADirectoryError:
             print(
                 Fore.RED
                 + "\nFile or filepath provided is a directory. Please enter a valid file or filepath",
             )
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
         except PermissionError:
             print(
                 Fore.RED + "\nYou don't have enough permission to access this file.",
             )
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
         except OSError:
             print(
                 Fore.RED + "\nSomething went wrong when accessing the file",
             )
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
 
 
 def validate_url_list_file(url_list_file: str) -> Path | str:
@@ -341,9 +342,17 @@ def validate_url_list_file(url_list_file: str) -> Path | str:
     else:
         path = Path(url_list_file)
         return downloader.URL_List_File(path).filepath
-    
 
-def get_dependency_decision():
+
+def get_dependency_decision() -> str:
+    """
+    Gets the user's decision on ffmpeg dependency
+
+    Loops until a valid decision is entered
+
+    Returns:
+        str: The validated decison. Either "y", "n", or "exit"
+    """
     while True:
         try:
             return validate_decision(
@@ -351,14 +360,15 @@ def get_dependency_decision():
             )
         except ValueError:
             print(Fore.RED + '\nInvalid input. Please input "y", "n", or "exit"')
-            time.sleep(DELAY)
+            time.sleep(DELAY_SHORT)
 
 
-def print_starting_program():
+def print_starting_program() -> None:
+    """Prints message at program run"""
     print(Fore.YELLOW + "\nStarting Program. . .")
-    time.sleep(DELAY)
+    time.sleep(DELAY_SHORT)
     print(Fore.YELLOW + "\nChecking for dependencies. . .")
-    time.sleep(DELAY)
+    time.sleep(DELAY_SHORT)
 
 
 def print_checking() -> None:
@@ -441,7 +451,7 @@ def print_duplicates(duplicates: list) -> None:
 
 
 def print_starting_download(caller: str) -> None:
-
+    """Prints appropriate download start message depending on caller"""
     assert caller in ("system_check", "download")
     if caller == "system_check":
         print(Fore.YELLOW + "\nStarting download. Please be patient. . .")
@@ -451,10 +461,12 @@ def print_starting_download(caller: str) -> None:
 
 
 def print_dependency_message() -> None:
+    """Prints message if user does not want to download ffmpeg"""
     print(Fore.YELLOW + prompts.DEPENDENCY_MESSAGE)
 
 
 def exit_program() -> NoReturn:
     """Prints and closes the program"""
     print(Fore.GREEN + "\nThank you for using EZ Youtube Downloader!")
+    time.sleep(DELAY_LONG)
     sys.exit()

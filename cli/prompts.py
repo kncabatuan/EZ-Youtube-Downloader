@@ -21,7 +21,6 @@ TYPE_PROMPT_1 = """
 What format do you want to download?
 """
 
-
 #Prompt for getting user input on type
 TYPE_PROMPT_2 = """
 1. Video
@@ -29,7 +28,6 @@ TYPE_PROMPT_2 = """
 2. Audio only
 
 """
-
 
 #Prompt for getting user input on URL
 URL_PROMPT = """
@@ -41,7 +39,6 @@ Please enter Youtube URL (copy-paste it below)
 PATH_PROMPT_1= """
 Do you want to save your download to a specific folder?
 """
-
 
 #Prompt for getting user input of Filepath
 PATH_PROMPT_2= """
@@ -55,7 +52,6 @@ Enter "no" or leave blank to save in the current directory
 
 """
 
-
 #Prompt for user's final decision
 FINAL_DECISION_PROMPT = """
 
@@ -67,13 +63,13 @@ Path: {filepath}
 
 """
 
-
+#Prompt for getting txt file for batch download
 GET_URL_LIST_PROMPT_1= """
 Please enter the name of the text file (with .txt) that contains all URL for download
 (This should be located in the directory of this program)
 """
 
-
+#Prompt for getting txt file for batch download
 GET_URL_LIST_PROMPT_2= """
 Important Notes:
 1. Text file must have ONLY one URL per line
@@ -84,6 +80,7 @@ ex. C:\\\\Users\\\\Name\\\\sample.txt
 
 """
 
+#Prompt if ffmpeg is not detected in system
 MISSING_DEPENDENCY_PROMPT= """
 Oops! ffmpeg is not detected in your system!
 
@@ -91,6 +88,7 @@ Would you like to download it now? y/n
 
 """
 
+#Message if user does not want to download ffmpeg
 DEPENDENCY_MESSAGE= """
 Sorry, ffmpeg is required to run this program.
         
