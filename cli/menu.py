@@ -247,13 +247,13 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
                     .lower()
                 )
             print("")
-            return validate_final_decision(final_decision)
+            return validate_decision(final_decision)
         except ValueError:
             print(Fore.RED + '\nInvalid input. Please input "y", "n", or "exit"')
             time.sleep(DELAY)
 
 
-def validate_final_decision(decision: str) -> str:
+def validate_decision(decision: str) -> str:
     """
     Validates the user's final decision
 
@@ -341,6 +341,24 @@ def validate_url_list_file(url_list_file: str) -> Path | str:
     else:
         path = Path(url_list_file)
         return downloader.URL_List_File(path).filepath
+    
+
+def get_dependency_decision():
+    while True:
+        try:
+            return validate_decision(
+                input(Fore.BLUE + prompts.MISSING_DEPENDENCY_PROMPT).strip()
+            )
+        except ValueError:
+            print(Fore.RED + '\nInvalid input. Please input "y", "n", or "exit"')
+            time.sleep(DELAY)
+
+
+def print_starting_program():
+    print(Fore.YELLOW + "\nStarting Program. . .")
+    time.sleep(DELAY)
+    print(Fore.YELLOW + "\nChecking for dependencies. . .")
+    time.sleep(DELAY)
 
 
 def print_checking() -> None:
@@ -367,19 +385,11 @@ def print_obj_fail(download_mode: str, url: str) -> None:
         print(Fore.RED + f"Failed to find video from {url}")
 
 
-def print_success() -> None:
-    """Prints success"""
-    print(Fore.GREEN + "\nDownload successful!")
-
-
-def print_failure() -> None:
-    """Prints failure"""
-    print(Fore.RED + "\nDownload failed!")
-
-
-def print_dl_success() -> None:
-    """Prints returning to Menu when success"""
-    print(Fore.GREEN + "\n\nDownload success! Returning to Main Menu . . .")
+def print_dl_success(caller: str) -> None:
+    if caller == "system_check":
+        print(Fore.GREEN + "\n\nDownload success!")
+    else:
+        print(Fore.GREEN + "\n\nDownload success! Returning to Main Menu . . .")
 
 
 def print_dl_fail() -> None:
@@ -412,10 +422,18 @@ def print_duplicates(duplicates: list) -> None:
         print(Fore.BLUE + f"{item}")
 
 
-def print_starting_download() -> None:
-    """Prints message that download is starting"""
-    print(Fore.YELLOW + "\nStarting download. Please be patient. . .")
-    print(Fore.YELLOW + "\nYou can interrupt download with Ctrl + C\n")
+def print_starting_download(caller: str) -> None:
+
+    assert caller in ("system_check", "download")
+    if caller == "system_check":
+        print(Fore.YELLOW + "\nStarting download. Please be patient. . .")
+    else:
+        print(Fore.YELLOW + "\nStarting download. Please be patient. . .")
+        print(Fore.YELLOW + "\nYou can interrupt download with Ctrl + C\n")
+
+
+def print_dependency_message() -> None:
+    print(Fore.YELLOW + prompts.DEPENDENCY_MESSAGE)
 
 
 def exit_program() -> NoReturn:

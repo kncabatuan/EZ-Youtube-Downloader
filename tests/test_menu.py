@@ -90,12 +90,12 @@ def test_decision_validation():
 
     for decision in invalid_decisions:
         with pytest.raises(ValueError):
-            menu.validate_final_decision(decision)
+            menu.validate_decision(decision)
 
     valid_decisions = ("y", "n", "exit")
 
     for decision in valid_decisions:
-        assert menu.validate_final_decision(decision) == decision
+        assert menu.validate_decision(decision) == decision
 
 
 def test_url_list_file_validation(tmp_path):

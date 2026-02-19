@@ -1,7 +1,8 @@
 from cli import menu
 from collections import Counter
-from helpers import downloader
+from helpers import downloader, system_check
 from pathlib import Path
+import requests
 import time
 import yt_dlp
 
@@ -15,6 +16,25 @@ def main() -> None:
 
     Controls the flow of the program based on user answers on prompt
     """
+    menu.print_starting_program()
+
+    while True:
+        if system_check.check_dependency():
+            break
+        else:
+            match menu.get_dependency_decision():
+                case "y":
+                    menu.print_starting_download("system_check")
+                    if system_check.download_ffmpeg():
+                        menu.print_dl_success("system_check")
+                    else:
+                        ...
+                case "n":
+                    menu.print_dependency_message()
+                    menu.exit_program()
+                case "exit":
+                    menu.exit_program()
+
     while True:
         try:
             match menu.get_user_choice():
@@ -184,7 +204,7 @@ def download_video(
     """
     if decision == "y":
         try:
-            menu.print_starting_download()
+            menu.print_starting_download("download")
             if download_mode == "single":
                 assert isinstance(objects, downloader.Download)
                 objects.download_vid()
@@ -197,7 +217,7 @@ def download_video(
                         downloaded_titles.append(object.title)
                     else:
                         continue
-            menu.print_dl_success()
+            menu.print_dl_success("download")
             return
         except yt_dlp.utils.ExtractorError:
             menu.print_exception("ExtractorError")
