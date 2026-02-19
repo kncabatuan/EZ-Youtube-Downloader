@@ -411,6 +411,23 @@ def print_exception(_exception: str) -> None:
         )
     if _exception == "KeyboardInterrupt":
         print(Fore.RED + "\n\nDownload has been interrupted")
+    if _exception == "PermissionError":
+        print(
+            Fore.RED
+            + "\n\nFailed to download ffmpeg. You may not have permission to access the program directory."
+        )
+    if _exception == "RequestException":
+        print(
+            Fore.RED
+            + "\n\nSomething went wrong when trying to access the website. Make sure you have stable internet connection."
+        )
+    if _exception == "OSError":
+        print(Fore.RED + "\n\nAn OS-related error occurred!")
+    if _exception == "zipfile.BadZipFile":
+        print(
+            Fore.RED
+            + "\n\nThe downloaded zip file is corrupted or incomplete. Make sure you have stable internet connection"
+        )
 
 
 def print_duplicates(duplicates: list) -> None:
