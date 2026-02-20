@@ -61,7 +61,6 @@ def test_type_validation():
     assert menu.validate_type("2") == "audio"
 
 
-# Test for filepath validation
 def test_filepath_validation(tmp_path):
     invalid_filepaths = ("test", "123", "---", "1:/test", "-:/test")
 
@@ -84,7 +83,6 @@ def test_filepath_validation(tmp_path):
         menu.validate_filepath(str(temp_file))
 
 
-# Test for final decision validation
 def test_decision_validation():
     invalid_decisions = ("", "      ", "test", "123", "---", "-a1")
 
