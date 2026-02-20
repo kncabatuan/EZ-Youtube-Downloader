@@ -1,7 +1,11 @@
 from pathlib import Path
 import requests
 import shutil
+import subprocess
 import zipfile
+
+# The root program directory
+PROGRAM_DIR = Path(__file__).parent.parent
 
 
 def check_ffmpeg() -> bool:
@@ -9,10 +13,81 @@ def check_ffmpeg() -> bool:
     Checks if ffmpeg is in PATH
 
     Returns:
-        bool: False if ffmpeg is not detected, True otherwise"""
+        bool: False if ffmpeg is not detected, True otherwise
+    """
     if not shutil.which("ffmpeg"):
         return False
     return True
+
+
+def find_ffmpeg_bin() -> Path:
+    """
+    Checks program directory if a bin folder for ffmpeg exists
+
+    Calls function to check ffmpeg.exe integrity
+
+    Returns:
+        Path: The file path of the bin folder that contains ffmpeg.exe
+
+    Raises:
+        FileNotFoundError: If relevant folder/files were not detected
+        PermissionError: If the user does not have permission to access program directory
+        OSError: If other os-related error occurs
+        subprocess.CalledProcessError: If running of ffmpeg.exe fails
+    """
+    ffmpeg_dir = PROGRAM_DIR / "ffmpeg"
+    ffmpeg_bin = None
+
+    if ffmpeg_dir.exists() and any(ffmpeg_dir.iterdir()):
+        for item in ffmpeg_dir.iterdir():
+            if item.is_dir() and "essentials" in item.name.lower() and any(item.iterdir()):
+                for sub_item in item.iterdir():
+                    if sub_item.name == "bin" and any(sub_item.iterdir()):
+                        ffmpeg_bin = sub_item
+                        break
+                break
+        if ffmpeg_bin is None:
+            raise FileNotFoundError
+    else:
+        raise FileNotFoundError
+
+    try:
+        if check_ffmpeg_bin_files(ffmpeg_bin):
+            return ffmpeg_bin
+    except Exception:
+        raise
+
+
+def check_ffmpeg_bin_files(ffmpeg_bin: Path) -> bool:
+    """
+    Handles checking of ffmpeg.exe integrity
+    
+    Args:
+        ffmpeg_bin (Path): Filepath of the bin folder that contains ffmpeg.exe
+        
+    Returns:
+        bool: True if ffmpeg.exe is detected and ran properly
+        
+    Raises:
+        FileNotFoundError: If relevant folder/files were not detected
+        PermissionError: If the user does not have permission to access program directory
+        OSError: If other os-related error occurs
+        subprocess.CalledProcessError: If running of ffmpeg.exe fails
+    """
+    ffmpeg_exe_path = ffmpeg_bin / "ffmpeg.exe"
+    if ffmpeg_exe_path.exists():
+        try:
+            _ = subprocess.run(
+                [str(ffmpeg_exe_path), "-version"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
+            return True
+        except (PermissionError, OSError, subprocess.CalledProcessError):
+            raise
+    else:
+        raise FileNotFoundError
 
 
 def download_ffmpeg() -> None:
@@ -28,8 +103,7 @@ def download_ffmpeg() -> None:
         zipfile.BadZipFile: If the downloaded zip file is corrupted or incomplete
     """
     url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
-    program_dir = Path(__file__).parent.parent
-    zip_file = program_dir / "ffmpeg.zip"
+    zip_file = PROGRAM_DIR / "ffmpeg.zip"
 
     try:
         response = requests.get(url, stream=True)
@@ -45,10 +119,12 @@ def download_ffmpeg() -> None:
         zip_file.unlink()
         raise
 
-    target_folder = program_dir / "ffmpeg"
+    target_folder = PROGRAM_DIR / "ffmpeg"
 
     try:
-        target_folder.mkdir(exist_ok=True)
+        if target_folder.exists():
+            shutil.rmtree(target_folder, ignore_errors=True)
+        target_folder.mkdir()
     except (PermissionError, OSError):
         zip_file.unlink()
         raise

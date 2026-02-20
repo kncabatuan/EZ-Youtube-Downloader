@@ -80,29 +80,6 @@ class Download:
         "progress_hooks": [my_hook],
     }
 
-    # Adds option for ffmpeg location in base opts if ffmpeg is not detected in system
-    if ffmpeg_handler.check_ffmpeg():
-        pass
-    else:
-        program_dir = Path(__file__).parent.parent
-        ffmpeg_dir = program_dir / "ffmpeg"
-        ffmpeg_bin = None
-
-        if ffmpeg_dir.exists():
-            for item in ffmpeg_dir.iterdir():
-                if item.is_dir() and "essentials" in item.name.lower():
-                    for sub_item in item.iterdir():
-                        if sub_item.name == "bin":
-                            ffmpeg_bin = sub_item
-                            if ffmpeg_bin is None:
-                                raise FileNotFoundError
-                            break
-                    break
-        else:
-            raise FileNotFoundError
-
-        BASE_OPTS["ffmpeg_location"] = str(ffmpeg_bin)
-
     def __init__(self, url: str, file_type: str, mode: str) -> None:
         self.mode = mode
         self.url = url
@@ -146,6 +123,11 @@ class Download:
             dict: The updated options (started from base opts) depending on download mode and type
         """
         opts = Download.BASE_OPTS.copy()
+
+        if self.ffmpeg_location is None:
+            pass
+        else:
+            opts["ffmpeg_location"] = str(self.ffmpeg_location)
 
         if self.file_type == "video":
             opts["noplaylist"] = True
@@ -216,6 +198,15 @@ class Download:
             filepath (Path): The file path where the user wants to save their downloads
         """
         self.filepath = filepath
+
+    def set_ffmpeg_location(self, ffmpeg_location: Path | None) -> None:
+        """
+        Adds ffmpeg_location attribute to created Download object
+        
+        Args:
+            ffmpeg_location (Path | None): Path of the ffmpeg bin folder if ffmpeg is not in PATH, None otherwise
+        """
+        self.ffmpeg_location = ffmpeg_location
 
     def download_vid(self) -> None:
         """

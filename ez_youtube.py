@@ -10,6 +10,9 @@ import zipfile
 # Time used for delay using time.sleep (in seconds)
 DELAY_SHORT = 1.5
 
+# Used for setting ffmpeg_location option in YoutubeDL, if applicable
+ffmpeg_bin_path = None
+
 
 def main() -> None:
     """
@@ -40,7 +43,7 @@ def single_download() -> None:
 
     menu.print_checking()
 
-    if download_object := object_create(url, file_type, download_mode):
+    if download_object := object_create(url, file_type, download_mode, ffmpeg_bin_path):
         menu.print_obj_success(download_object.title, download_mode)
     else:
         return
@@ -80,7 +83,7 @@ def batch_download() -> None:
     download_object_list = []
     detected_titles = []
     for url in url_list:
-        if download_object := (object_create(url, file_type, download_mode)):
+        if download_object := (object_create(url, file_type, download_mode, ffmpeg_bin_path)):
             download_object_list.append(download_object)
             if download_object.title not in detected_titles:
                 menu.print_obj_success(download_object.title, download_mode)
@@ -140,7 +143,7 @@ def get_user_inputs(download_mode: str) -> tuple:
 
 
 def object_create(
-    url: str, file_type: str, download_mode: str
+    url: str, file_type: str, download_mode: str, ffmpeg_location: Path | None
 ) -> downloader.Download | None:
     """
     Calls on helper to create object for download. Prints appropriate message
@@ -149,6 +152,7 @@ def object_create(
         url (str): The input URL
         file_type (str): The input file_type ("video" or "audio")
         download_mode (str): Either single or batch (from the calling function)
+        ffmpeg_location (Path | None): Path of the ffmpeg bin folder if ffmpeg is not in PATH, None otherwise 
 
     Returns:
         downloader.Download: The Download instance that was created
@@ -156,6 +160,7 @@ def object_create(
     """
     try:
         download_object = downloader.Download(url, file_type, download_mode)
+        download_object.set_ffmpeg_location(ffmpeg_location)
         download_object.set_title()
         return download_object
     except ValueError:
@@ -227,40 +232,43 @@ def download_video(
 
 def verify_ffmpeg() -> None:
     """Handles the verification of ffmpeg existence in user system"""
+    global ffmpeg_bin_path
+
     while True:
         menu.print_starting_program()
         if ffmpeg_handler.check_ffmpeg():
             break
         else:
-            match menu.get_dependency_decision():
-                case "y":
-                    menu.print_starting_download("system_check")
-                    try:
-                        ffmpeg_handler.download_ffmpeg()
-                        menu.print_dl_success("system_check")
-                        break
-                    except PermissionError:
-                        menu.print_exception("PermissionError")
-                        time.sleep(DELAY_SHORT)
+            try:
+                ffmpeg_bin_path = ffmpeg_handler.find_ffmpeg_bin()
+                break
+            except Exception:
+                match menu.get_dependency_decision():
+                    case "y":
+                        menu.print_starting_download("system_check")
+                        try:
+                            ffmpeg_handler.download_ffmpeg()
+                            menu.print_dl_success("system_check")
+                            break
+                        except PermissionError:
+                            menu.print_exception("PermissionError")
+                            menu.exit_program()
+                        except OSError:
+                            menu.print_exception("OSError")
+                            menu.exit_program()
+                        except requests.exceptions.RequestException:
+                            menu.print_exception("RequestException")
+                            time.sleep(DELAY_SHORT)
+                            continue
+                        except zipfile.BadZipFile:
+                            menu.print_exception("zipfile.BadZipFile")
+                            time.sleep(DELAY_SHORT)
+                            continue
+                    case "n":
+                        menu.print_dependency_message()
                         menu.exit_program()
-                    except OSError:
-                        menu.print_exception("OSError")
-                        time.sleep(DELAY_SHORT)
+                    case "exit":
                         menu.exit_program()
-                    except requests.exceptions.RequestException:
-                        menu.print_exception("RequestException")
-                        time.sleep(DELAY_SHORT)
-                        continue
-                    except zipfile.BadZipFile:
-                        menu.print_exception("zipfile.BadZipFile")
-                        time.sleep(DELAY_SHORT)
-                        continue
-                case "n":
-                    menu.print_dependency_message()
-                    time.sleep(DELAY_SHORT)
-                    menu.exit_program()
-                case "exit":
-                    menu.exit_program()
 
 
 if __name__ == "__main__":
