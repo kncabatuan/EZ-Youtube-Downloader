@@ -52,8 +52,8 @@ def find_ffmpeg_bin() -> Path:
         raise FileNotFoundError
 
     try:
-        if check_ffmpeg_bin_files(ffmpeg_bin):
-            return ffmpeg_bin
+        check_ffmpeg_bin_files(ffmpeg_bin)
+        return ffmpeg_bin
     except Exception:
         raise
 

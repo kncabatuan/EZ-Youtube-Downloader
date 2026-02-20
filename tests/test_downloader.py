@@ -38,7 +38,7 @@ def test_url_extraction():
     )
 
 
-def test_opts_builder_single_batch():
+def test_opts_builder():
     valid_url = "https://www.youtube.com/watch?v=testtesttes&list=test&index=test"
     valid_types = ("video", "audio")
     mode = "single"
@@ -46,6 +46,7 @@ def test_opts_builder_single_batch():
 
     test_obj1 = downloader.Download(valid_url, valid_types[0], mode)
     test_obj1.filepath = filepath
+    test_obj1.ffmpeg_location = None
     opts1 = test_obj1.opts_builder()
 
     assert opts1["quiet"] == True
@@ -60,6 +61,7 @@ def test_opts_builder_single_batch():
     mode = "batch"
     test_obj2 = downloader.Download(valid_url, valid_types[1], mode)
     test_obj2.filepath = filepath
+    test_obj2.ffmpeg_location = None
     opts2 = test_obj2.opts_builder()
 
     assert opts2["quiet"] == True
@@ -110,6 +112,7 @@ def test_download():
 
         test_obj = downloader.Download(valid_url, valid_type, valid_mode)
         test_obj.filepath = valid_filepath
+        test_obj.ffmpeg_location = None
         test_obj.download_vid()
 
         mock_instance.download.assert_called_once_with(valid_url)
