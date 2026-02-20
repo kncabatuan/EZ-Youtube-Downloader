@@ -106,25 +106,15 @@ def download_ffmpeg() -> None:
     zip_file = PROGRAM_DIR / "ffmpeg.zip"
 
     try:
-        response = requests.get(url, stream=True)
-        response.raise_for_status()
-        try:
-            with open(zip_file, "wb") as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-        except (PermissionError, OSError):
-            zip_file.unlink()
-            raise
-    except requests.exceptions.RequestException:
+        get_ffmpeg_zip_from_url(url, zip_file)
+    except (PermissionError, OSError, requests.exceptions.RequestException):
         zip_file.unlink()
         raise
 
     target_folder = PROGRAM_DIR / "ffmpeg"
 
     try:
-        if target_folder.exists():
-            shutil.rmtree(target_folder, ignore_errors=True)
-        target_folder.mkdir()
+        make_target_folder(target_folder)
     except (PermissionError, OSError):
         zip_file.unlink()
         raise
@@ -133,6 +123,26 @@ def download_ffmpeg() -> None:
         extract_to_target_folder(zip_file, target_folder)
     except (OSError, PermissionError, zipfile.BadZipFile):
         raise
+
+
+def get_ffmpeg_zip_from_url(url: str, zip_file: Path) -> None:
+    
+    response = requests.get(url, stream=True)
+    response.raise_for_status()
+    try:
+        with open(zip_file, "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+    except (PermissionError, OSError):
+        raise
+
+
+def make_target_folder(target_folder: Path) -> None:
+
+    if target_folder.exists():
+        shutil.rmtree(target_folder, ignore_errors=True)
+    target_folder.mkdir()
+
 
 
 def extract_to_target_folder(downloaded_zip: Path, folder_path: Path) -> None:
