@@ -1,3 +1,6 @@
+from colorama import init
+init(autoreset=True)
+
 from cli import menu
 from collections import Counter
 from helpers import downloader, ffmpeg_handler
