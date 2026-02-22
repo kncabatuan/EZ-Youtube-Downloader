@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 import requests
 import shutil
 import subprocess
@@ -6,10 +7,15 @@ import sys
 import zipfile
 
 # The root program directory
-if getattr(sys, "frozen", False):   
-    PROGRAM_DIR = Path(sys.executable).parent
+if getattr(sys, 'frozen', False):
+    # Running as a frozen exe
+    local_app_data = os.getenv('LOCALAPPDATA')
+    assert local_app_data is not None
+    APPDATA_DIR = Path(local_app_data) / "EZYoutube"
+    APPDATA_DIR.mkdir(parents=True, exist_ok=True)
 else:
-    PROGRAM_DIR = Path(__file__).parent.parent
+    # Running normally from source
+    APPDATA_DIR = Path(__file__).parent.parent
 
 
 def check_ffmpeg() -> bool:
@@ -39,7 +45,7 @@ def find_ffmpeg_bin() -> Path:
         OSError: If other os-related error occurs
         subprocess.CalledProcessError: If running of ffmpeg.exe fails
     """
-    ffmpeg_dir = PROGRAM_DIR / "ffmpeg"
+    ffmpeg_dir = APPDATA_DIR / "ffmpeg"
     ffmpeg_bin = None
 
     if ffmpeg_dir.exists() and any(ffmpeg_dir.iterdir()):
@@ -107,7 +113,7 @@ def download_ffmpeg() -> None:
         zipfile.BadZipFile: If the downloaded zip file is corrupted or incomplete
     """
     url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
-    zip_file = PROGRAM_DIR / "ffmpeg.zip"
+    zip_file = APPDATA_DIR / "ffmpeg.zip"
 
     try:
         get_ffmpeg_zip_from_url(url, zip_file)
@@ -116,7 +122,7 @@ def download_ffmpeg() -> None:
             zip_file.unlink()
         raise
 
-    target_folder = PROGRAM_DIR / "ffmpeg"
+    target_folder = APPDATA_DIR / "ffmpeg"
 
     try:
         make_target_folder(target_folder)
