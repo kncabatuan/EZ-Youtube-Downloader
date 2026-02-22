@@ -2,6 +2,7 @@ from helpers import ffmpeg_handler
 from pathlib import Path
 from typing import Any
 import re
+import shutil
 import sys
 import yt_dlp
 
@@ -33,6 +34,8 @@ def my_hook(d: dict[str, Any]) -> None:
     # Used for proper printing of hook
     global LAST_PERCENT
 
+    terminal_width = shutil.get_terminal_size().columns
+
     if d["status"] == "error":
         pass
     elif d["status"] == "downloading":
@@ -48,10 +51,15 @@ def my_hook(d: dict[str, Any]) -> None:
 
             if percent != LAST_PERCENT:
                 LAST_PERCENT = percent
-                if len(filename) > 40:
-                    rewrite_line(f"Downloading {filename[:37]}...: {percent:.2f}%")
+
+                base_text = f"Downloading {filename}: {percent:.2f}%"
+                if len(base_text) >= terminal_width:
+                    fixed_text = f"Downloading : {percent:.2f}%"
+                    allowed = terminal_width - len(fixed_text) - 3
+                    new_filename = f"{filename[:max(0,allowed)]}..."
+                    rewrite_line(f"Downloading {new_filename}: {percent:.2f}%")
                 else:
-                    rewrite_line(f"Downloading {filename}: {percent:.2f}%")
+                    rewrite_line(base_text)
 
                 if percent == 100:
                     print("")
