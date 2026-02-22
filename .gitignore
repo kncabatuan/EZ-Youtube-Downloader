@@ -1,6 +1,13 @@
 __pycache__/
+.mypy_cache
+.pytest_cache
+
+build/
+dist/
+
+*.spec
 
 *.mp3
 *.mp4
 
-*.txt
+test_text_file.txt
