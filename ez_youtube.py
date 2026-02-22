@@ -231,7 +231,12 @@ def download_video(
 
 
 def verify_ffmpeg() -> None:
-    """Handles the verification of ffmpeg existence in user system"""
+    """
+    Handles the verification of ffmpeg existence in user system
+    
+    Asks user whether user wants to download ffmpeg, prints message
+    accordingly
+    """
     global ffmpeg_bin_path
 
     while True:

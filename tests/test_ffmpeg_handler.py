@@ -7,11 +7,13 @@ import subprocess
 import zipfile
 
 
+# Tests the checking of ffmpeg in the PATH
 def test_dependency_checking():
     with patch("shutil.which", return_value = None):
         assert ffmpeg_handler.check_ffmpeg() == False
 
 
+# Tests the behavior of find_ffmpeg_bin function when the bin exists and is valid
 def test_ffmpeg_bin_finding_valid(tmp_path):
     temp_dir = tmp_path / "Temporary Directory"
     temp_dir.mkdir()
@@ -29,6 +31,7 @@ def test_ffmpeg_bin_finding_valid(tmp_path):
     assert ffmpeg_bin == temp_bin_path
 
 
+# Tests the behavior of find_ffmpeg_bin function when the bin is invalid or non-existent
 def test_ffmpeg_bin_finding_invalid(tmp_path):
     temp_dir = tmp_path / "Temporary Directory"
     temp_dir.mkdir()
@@ -52,6 +55,7 @@ def test_ffmpeg_bin_finding_invalid(tmp_path):
         shutil.rmtree(path, ignore_errors=True)
 
 
+# Tests the behavior of check_ffmpeg_bin_files function if ffmpeg.exe is valid, existent, complete, and not corrupt
 def test_ffmpeg_exe_checking_valid(tmp_path):
     temp_dir = tmp_path / "Temporary Directory"
     temp_dir.mkdir()
@@ -72,6 +76,7 @@ def test_ffmpeg_exe_checking_valid(tmp_path):
         assert ffmpeg_handler.check_ffmpeg_bin_files(temp_bin_path) == True
 
 
+# Tests the behavior of check_ffmpeg_bin_files function if ffmpeg.exe is invalid, doe not exist, incomplete or corrupt
 def test_ffmpeg_exe_checking_invalid(tmp_path):
     temp_dir = tmp_path / "Temporary Directory"
     temp_dir.mkdir()
@@ -94,6 +99,7 @@ def test_ffmpeg_exe_checking_invalid(tmp_path):
             ffmpeg_handler.check_ffmpeg_bin_files(temp_bin_path)
 
 
+# Tests the behavior of download_ffmpeg function if all helper functions worked properly
 def test_ffmpeg_download_helper_behavior(tmp_path):
     test_url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
     
@@ -117,6 +123,7 @@ def test_ffmpeg_download_helper_behavior(tmp_path):
             mock_extract.assert_called_once_with(test_zip_file, test_target_folder)
 
 
+# Tests behavior of ffmpeg_download function if get_ffmpeg_zip_from_url fails
 def test_ffmpeg_download_raising_1(tmp_path):
     temp_dir = tmp_path / "Temporary Directory"
     temp_dir.mkdir()
@@ -134,6 +141,7 @@ def test_ffmpeg_download_raising_1(tmp_path):
                 assert not test_zip_file.exists()
 
 
+# Tests behavior of ffmpeg_download function if make_target_folder fails
 def test_ffmpeg_download_raising_2(tmp_path):
     temp_dir = tmp_path / "Temporary Directory"
     temp_dir.mkdir()
@@ -152,6 +160,7 @@ def test_ffmpeg_download_raising_2(tmp_path):
                     assert not test_zip_file.exists()
 
 
+# Tests behavior of ffmpeg_download function if extract_to_target_folder fails
 def test_ffmpeg_download_raising_3(tmp_path):
     temp_dir = tmp_path / "Temporary Directory"
     temp_dir.mkdir()
@@ -173,6 +182,7 @@ def test_ffmpeg_download_raising_3(tmp_path):
                             ffmpeg_handler.download_ffmpeg()
 
 
+# Tests get_zip_from_url function behavior if requests.get and writing the downloaded file is successful
 def test_get_zip_from_url_success(tmp_path):
     test_zip_file = tmp_path / "ffmpeg.zip"
     test_url = "https://www.test_url.com"
@@ -191,6 +201,7 @@ def test_get_zip_from_url_success(tmp_path):
     assert test_zip_file.read_bytes() == b"testcontents"
 
 
+# Tests get_zip_from_url function behavior if requests.get or writing the downloaded file fails
 def test_get_zip_from_url_fail(tmp_path):
     test_zip_file = tmp_path / "ffmpeg.zip"
     test_url = "https://www.test_url.com"
@@ -217,6 +228,7 @@ def test_get_zip_from_url_fail(tmp_path):
                 assert not test_zip_file.exists()
 
 
+# Tests extract_to_target_folder if movement of zip_file and extraction succeeds
 def test_extract_to_target_folder_success(tmp_path):
     temp_dir = tmp_path / "temp_dir"
     temp_dir.mkdir()
@@ -248,6 +260,7 @@ def test_extract_to_target_folder_success(tmp_path):
         assert fake_extracted_file.exists()
 
 
+# Tests extract_to_target_folder if movement of zip_file or extraction fails
 def test_extract_to_target_folder_fail(tmp_path):
     temp_dir = tmp_path / "temp_dir"
     temp_dir.mkdir()

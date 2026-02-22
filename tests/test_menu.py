@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 
+# Validates user choice in main menu
 def test_choice_validation():
     invalid_choices = ("", "0", "4", "-1", "test", "     ")
     for choice in invalid_choices:
@@ -14,7 +15,7 @@ def test_choice_validation():
         assert menu.validate_choice(choice) == choice
 
 
-# Test for UI level validation only
+# Validates user input for URL. (UI level validation only)
 def test_url_validation():
     invalid_url = (
         "",
@@ -49,6 +50,7 @@ def test_url_validation():
     assert menu.validate_url("exit") == "exit"
 
 
+# Validates user input in type of file
 def test_type_validation():
     invalid_types = ("0", "3", "", "    ", "test", "123", "-1", "---")
 
@@ -61,6 +63,7 @@ def test_type_validation():
     assert menu.validate_type("2") == "audio"
 
 
+# Validates user's input for filepath on where to save the downloaded files
 def test_filepath_validation(tmp_path):
     invalid_filepaths = ("test", "123", "---", "1:/test", "-:/test")
 
@@ -83,6 +86,7 @@ def test_filepath_validation(tmp_path):
         menu.validate_filepath(str(temp_file))
 
 
+# Validates the user input for yes or no decisions
 def test_decision_validation():
     invalid_decisions = ("", "      ", "test", "123", "---", "-a1")
 
@@ -96,6 +100,7 @@ def test_decision_validation():
         assert menu.validate_decision(decision) == decision
 
 
+# Validates user input for filepath of their txt file for batch downloading
 def test_url_list_file_validation(tmp_path):
     assert menu.validate_url_list_file("exit") == "exit"
 

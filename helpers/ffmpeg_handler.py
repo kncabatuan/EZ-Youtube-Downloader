@@ -128,6 +128,18 @@ def download_ffmpeg() -> None:
 
 
 def get_ffmpeg_zip_from_url(url: str, zip_file: Path) -> None:
+    """
+    Gets the ffmpeg zip file from ffmpeg site
+    
+    Args:
+        url (str): ffmpeg url
+        zip_file (Path): The path of the zip file that will be created from downloading
+    
+    Raises:
+        PermissionError: If the user does not have permission to create a file in the program directory
+        OSError: If other os-related error occurs
+        requests.exceptions.RequestException: If an error from requests occurs
+    """
     
     response = requests.get(url, stream=True)
     response.raise_for_status()
@@ -140,6 +152,16 @@ def get_ffmpeg_zip_from_url(url: str, zip_file: Path) -> None:
 
 
 def make_target_folder(target_folder: Path) -> None:
+    """
+    Creates the target folder for extraction of the ffmpeg zip file
+    
+    Args:
+        target_folder (Path): The path of the target folder
+    
+    Raises:
+        PermissionError: If user does not have permission to create a folder in program directory
+        OSError: If other os-related error occurs
+    """
 
     if target_folder.exists():
         shutil.rmtree(target_folder, ignore_errors=True)

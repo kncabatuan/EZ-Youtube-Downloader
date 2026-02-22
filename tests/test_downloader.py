@@ -4,6 +4,7 @@ from unittest.mock import patch, MagicMock
 import pytest
 
 
+# Tests initialization of the Download class
 def test_download_init():
     valid_url = "https://www.youtube.com/watch?v=testtesttes"
     valid_type = "video"
@@ -20,6 +21,7 @@ def test_download_init():
         downloader.Download(invalid_url, valid_type, valid_mode)
 
 
+# Tests the extraction of the url based on the mode of download
 def test_url_extraction():
     valid_url = "https://www.youtube.com/watch?v=testtesttes&list=test&index=test"
     valid_type = "video"
@@ -38,6 +40,7 @@ def test_url_extraction():
     )
 
 
+# Tests the building of the options dictionary to pass into YoutubeDL
 def test_opts_builder():
     valid_url = "https://www.youtube.com/watch?v=testtesttes&list=test&index=test"
     valid_types = ("video", "audio")
@@ -80,6 +83,7 @@ def test_opts_builder():
     ]
 
 
+# Tests the extraction of data by YoutubeDL using a valid youtube video URL
 def test_data_extraction():
     valid_url = "https://www.youtube.com/watch?v=testtesttes"
     valid_type = "video"
@@ -100,6 +104,7 @@ def test_data_extraction():
         assert test_obj.title == "Test Title"
 
 
+# Tests the actual downloading using YoutubeDL
 def test_download():
     valid_url = "https://www.youtube.com/watch?v=testtesttes"
     valid_type = "video"
@@ -118,6 +123,7 @@ def test_download():
         mock_instance.download.assert_called_once_with(valid_url)
 
 
+# Tests the printing of progress hook
 def test_hook_printing(capsys):
     test_total_bytes = 100
     test_downloaded_bytes = 50
