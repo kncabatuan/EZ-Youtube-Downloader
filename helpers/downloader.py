@@ -322,7 +322,7 @@ class URL_List_File:
             PermissionError: If the user does not have permission to access that file
             OSError: If other OS-related error occurred
         """
-        pattern = r'[<>:"\s|?*]'
+        pattern = r'[<>:"|?*]'
         if re.search(pattern, filepath.stem):
             raise ValueError
         elif filepath.stem.startswith(".") or filepath.stem.endswith("."):

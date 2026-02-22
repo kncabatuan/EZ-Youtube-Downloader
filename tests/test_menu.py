@@ -108,9 +108,6 @@ def test_url_list_file_validation(tmp_path):
         "",
         "filename",
         "filename.csv",
-        "file name.txt",
-        " filename.txt",
-        "filename .txt",
         ".filename.txt",
         ".filename..txt",
     ]
