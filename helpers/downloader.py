@@ -49,6 +49,17 @@ def my_hook(d: dict[str, Any]) -> None:
 
         assert isinstance(raw_filename, str)
         filename = Path(raw_filename).stem
+
+        if match := re.search(r"\.f(\d{3})", filename):
+            if int(match.group(1)) >= 300:
+                message_prefix = "Downloading Video for"
+            else:
+                message_prefix = "Downloading Audio for"
+            
+            filename = filename.strip(f".f{match.group(1)}")
+        else:
+            message_prefix = "Downloading" 
+        
         total = d.get("total_bytes") or d.get("total_bytes_estimate")
         downloaded = d.get("downloaded_bytes", 0)
 
@@ -58,12 +69,12 @@ def my_hook(d: dict[str, Any]) -> None:
             if percent != LAST_PERCENT:
                 LAST_PERCENT = percent
 
-                base_text = f"Downloading {filename}: {percent:.2f}%"
+                base_text = f"{message_prefix} {filename}: {percent:.2f}%"
                 if len(base_text) >= terminal_width:
-                    fixed_text = f"Downloading : {percent:.2f}%"
+                    fixed_text = f"{message_prefix} : {percent:.2f}%"
                     allowed = terminal_width - len(fixed_text) - 3
                     new_filename = f"{filename[:max(0,allowed)]}..."
-                    rewrite_line(f"Downloading {new_filename}: {percent:.2f}%")
+                    rewrite_line(f"{message_prefix} {new_filename}: {percent:.2f}%")
                 else:
                     rewrite_line(base_text)
 
