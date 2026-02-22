@@ -2,10 +2,14 @@ from pathlib import Path
 import requests
 import shutil
 import subprocess
+import sys
 import zipfile
 
 # The root program directory
-PROGRAM_DIR = Path(__file__).parent.parent
+if getattr(sys, "frozen", False):   
+    PROGRAM_DIR = Path(sys.executable).parent
+else:
+    PROGRAM_DIR = Path(__file__).parent.parent
 
 
 def check_ffmpeg() -> bool:

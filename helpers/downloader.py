@@ -7,6 +7,13 @@ import sys
 import yt_dlp
 
 
+# The root program directory
+if getattr(sys, "frozen", False):   
+    PROGRAM_DIR = Path(sys.executable).parent
+else:
+    PROGRAM_DIR = Path(__file__).parent.parent
+
+
 # Used to override default yt-dlp printing to terminal
 class MyLogger:
     def debug(self, msg):
@@ -263,7 +270,7 @@ class Save_Directory:
             OSError: If other OS-related error occurs
         """
         if filepath in ("", "no"):
-            self._filepath = Path(__file__).parent.parent
+            self._filepath = PROGRAM_DIR
         elif not re.search(r"^[a-zA-Z]:[\\/].*$", filepath):
             raise ValueError
         elif not Path(filepath).is_dir():
