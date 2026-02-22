@@ -12,6 +12,7 @@ import zipfile
 
 # Time used for delay using time.sleep (in seconds)
 DELAY_SHORT = 1.5
+DELAY_VERY_LONG = 10
 
 # Used for setting ffmpeg_location option in YoutubeDL, if applicable
 ffmpeg_bin_path = None
@@ -274,6 +275,7 @@ def verify_ffmpeg() -> None:
                             continue
                     case "n":
                         menu.print_dependency_message()
+                        time.sleep(DELAY_VERY_LONG)
                         menu.exit_program()
                     case "exit":
                         menu.exit_program()

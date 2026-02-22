@@ -92,11 +92,12 @@ Would you like to download it now? y/n
 DEPENDENCY_MESSAGE= """
 Sorry, ffmpeg is required to run this program.
         
-You can read about it here: https://www.gyan.dev/ffmpeg/builds/")
+You can read about it here: https://www.gyan.dev/ffmpeg/builds/"
         
 Note:
 - ffmpeg needs to be placed in the proper directory for the program to work. If you are not
   comfortable with paths, it can be a bit confusing to do this on your own.
+  
 - Enter "y" the next time you run the program so it can do it for you :)
         
 """
