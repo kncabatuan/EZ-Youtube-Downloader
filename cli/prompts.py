@@ -67,6 +67,7 @@ Path: {filepath}
 #Prompt for getting txt file for batch download
 GET_URL_LIST_PROMPT_1= """
 Please enter the name of the text file (with .txt) that contains all URL for download
+(This must be in the directory where you ran the program)
 """
 
 #Prompt for getting txt file for batch download
@@ -97,7 +98,7 @@ You can read about it here: https://www.gyan.dev/ffmpeg/builds/"
 Note:
 - ffmpeg needs to be placed in the proper directory for the program to work. If you are not
   comfortable with paths, it can be a bit confusing to do this on your own.
-  
+
 - Enter "y" the next time you run the program so it can do it for you :)
         
 """
