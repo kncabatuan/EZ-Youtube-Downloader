@@ -108,7 +108,8 @@ def download_ffmpeg() -> None:
     try:
         get_ffmpeg_zip_from_url(url, zip_file)
     except (PermissionError, OSError, requests.exceptions.RequestException):
-        zip_file.unlink()
+        if zip_file.exists():
+            zip_file.unlink()
         raise
 
     target_folder = PROGRAM_DIR / "ffmpeg"
@@ -116,7 +117,8 @@ def download_ffmpeg() -> None:
     try:
         make_target_folder(target_folder)
     except (PermissionError, OSError):
-        zip_file.unlink()
+        if zip_file.exists():
+            zip_file.unlink()
         raise
 
     try:
