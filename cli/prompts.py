@@ -1,6 +1,7 @@
 # Prompt used as Main Menu
 MAIN_PROMPT_1= """
-Welcome to EZ Youtube Downloader!
+Welcome to EZ YOUTUBE DOWNLOADER!
+--Powered by yt-dlp and ffmpeg
 
 To get started, choose among the options below:
 """
@@ -66,7 +67,6 @@ Path: {filepath}
 #Prompt for getting txt file for batch download
 GET_URL_LIST_PROMPT_1= """
 Please enter the name of the text file (with .txt) that contains all URL for download
-(This should be located in the directory of this program)
 """
 
 #Prompt for getting txt file for batch download

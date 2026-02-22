@@ -263,7 +263,7 @@ class Save_Directory:
             OSError: If other OS-related error occurs
         """
         if filepath in ("", "no"):
-            self._filepath = Path.cwd()
+            self._filepath = Path(__file__).parent.parent
         elif not re.search(r"^[a-zA-Z]:[\\/].*$", filepath):
             raise ValueError
         elif not Path(filepath).is_dir():
@@ -308,7 +308,7 @@ class URL_List_File:
         pattern = r'[<>:"\s|?*]'
         if re.search(pattern, filepath.stem):
             raise ValueError
-        elif re.search(r"^\..*", filepath.stem) or re.search(r".*\.", filepath.stem):
+        elif filepath.stem.startswith(".") or filepath.stem.endswith("."):
             raise ValueError
         elif filepath.suffix.lower() == "" or filepath.suffix.lower() != ".txt":
             raise ValueError

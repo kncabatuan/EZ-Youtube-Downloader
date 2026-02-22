@@ -71,8 +71,8 @@ def test_filepath_validation(tmp_path):
         with pytest.raises(ValueError):
             menu.validate_filepath(filepath)
 
-    assert menu.validate_filepath("") == Path.cwd()
-    assert menu.validate_filepath("no") == Path.cwd()
+    assert menu.validate_filepath("") == Path(__file__).parent.parent
+    assert menu.validate_filepath("no") == Path(__file__).parent.parent
 
     temp_dir = tmp_path / "my_temp_dir"
     temp_dir.mkdir()

@@ -10,7 +10,7 @@ import time
 
 # Time used for delay using time.sleep (in seconds)
 DELAY_SHORT = 1.5
-DELAY_LONG = 2.5
+DELAY_LONG = 2
 
 # Used for printing horizontal lines in terminal for UX
 COLUMNS = shutil.get_terminal_size().columns
@@ -340,7 +340,7 @@ def validate_url_list_file(url_list_file: str) -> Path | str:
     elif url_list_file == "":
         raise ValueError
     else:
-        path = Path(url_list_file)
+        path = Path(url_list_file).expanduser().resolve()
         return downloader.URL_List_File(path).filepath
 
 
