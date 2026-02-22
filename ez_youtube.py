@@ -12,7 +12,7 @@ import zipfile
 
 # Time used for delay using time.sleep (in seconds)
 DELAY_SHORT = 1.5
-DELAY_VERY_LONG = 10
+DELAY_VERY_LONG = 15
 
 # Used for setting ffmpeg_location option in YoutubeDL, if applicable
 ffmpeg_bin_path = None
