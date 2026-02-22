@@ -10,4 +10,7 @@ dist/
 *.mp3
 *.mp4
 
+*.ico
+
 test_text_file.txt
+
