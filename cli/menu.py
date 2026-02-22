@@ -454,7 +454,7 @@ def print_starting_download(caller: str) -> None:
     """Prints appropriate download start message depending on caller"""
     assert caller in ("system_check", "download")
     if caller == "system_check":
-        print(Fore.YELLOW + "\nStarting download. Please be patient. . .")
+        print(Fore.YELLOW + "\nStarting download. Please be patient. This may take a while. . .")
     else:
         print(Fore.YELLOW + "\nStarting download. Please be patient. . .")
         print(Fore.YELLOW + "\nYou can interrupt download with Ctrl + C\n")
