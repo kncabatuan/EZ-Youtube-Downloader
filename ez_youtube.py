@@ -82,7 +82,7 @@ def batch_download() -> None:
     menu.print_checking()
 
     with open(url_list_file, "r") as file:
-        url_list = [line.strip() for line in file]
+        url_list = [line.strip() for line in file if not line.strip() == ""]
 
     download_object_list = []
     detected_titles = []
