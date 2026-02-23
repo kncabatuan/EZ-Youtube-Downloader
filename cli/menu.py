@@ -364,7 +364,7 @@ def print_exception(_exception: str) -> None:
     if _exception == "DownloadError":
         print(
             Fore.RED
-            + "\n\nSomething went wrong when trying to download. Please check your internet connection"
+            + "\n\nSomething went wrong. Make sure you have stable internet connection"
         )
     if _exception == "KeyboardInterrupt":
         print(Fore.RED + "\n\nDownload has been interrupted")
@@ -404,8 +404,7 @@ def print_starting_download(caller: str) -> None:
         )
     else:
         print(
-            Fore.YELLOW
-            + "\nStarting download. Wait until it says success or failure. Please be patient. . ."
+            Fore.YELLOW + "\nStarting download. Wait until it says success or failure."
         )
         print(Fore.YELLOW + "Please be patient. . .")
         print(Fore.YELLOW + "\nYou can interrupt download with Ctrl + C\n")

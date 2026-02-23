@@ -53,9 +53,16 @@ def single_download() -> None:
 
     menu.print_checking()
 
-    if download_object := object_create(url, file_type, download_mode, ffmpeg_bin_path):
-        menu.print_obj_success(download_object.title, download_mode)
-    else:
+    try:
+        if download_object := object_create(
+            url, file_type, download_mode, ffmpeg_bin_path
+        ):
+            menu.print_obj_success(download_object.title, download_mode)
+        else:
+            time.sleep(DELAY_SHORT)
+            return
+    except yt_dlp.utils.DownloadError:
+        menu.print_exception("DownloadError")
         time.sleep(DELAY_SHORT)
         return
 
@@ -108,17 +115,22 @@ def batch_download() -> None:
     download_object_list = []
     detected_titles = []
     for url in url_list:
-        if download_object := (
-            object_create(url, file_type, download_mode, ffmpeg_bin_path)
-        ):
-            download_object_list.append(download_object)
-            if download_object.title not in detected_titles:
-                menu.print_obj_success(download_object.title, download_mode)
-                detected_titles.append(download_object.title)
+        try:
+            if download_object := (
+                object_create(url, file_type, download_mode, ffmpeg_bin_path)
+            ):
+                download_object_list.append(download_object)
+                if download_object.title not in detected_titles:
+                    menu.print_obj_success(download_object.title, download_mode)
+                    detected_titles.append(download_object.title)
+                else:
+                    continue
             else:
                 continue
-        else:
-            continue
+        except yt_dlp.utils.DownloadError:
+            menu.print_exception("DownloadError")
+            time.sleep(DELAY_SHORT)
+            return
 
     counts = Counter(
         [download_object.title for download_object in download_object_list]
@@ -203,12 +215,12 @@ def object_create(
         download_object.set_ffmpeg_location(ffmpeg_location)
         download_object.set_title()
         return download_object
-    except yt_dlp.utils.ExtractorError:
+    except (yt_dlp.utils.ExtractorError, ValueError):
         menu.print_obj_fail(download_mode, url)
         return None
     except yt_dlp.utils.DownloadError:
-        menu.print_exception("DownloadError")   
-        return None
+        raise
+
 
 def set_save_path(download_object: downloader.Download) -> None:
     """
