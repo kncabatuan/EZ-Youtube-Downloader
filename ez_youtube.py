@@ -56,6 +56,7 @@ def single_download() -> None:
     if download_object := object_create(url, file_type, download_mode, ffmpeg_bin_path):
         menu.print_obj_success(download_object.title, download_mode)
     else:
+        time.sleep(DELAY_SHORT)
         return
 
     time.sleep(DELAY_SHORT)
