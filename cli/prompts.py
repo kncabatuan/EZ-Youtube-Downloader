@@ -69,6 +69,8 @@ ex. C:\\\\Users\\\\Name\\\\sample.txt
 MISSING_DEPENDENCY_PROMPT = """
 Oops! ffmpeg is not detected in your system!
 
+This program uses ffmpeg and cannot run without it.
+
 Would you like to download it now? y/n
 
 """
@@ -84,5 +86,7 @@ Note:
   comfortable with paths, it can be a bit confusing to do this on your own.
 
 - Enter "y" the next time you run the program so it can do it for you :)
-        
+
+
+Closing the program . . .
 """

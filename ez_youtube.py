@@ -178,6 +178,16 @@ def object_create(
 
 
 def set_save_path(download_object: downloader.Download) -> None:
+    """
+    Sets the default save path for downloads
+    
+    Args:
+        download_object (Download): The created download object
+    
+    Raises:
+        PermissionError: If user does not have enough permission to access the downloads folder
+        OSError: If other os-related error occurs
+    """
     try:
         download_object.set_path()
     except OSError:

@@ -214,6 +214,13 @@ class Download:
             raise ValueError
 
     def set_path(self) -> None:
+        """
+        Adds filepath attribute to Download object
+        
+        Raises:
+            PermissionError: If user does not have enough permission to access the downloads folder
+            OSError: If other os-related error occurs
+        """
 
         default_save_path = Path.home() / "Downloads"
         if not default_save_path.exists():
