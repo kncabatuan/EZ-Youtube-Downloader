@@ -1,4 +1,5 @@
 from colorama import init
+
 init(autoreset=True)
 
 from cli import menu
@@ -54,10 +55,10 @@ def single_download() -> None:
 
     time.sleep(DELAY_SHORT)
 
-    download_object.set_path(save_path())
-
-    menu.print_checking()
-    time.sleep(DELAY_SHORT)
+    try:
+        set_save_path(download_object)
+    except Exception:
+        return
 
     assert download_object.title is not None
     decision = menu.get_final_decision(
@@ -87,7 +88,9 @@ def batch_download() -> None:
     download_object_list = []
     detected_titles = []
     for url in url_list:
-        if download_object := (object_create(url, file_type, download_mode, ffmpeg_bin_path)):
+        if download_object := (
+            object_create(url, file_type, download_mode, ffmpeg_bin_path)
+        ):
             download_object_list.append(download_object)
             if download_object.title not in detected_titles:
                 menu.print_obj_success(download_object.title, download_mode)
@@ -105,15 +108,17 @@ def batch_download() -> None:
 
     time.sleep(DELAY_SHORT)
 
-    filepath = save_path()
     for download_object in download_object_list:
-        download_object.set_path(filepath)
-
-    menu.print_checking()
-    time.sleep(DELAY_SHORT)
+        try:
+            set_save_path(download_object)
+        except Exception:
+            return
 
     decision = menu.get_final_decision(
-        mode=download_mode, title="Multiple", file_type=file_type, filepath=filepath
+        mode=download_mode,
+        title="Multiple",
+        file_type=file_type,
+        filepath=download_object_list[0].filepath,
     )
 
     download_video(decision, download_mode, download_object_list)
@@ -156,7 +161,7 @@ def object_create(
         url (str): The input URL
         file_type (str): The input file_type ("video" or "audio")
         download_mode (str): Either single or batch (from the calling function)
-        ffmpeg_location (Path | None): Path of the ffmpeg bin folder if ffmpeg is not in PATH, None otherwise 
+        ffmpeg_location (Path | None): Path of the ffmpeg bin folder if ffmpeg is not in PATH, None otherwise
 
     Returns:
         downloader.Download: The Download instance that was created
@@ -172,19 +177,15 @@ def object_create(
         return None
 
 
-def save_path() -> Path:
-    """
-    Calls on cli to get the filepath to save the file, if any
-
-    Returns:
-        Path: The filepath
-    """
-    filepath = menu.get_filepath()
-    if filepath == "exit":
-        menu.exit_program()
-    else:
-        assert isinstance(filepath, Path)
-        return filepath
+def set_save_path(download_object: downloader.Download) -> None:
+    try:
+        download_object.set_path()
+    except OSError:
+        menu.print_exception("OSError")
+        raise
+    except PermissionError:
+        menu.print_exception("PermissionError")
+        raise
 
 
 def download_video(
@@ -237,7 +238,7 @@ def download_video(
 def verify_ffmpeg() -> None:
     """
     Handles the verification of ffmpeg existence in user system
-    
+
     Asks user whether user wants to download ffmpeg, prints message
     accordingly
     """

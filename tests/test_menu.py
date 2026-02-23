@@ -63,29 +63,6 @@ def test_type_validation():
     assert menu.validate_type("2") == "audio"
 
 
-# Validates user's input for filepath on where to save the downloaded files
-def test_filepath_validation(tmp_path):
-    invalid_filepaths = ("test", "123", "---", "1:/test", "-:/test")
-
-    for filepath in invalid_filepaths:
-        with pytest.raises(ValueError):
-            menu.validate_filepath(filepath)
-
-    assert menu.validate_filepath("") == Path(__file__).parent.parent
-    assert menu.validate_filepath("no") == Path(__file__).parent.parent
-
-    temp_dir = tmp_path / "my_temp_dir"
-    temp_dir.mkdir()
-
-    assert menu.validate_filepath(str(temp_dir)) == temp_dir
-
-    temp_file = tmp_path / "temp_file.txt"
-    temp_file.touch()
-
-    with pytest.raises(NotADirectoryError):
-        menu.validate_filepath(str(temp_file))
-
-
 # Validates the user input for yes or no decisions
 def test_decision_validation():
     invalid_decisions = ("", "      ", "test", "123", "---", "-a1")

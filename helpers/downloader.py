@@ -5,9 +5,8 @@ import shutil
 import sys
 import yt_dlp
 
-
 # The root program directory
-if getattr(sys, "frozen", False):   
+if getattr(sys, "frozen", False):
     PROGRAM_DIR = Path(sys.executable).parent
 else:
     PROGRAM_DIR = Path(__file__).parent.parent
@@ -44,6 +43,9 @@ def my_hook(d: dict[str, Any]) -> None:
 
     if d["status"] == "error":
         pass
+    elif d["status"] == "finished":
+        LAST_PERCENT = -1
+        print("")
     elif d["status"] == "downloading":
         raw_filename = d.get("filename")
 
@@ -55,11 +57,11 @@ def my_hook(d: dict[str, Any]) -> None:
                 message_prefix = "Downloading Video for"
             else:
                 message_prefix = "Downloading Audio for"
-            
+
             filename = filename.strip(f".f{match.group(1)}")
         else:
-            message_prefix = "Downloading" 
-        
+            message_prefix = "Downloading"
+
         total = d.get("total_bytes") or d.get("total_bytes_estimate")
         downloaded = d.get("downloaded_bytes", 0)
 
@@ -72,14 +74,11 @@ def my_hook(d: dict[str, Any]) -> None:
                 base_text = f"{message_prefix} {filename}: {percent:.2f}%"
                 if len(base_text) >= terminal_width:
                     fixed_text = f"{message_prefix} : {percent:.2f}%"
-                    allowed = terminal_width - len(fixed_text) - 3
+                    allowed = terminal_width - len(fixed_text) - 6
                     new_filename = f"{filename[:max(0,allowed)]}..."
                     rewrite_line(f"{message_prefix} {new_filename}: {percent:.2f}%")
                 else:
                     rewrite_line(base_text)
-
-                if percent == 100:
-                    print("")
 
 
 def rewrite_line(text: str) -> None:
@@ -89,8 +88,7 @@ def rewrite_line(text: str) -> None:
     Args:
         text (str): The message to print with the appropriate download progress and file name
     """
-    sys.stdout.write("\r\033[K" + text)
-    sys.stdout.flush
+    print("\r\033[K" + text, end="", flush=True)
 
 
 class Download:
@@ -215,19 +213,29 @@ class Download:
         except (yt_dlp.utils.ExtractorError, yt_dlp.utils.DownloadError):
             raise ValueError
 
-    def set_path(self, filepath: Path) -> None:
-        """
-        Adds filepath attribute to the created Download object
+    def set_path(self) -> None:
 
-        Args:
-            filepath (Path): The file path where the user wants to save their downloads
-        """
-        self.filepath = filepath
+        default_save_path = Path.home() / "Downloads"
+        if not default_save_path.exists():
+            try:
+                default_save_path.mkdir(exist_ok=True)
+            except (PermissionError, OSError):
+                raise
+
+        test_file = default_save_path / "test_file.txt"
+        try:
+            test_file.touch()
+            self.filepath = default_save_path
+        except PermissionError:
+            raise
+        finally:
+            if test_file.exists():
+                test_file.unlink()
 
     def set_ffmpeg_location(self, ffmpeg_location: Path | None) -> None:
         """
         Adds ffmpeg_location attribute to created Download object
-        
+
         Args:
             ffmpeg_location (Path | None): Path of the ffmpeg bin folder if ffmpeg is not in PATH, None otherwise
         """
@@ -253,48 +261,6 @@ class Download:
             KeyboardInterrupt,
         ):
             raise
-
-
-class Save_Directory:
-    """Handles validation of entered filepath if any"""
-
-    def __init__(self, filepath: str) -> None:
-        self.filepath = filepath
-
-    @property
-    def filepath(self) -> Path:
-        return self._filepath
-
-    @filepath.setter
-    def filepath(self, filepath: str) -> None:
-        """
-        Filepath validation
-
-        Args:
-            filepath(str): The user input for URL
-
-        Raises:
-            ValueError: If input does not match regex pattern as initial check
-            NotADirectoryError: If input is not a directory
-            PermissionError: If the user does not have enough permission to access directory
-            OSError: If other OS-related error occurs
-        """
-        if filepath in ("", "no"):
-            self._filepath = PROGRAM_DIR
-        elif not re.search(r"^[a-zA-Z]:[\\/].*$", filepath):
-            raise ValueError
-        elif not Path(filepath).is_dir():
-            raise NotADirectoryError
-        else:
-            test_file = Path(filepath) / "test_file.txt"
-            try:
-                test_file.touch()
-                self._filepath = Path(filepath)
-            except PermissionError:
-                raise
-            finally:
-                if test_file.exists():
-                    test_file.unlink()
 
 
 class URL_List_File:

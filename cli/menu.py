@@ -144,69 +144,6 @@ def validate_type(file_type: str) -> str:
     raise ValueError
 
 
-def get_filepath() -> str | Path:
-    """
-    Prompts user for file path to save the downloaded file, if any
-
-    Loops until a valid path or "exit" is obtained
-
-    Returns:
-        Path: The validated file path (object)
-        str: "exit" if the user wants to close the program
-    """
-    while True:
-        print(Fore.WHITE + ("\n\n" + ("-" * COLUMNS)))
-        print(Fore.YELLOW + prompts.PATH_PROMPT_1)
-        try:
-            return validate_filepath(input(Fore.WHITE + prompts.PATH_PROMPT_2).strip())
-        except ValueError:
-            print(
-                Fore.RED + "\nInvalid filepath. Please follow correct format",
-                Fore.RED + "\nC:\\... or C:/...",
-            )
-            time.sleep(DELAY_SHORT)
-        except NotADirectoryError:
-            print(
-                Fore.RED
-                + "\nFilepath provided is not a directory. Please enter a valid one",
-            )
-            time.sleep(DELAY_SHORT)
-        except PermissionError:
-            print(
-                Fore.RED + "\nYou don't have enough permission to access this folder.",
-            )
-            time.sleep(DELAY_SHORT)
-        except OSError:
-            print(
-                Fore.RED + "\nSomething went wrong when accessing the folder",
-            )
-            time.sleep(DELAY_SHORT)
-
-
-def validate_filepath(filepath: str) -> str | Path:
-    """
-    Validates user input for file path
-
-    Args:
-        filepath (str): The user input for file path
-
-    Returns:
-        Path: The validated file path (object)
-        str: "exit" if the user wants to close the program
-
-    Raises:
-        ValueError: If the user input is invalid
-        NotADirectoryError: If the path is not a directory
-        PermissionError: If the user does not have permission to access the directory
-        OSError: If other OS-related error occurred
-    """
-    if filepath == "exit":
-        return filepath
-
-    valid_path = downloader.Save_Directory(filepath)
-    return valid_path.filepath
-
-
 def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) -> str:
     """
     Prompts user for decision to proceed/cancel download
@@ -400,7 +337,7 @@ def print_dl_success(caller: str) -> None:
     if caller == "system_check":
         print(Fore.GREEN + "\n\nDownload success!")
     else:
-        print(Fore.GREEN + "\n\nDownload success! Returning to Main Menu . . .")
+        print(Fore.GREEN + "\n\nDownload success! It's in your DOWNLOADS folder. :)")
 
 
 def print_dl_fail() -> None:
@@ -422,10 +359,7 @@ def print_exception(_exception: str) -> None:
     if _exception == "KeyboardInterrupt":
         print(Fore.RED + "\n\nDownload has been interrupted")
     if _exception == "PermissionError":
-        print(
-            Fore.RED
-            + "\n\nFailed to download ffmpeg. You may not have permission to access the program directory."
-        )
+        print(Fore.RED + "\n\nYou may not have permission to access this folder.")
     if _exception == "RequestException":
         print(
             Fore.RED
@@ -454,7 +388,10 @@ def print_starting_download(caller: str) -> None:
     """Prints appropriate download start message depending on caller"""
     assert caller in ("system_check", "download")
     if caller == "system_check":
-        print(Fore.YELLOW + "\nStarting download. Please be patient. This may take a while. . .")
+        print(
+            Fore.YELLOW
+            + "\nStarting download. Please be patient. This may take a while. . ."
+        )
     else:
         print(Fore.YELLOW + "\nStarting download. Please be patient. . .")
         print(Fore.YELLOW + "\nYou can interrupt download with Ctrl + C\n")
