@@ -211,35 +211,36 @@ def validate_decision(decision: str) -> str:
 
 def get_url_list_file() -> Path | str:
     """
-    Gets the txt file that contains URL for batch downloading.
+    Shows instruction on how to use batch file
 
-    Loops until a valid file or "exit" is obtained.
+    Gets user input once they followed the said instructions
 
     Returns:
-        Path: The validated filepath of the txt file
-        str: "exit" of the user wants to close the program
+        Path: The validated path of the text file on the desktop
+        str: "exit" if the user wants to exit the program
     """
     while True:
         print(Fore.WHITE + ("\n\n" + ("-" * COLUMNS)))
         print(Fore.YELLOW + prompts.GET_URL_LIST_PROMPT_1)
         try:
-            return validate_url_list_file(
+            return validate_url_list_file_input(
                 input(Fore.WHITE + prompts.GET_URL_LIST_PROMPT_2).strip()
             )
         except ValueError:
             print(
-                Fore.RED + "\nInvalid file. Please enter a valid file or filepath",
+                Fore.RED + '\nInvalid input. Please enter "proceed" or "exit".',
             )
             time.sleep(DELAY_SHORT)
         except FileNotFoundError:
             print(
-                Fore.RED + "\nFile was not found. Please enter a valid file or filepath"
+                Fore.RED
+                + '\nFile was not found. Make sure that it is in DESKTOP and named "ez"'
             )
             time.sleep(DELAY_SHORT)
         except IsADirectoryError:
             print(
                 Fore.RED
-                + "\nFile or filepath provided is a directory. Please enter a valid file or filepath",
+                + "\nFile provided is a directory. Please make sure it is a .txt file"
             )
             time.sleep(DELAY_SHORT)
         except PermissionError:
@@ -254,30 +255,31 @@ def get_url_list_file() -> Path | str:
             time.sleep(DELAY_SHORT)
 
 
-def validate_url_list_file(url_list_file: str) -> Path | str:
+def validate_url_list_file_input(url_list_file_input: str) -> Path | str:
     """
-    Validates the user input for the url list txt file
+    Validates the user's input in getting url list file
 
     Args:
-        url_list_file (str): The user input for url list txt file
+        url_list_file_input (str): Either "proceed" or "exit"
 
     Returns:
-        Path: The validated file path of the txt file
-        str: "exit" if the user wants to close the program
+        Path: The validated path of the text file
+        str: "exit" if the user wants to exit the program
 
     Raises:
-        ValueError: If the file name or path is invalid
-        FileNotFoundError: If the file cannot be found
-        IsADirectoryError: If the path points to a directory
-        PermissionError: If the user does not have permission to access that file
-        OSError: If other OS-related error occurred
+        ValueError: If the input is not "proceed" or "exit"
+        FileNotFoundError: If the text file is not found in Desktop
+        IsADirectoryError: if the file detected is a directory
+        PermissionError: If the user does not have enough permission to access the file
+        OSError: If other os-related error occurs
     """
-    if url_list_file == "exit":
-        return url_list_file
-    elif url_list_file == "":
+
+    if url_list_file_input not in ("proceed", "exit"):
         raise ValueError
+    elif url_list_file_input == "exit":
+        return url_list_file_input
     else:
-        path = Path(url_list_file).expanduser().resolve()
+        path = Path.home() / "Desktop" / "ez.txt"
         return downloader.URL_List_File(path).filepath
 
 

@@ -50,18 +50,28 @@ Path: {filepath}
 
 # Prompt for getting txt file for batch download
 GET_URL_LIST_PROMPT_1 = """
-Please enter the name of the text file (with .txt) that contains all URL for download
-(This must be in the directory where you ran the program)
+To use the Batch Download feature, do the following steps:
 """
 
 # Prompt for getting txt file for batch download
 GET_URL_LIST_PROMPT_2 = """
-Important Notes:
-1. Text file must have ONLY one URL per line
-2. You can also enter the full filepath if the text file is not in current directory
+-----Step 1-----
 
-ex. C:\\\\Users\\\\Name\\\\sample.txt
-    C:/Users/Name/sample.txt
+Open Notepad or any text file editor
+
+-----Step 2----- (IMPORTANT!)
+
+Copy-paste the URLs of the videos into the text file.
+Ensure that there is only ONE URL per line
+
+-----Step 3----- (IMPORTANT!)
+
+Save the text file on your DESKTOP with file name "ez"
+
+-----Step 4-----
+
+Enter "proceed" once you are ready!
+
 
 """
 

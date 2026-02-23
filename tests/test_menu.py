@@ -1,5 +1,5 @@
 from cli import menu
-from pathlib import Path
+from unittest.mock import patch
 import pytest
 
 
@@ -77,27 +77,24 @@ def test_decision_validation():
         assert menu.validate_decision(decision) == decision
 
 
-# Validates user input for filepath of their txt file for batch downloading
+# Validates user input for getting url list file depending on users action based on given steps
 def test_url_list_file_validation(tmp_path):
-    assert menu.validate_url_list_file("exit") == "exit"
+    assert menu.validate_url_list_file_input("exit") == "exit"
 
-    invalid_filenames = [
-        "",
-        "filename",
-        "filename.csv",
-        ".filename.txt",
-        ".filename..txt",
-    ]
+    fake_home = tmp_path
+    fake_desktop = tmp_path / "Desktop"
+    fake_desktop.mkdir()
 
-    for filename in invalid_filenames:
-        with pytest.raises(ValueError):
-            menu.validate_url_list_file(filename)
+    with patch("pathlib.Path.home", return_value=fake_home):
+        with pytest.raises(FileNotFoundError):
+            menu.validate_url_list_file_input("proceed")
 
-    with pytest.raises(FileNotFoundError):
-        menu.validate_url_list_file("missing_file.txt")
+        fake_file = fake_desktop / "ez.txt"
+        fake_file.mkdir()
 
-    temp_dir = tmp_path / "my_temp_dir.txt"
-    temp_dir.mkdir()
+        with pytest.raises(IsADirectoryError):
+            menu.validate_url_list_file_input("proceed")
+        fake_file.rmdir()
 
-    with pytest.raises(IsADirectoryError):
-        menu.validate_url_list_file(str(temp_dir))
+        fake_file.touch()
+        assert menu.validate_url_list_file_input("proceed") == fake_file

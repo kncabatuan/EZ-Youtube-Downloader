@@ -216,7 +216,7 @@ class Download:
     def set_path(self) -> None:
         """
         Adds filepath attribute to Download object
-        
+
         Raises:
             PermissionError: If user does not have enough permission to access the downloads folder
             OSError: If other os-related error occurs
@@ -271,7 +271,7 @@ class Download:
 
 
 class URL_List_File:
-    """Handles validation of entered txt file for batch download, if any"""
+    """Sets filepath attribute for URL_List_File"""
 
     def __init__(self, filepath: Path) -> None:
         self.filepath = filepath
@@ -286,23 +286,15 @@ class URL_List_File:
         Txt file path validation.
 
         Args:
-            filepath (Path): The input path for the txt file
+            filepath (Path): The path for the txt file
 
         Raises:
-            ValueError: If the file name or extension is invalid
             FileNotFoundError: If the file cannot be found
             IsADirectoryError: If the path points to a directory
             PermissionError: If the user does not have permission to access that file
             OSError: If other OS-related error occurred
         """
-        pattern = r'[<>:"|?*]'
-        if re.search(pattern, filepath.stem):
-            raise ValueError
-        elif filepath.stem.startswith(".") or filepath.stem.endswith("."):
-            raise ValueError
-        elif filepath.suffix.lower() == "" or filepath.suffix.lower() != ".txt":
-            raise ValueError
-        elif not filepath.exists():
+        if not filepath.exists():
             raise FileNotFoundError
         elif filepath.is_dir():
             raise IsADirectoryError
