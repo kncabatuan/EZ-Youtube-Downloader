@@ -48,6 +48,7 @@ def test_url_validation():
         assert menu.validate_url(url) == url
 
     assert menu.validate_url("exit") == "exit"
+    assert menu.validate_url("cancel") == "cancel"
 
 
 # Validates user input in type of file
@@ -59,6 +60,7 @@ def test_type_validation():
             menu.validate_type(_type)
 
     assert menu.validate_type("exit") == "exit"
+    assert menu.validate_url("cancel") == "cancel"
     assert menu.validate_type("1") == "video"
     assert menu.validate_type("2") == "audio"
 
@@ -71,7 +73,7 @@ def test_decision_validation():
         with pytest.raises(ValueError):
             menu.validate_decision(decision)
 
-    valid_decisions = ("y", "n", "exit")
+    valid_decisions = ("y", "n", "exit", "cancel")
 
     for decision in valid_decisions:
         assert menu.validate_decision(decision) == decision
@@ -80,6 +82,7 @@ def test_decision_validation():
 # Validates user input for getting url list file depending on users action based on given steps
 def test_url_list_file_validation(tmp_path):
     assert menu.validate_url_list_file_input("exit") == "exit"
+    assert menu.validate_url_list_file_input("cancel") == "cancel"
 
     fake_home = tmp_path
     fake_desktop = tmp_path / "Desktop"

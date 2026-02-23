@@ -59,7 +59,7 @@ def get_url() -> str:
     """
     Gets user input for URL and calls validator function.
 
-    Loops until a valid (UI-level) url or "exit" is obtained.
+    Loops until a valid (UI-level) url or "exit"/"cancel" is obtained.
 
     Returns:
         str: The validated URL
@@ -70,7 +70,10 @@ def get_url() -> str:
         try:
             return validate_url(input(Fore.WHITE + "")).strip()
         except ValueError:
-            print(Fore.RED + "\nInvalid URL. Please copy-paste Youtube URL")
+            print(
+                Fore.RED
+                + '\nInvalid URL. Please copy-paste Youtube URL, enter "cancel", or "exit"'
+            )
             time.sleep(DELAY_SHORT)
 
 
@@ -82,13 +85,13 @@ def validate_url(url: str) -> str:
         url (str): The user's URL input
 
     Returns:
-        str: The validated URL or "exit"
+        str: The validated URL, "exit", or "cancel"
 
     Raises:
         ValueError: If input is empty, regex is not recognized in input, or input is not exit
     """
     pattern = r"^(?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/"
-    if url.lower() != "exit" and not re.search(pattern, url):
+    if url.lower() not in ("exit", "cancel") and not re.search(pattern, url):
         raise ValueError
 
     if url == "":
@@ -101,10 +104,10 @@ def get_type() -> str:
     """
     Gets user input for File Type and calls validator function.
 
-    Loops until a valid type or "exit" is obtained.
+    Loops until a valid type or "exit"/"cancel" is obtained.
 
     Returns:
-        str: The file type ("video"/"audio") or "exit"
+        str: The file type ("video"/"audio"), "exit", or "cancel"
     """
     while True:
         print(Fore.WHITE + ("\n" + ("-" * COLUMNS)))
@@ -114,7 +117,7 @@ def get_type() -> str:
                 input(Fore.WHITE + prompts.TYPE_PROMPT_2).strip().lower()
             )
         except ValueError:
-            print(Fore.RED + "\nInvalid input. Please enter 1, 2, or exit")
+            print(Fore.RED + '\nInvalid input. Please enter 1, 2, "cancel", or "exit"')
             time.sleep(DELAY_SHORT)
 
 
@@ -126,15 +129,15 @@ def validate_type(file_type: str) -> str:
         file_type (str): The user's file_type input
 
     Returns:
-        str: The validated file_type ("video" or "audio") or "exit"
+        str: The validated file_type ("video" or "audio"), "cancel, or "exit"
 
     Raises:
-        ValueError: If input is not "1", "2", or "exit"
+        ValueError: If input is not "1", "2", "cancel", or "exit"
     """
-    if file_type != "exit" and int(file_type) not in range(1, 3):
+    if file_type not in ("exit", "cancel") and int(file_type) not in range(1, 3):
         raise ValueError
 
-    if file_type == "exit":
+    if file_type in ("exit", "cancel"):
         return file_type
     if int(file_type) == 1:
         return "video"
@@ -157,7 +160,7 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
         filepath (Path): The valid directory to save the downloaded file/s
 
     Returns:
-        str: "y", "n", or "exit"
+        str: "y", "n", "cancel", or "exit"
     """
     while True:
         print(Fore.WHITE + ("\n" + ("-" * COLUMNS)))
@@ -187,7 +190,9 @@ def get_final_decision(mode: str, title: str, file_type: str, filepath: Path) ->
             print("")
             return validate_decision(final_decision)
         except ValueError:
-            print(Fore.RED + '\nInvalid input. Please input "y", "n", or "exit"')
+            print(
+                Fore.RED + '\nInvalid input. Please input "y", "n", "cancel", or "exit"'
+            )
             time.sleep(DELAY_SHORT)
 
 
@@ -199,12 +204,12 @@ def validate_decision(decision: str) -> str:
         decision (str): The user's input
 
     Returns:
-        str: The validated input. Either "y", "n", or "exit"
+        str: The validated input. Either "y", "n", "cancel", or "exit"
 
     Raises:
-        ValueError: If input is not "y", "n" or "exit"
+        ValueError: If input is not "y", "n", "cancel", or "exit"
     """
-    if not re.search(r"^([yn]|exit)$", decision):
+    if not re.search(r"^([yn]|exit|cancel)$", decision):
         raise ValueError
     return decision
 
@@ -217,18 +222,19 @@ def get_url_list_file() -> Path | str:
 
     Returns:
         Path: The validated path of the text file on the desktop
-        str: "exit" if the user wants to exit the program
+        str: "exit" or "cancel"
     """
     while True:
-        print(Fore.WHITE + ("\n\n" + ("-" * COLUMNS)))
+        print(Fore.WHITE + ("\n" + ("-" * COLUMNS)))
         print(Fore.YELLOW + prompts.GET_URL_LIST_PROMPT_1)
         try:
             return validate_url_list_file_input(
-                input(Fore.WHITE + prompts.GET_URL_LIST_PROMPT_2).strip()
+                input(Fore.WHITE + prompts.GET_URL_LIST_PROMPT_2).strip().lower()
             )
         except ValueError:
             print(
-                Fore.RED + '\nInvalid input. Please enter "proceed" or "exit".',
+                Fore.RED
+                + '\nInvalid input. Please enter "proceed", "cancel", or "exit".',
             )
             time.sleep(DELAY_SHORT)
         except FileNotFoundError:
@@ -260,11 +266,11 @@ def validate_url_list_file_input(url_list_file_input: str) -> Path | str:
     Validates the user's input in getting url list file
 
     Args:
-        url_list_file_input (str): Either "proceed" or "exit"
+        url_list_file_input (str): The user input
 
     Returns:
         Path: The validated path of the text file
-        str: "exit" if the user wants to exit the program
+        str: Either "proceed", "cancel", or "exit"
 
     Raises:
         ValueError: If the input is not "proceed" or "exit"
@@ -274,9 +280,9 @@ def validate_url_list_file_input(url_list_file_input: str) -> Path | str:
         OSError: If other os-related error occurs
     """
 
-    if url_list_file_input not in ("proceed", "exit"):
+    if url_list_file_input not in ("proceed", "cancel", "exit"):
         raise ValueError
-    elif url_list_file_input == "exit":
+    elif url_list_file_input in ("exit", "cancel"):
         return url_list_file_input
     else:
         path = Path.home() / "Desktop" / "ez.txt"
@@ -290,7 +296,7 @@ def get_dependency_decision() -> str:
     Loops until a valid decision is entered
 
     Returns:
-        str: The validated decison. Either "y", "n", or "exit"
+        str: The validated decison. Either "y", "n", "cancel", or "exit"
     """
     while True:
         try:
@@ -298,7 +304,9 @@ def get_dependency_decision() -> str:
                 input(Fore.BLUE + prompts.MISSING_DEPENDENCY_PROMPT).strip()
             )
         except ValueError:
-            print(Fore.RED + '\nInvalid input. Please input "y", "n", or "exit"')
+            print(
+                Fore.RED + '\nInvalid input. Please input "y", "n", "cancel" or "exit"'
+            )
             time.sleep(DELAY_SHORT)
 
 
@@ -395,13 +403,29 @@ def print_starting_download(caller: str) -> None:
             + "\nStarting download. Please be patient. This may take a while. . ."
         )
     else:
-        print(Fore.YELLOW + "\nStarting download. Please be patient. . .")
+        print(
+            Fore.YELLOW
+            + "\nStarting download. Wait until it says success or failure. Please be patient. . ."
+        )
+        print(Fore.YELLOW + "Please be patient. . .")
         print(Fore.YELLOW + "\nYou can interrupt download with Ctrl + C\n")
 
 
 def print_dependency_message() -> None:
     """Prints message if user does not want to download ffmpeg"""
     print(Fore.YELLOW + prompts.DEPENDENCY_MESSAGE)
+
+
+def print_cancel(mode: str) -> None:
+    """
+    Prints message if the user enters cancel
+
+    Args:
+        mode (str): Either "single" or "batch"
+    """
+    print(
+        Fore.RED + f"\n{mode.title()} Download canceled. Returning to Main Menu . . ."
+    )
 
 
 def exit_program() -> NoReturn:

@@ -46,6 +46,11 @@ def single_download() -> None:
     download_mode = "single"
     url, file_type = get_user_inputs(download_mode)
 
+    if url == None and file_type == None:
+        menu.print_cancel(download_mode)
+        time.sleep(DELAY_SHORT)
+        return
+
     menu.print_checking()
 
     if download_object := object_create(url, file_type, download_mode, ffmpeg_bin_path):
@@ -65,7 +70,12 @@ def single_download() -> None:
         download_mode, download_object.title, file_type, download_object.filepath
     )
 
-    download_video(decision, download_mode, download_object)
+    if decision == "cancel":
+        menu.print_cancel(download_mode)
+        time.sleep(DELAY_SHORT)
+        return
+    else:
+        download_video(decision, download_mode, download_object)
 
     time.sleep(DELAY_SHORT)
     return
@@ -76,9 +86,18 @@ def batch_download() -> None:
     download_mode = "batch"
     file_type = get_user_inputs(download_mode)[1]
 
+    if file_type == None:
+        menu.print_cancel(download_mode)
+        time.sleep(DELAY_SHORT)
+        return
+
     url_list_file = menu.get_url_list_file()
     if url_list_file == "exit":
         menu.exit_program()
+    elif url_list_file == "cancel":
+        menu.print_cancel(download_mode)
+        time.sleep(DELAY_SHORT)
+        return
 
     menu.print_checking()
 
@@ -121,7 +140,12 @@ def batch_download() -> None:
         filepath=download_object_list[0].filepath,
     )
 
-    download_video(decision, download_mode, download_object_list)
+    if decision == "cancel":
+        menu.print_cancel(download_mode)
+        time.sleep(DELAY_SHORT)
+        return
+    else:
+        download_video(decision, download_mode, download_object_list)
 
     time.sleep(DELAY_SHORT)
     return
@@ -141,11 +165,17 @@ def get_user_inputs(download_mode: str) -> tuple:
     file_type = menu.get_type()
     if file_type == "exit":
         menu.exit_program()
+    if file_type == "cancel":
+        return None, None
 
     if download_mode == "single":
         url = menu.get_url()
+
         if url == "exit":
             menu.exit_program()
+        elif url == "cancel":
+            return None, None
+
         return url, file_type
     else:
         return None, file_type
@@ -180,10 +210,10 @@ def object_create(
 def set_save_path(download_object: downloader.Download) -> None:
     """
     Sets the default save path for downloads
-    
+
     Args:
         download_object (Download): The created download object
-    
+
     Raises:
         PermissionError: If user does not have enough permission to access the downloads folder
         OSError: If other os-related error occurs
@@ -288,7 +318,7 @@ def verify_ffmpeg() -> None:
                         menu.print_dependency_message()
                         time.sleep(DELAY_VERY_LONG)
                         menu.exit_program()
-                    case "exit":
+                    case "cancel" | "exit":
                         menu.exit_program()
 
 

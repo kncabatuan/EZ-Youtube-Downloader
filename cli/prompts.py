@@ -13,7 +13,10 @@ MAIN_PROMPT_2 = """
 2. Batch Download
 
 
-Note: You can type "exit" anytime to close the program :)
+You can enter these at any prompt moving forward :)
+  "cancel" : Back to Main Menu 
+  "exit"   : Close the program
+
 
 """
 
