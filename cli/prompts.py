@@ -17,6 +17,7 @@ You can enter these at any prompt moving forward :)
   "cancel" : Back to Main Menu 
   "exit"   : Close the program
 
+To force stop the program, use Ctrl + C
 
 """
 
