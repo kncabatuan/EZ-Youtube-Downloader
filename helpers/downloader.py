@@ -210,8 +210,10 @@ class Download:
             if "title" not in info.keys():
                 raise ValueError
             self.title = info["title"]
-        except (yt_dlp.utils.ExtractorError, yt_dlp.utils.DownloadError):
-            raise ValueError
+        except yt_dlp.utils.ExtractorError:
+            raise
+        except yt_dlp.utils.DownloadError:
+            raise
 
     def set_path(self) -> None:
         """

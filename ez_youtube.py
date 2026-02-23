@@ -202,10 +202,12 @@ def object_create(
         download_object.set_ffmpeg_location(ffmpeg_location)
         download_object.set_title()
         return download_object
-    except ValueError:
+    except yt_dlp.utils.ExtractorError:
         menu.print_obj_fail(download_mode, url)
         return None
-
+    except yt_dlp.utils.DownloadError:
+        menu.print_exception("DownloadError")   
+        return None
 
 def set_save_path(download_object: downloader.Download) -> None:
     """
