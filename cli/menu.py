@@ -228,9 +228,18 @@ def get_url_list_file() -> Path | str:
         print(Fore.WHITE + ("\n" + ("-" * COLUMNS)))
         print(Fore.YELLOW + prompts.GET_URL_LIST_PROMPT_1)
         try:
-            return validate_url_list_file_input(
+            valid_file = validate_url_list_file_input(
                 input(Fore.WHITE + prompts.GET_URL_LIST_PROMPT_2).strip().lower()
             )
+            if isinstance(valid_file, Path):
+                with open(valid_file, "r") as file:
+                    url_list = [line.strip() for line in file]
+                    if not url_list:
+                        print_empty_file()
+                        time.sleep(DELAY_SHORT)
+                        continue
+                    else:
+                        return valid_file
         except ValueError:
             print(
                 Fore.RED
