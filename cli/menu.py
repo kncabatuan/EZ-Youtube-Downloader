@@ -427,6 +427,11 @@ def print_cancel(mode: str) -> None:
     )
 
 
+def print_empty_file():
+    """Prints message that url list file is empty"""
+    print(Fore.RED + f"\nThe text file is empty. Make sure you put at least one URL")
+
+
 def exit_program() -> NoReturn:
     """Prints and closes the program"""
     print(Fore.GREEN + "\nThank you for using EZ Youtube Downloader!")
