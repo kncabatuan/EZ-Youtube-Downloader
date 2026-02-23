@@ -130,7 +130,12 @@ def batch_download() -> None:
         except yt_dlp.utils.DownloadError:
             menu.print_exception("DownloadError")
             time.sleep(DELAY_SHORT)
-            return
+            continue
+
+    if download_object_list == []:
+        menu.print_no_downloadable_url_detected()
+        time.sleep(DELAY_SHORT)
+        return
 
     counts = Counter(
         [download_object.title for download_object in download_object_list]

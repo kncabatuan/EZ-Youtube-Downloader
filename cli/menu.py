@@ -445,6 +445,11 @@ def print_empty_file():
     print(Fore.RED + f"\nThe text file is empty. Make sure you put at least one URL")
 
 
+def print_no_downloadable_url_detected():
+    """Prints message that no downloadable object is detected"""
+    print(Fore.RED + f"\nFailed to detect a video that is downloadable")
+
+
 def exit_program() -> NoReturn:
     """Prints and closes the program"""
     print(Fore.GREEN + "\nThank you for using EZ Youtube Downloader!")
