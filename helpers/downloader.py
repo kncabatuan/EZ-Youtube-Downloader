@@ -126,16 +126,10 @@ class Download:
         """
         pattern = r"^((https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/(?:watch\?v=)?[\w-]{11}).*$"
         if match := re.search(pattern, url):
-            if self.mode in ("single", "batch"):
-                if match.group(2) == None:
-                    self._url = "https://" + match.group(1)
-                else:
-                    self._url = match.group(1)
-            if self.mode == "playlist":
-                if match.group(2) == None:
-                    self._url = "https://" + match.group(0)
-                else:
-                    self._url = match.group(0)
+            if match.group(2) == None:
+                self._url = "https://" + match.group(1)
+            else:
+                self._url = match.group(1)
         else:
             raise ValueError
 

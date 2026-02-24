@@ -25,19 +25,13 @@ def test_download_init():
 def test_url_extraction():
     valid_url = "https://www.youtube.com/watch?v=testtesttes&list=test&index=test"
     valid_type = "video"
-    modes = ("single", "batch", "playlist")
+    modes = ("single", "batch")
 
     test_obj = downloader.Download(valid_url, valid_type, modes[0])
     assert test_obj.url == "https://www.youtube.com/watch?v=testtesttes"
 
     test_obj = downloader.Download(valid_url, valid_type, modes[1])
     assert test_obj.url == "https://www.youtube.com/watch?v=testtesttes"
-
-    test_obj = downloader.Download(valid_url, valid_type, modes[2])
-    assert (
-        test_obj.url
-        == "https://www.youtube.com/watch?v=testtesttes&list=test&index=test"
-    )
 
 
 # Tests the building of the options dictionary to pass into YoutubeDL
