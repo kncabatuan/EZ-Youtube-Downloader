@@ -13,6 +13,7 @@ import zipfile
 
 # Time used for delay using time.sleep (in seconds)
 DELAY_SHORT = 1.5
+DELAY_LONG = 2
 DELAY_VERY_LONG = 15
 
 # Used for setting ffmpeg_location option in YoutubeDL, if applicable
@@ -85,7 +86,7 @@ def single_download() -> None:
     else:
         download_video(decision, download_mode, download_object)
 
-    time.sleep(DELAY_SHORT)
+    time.sleep(DELAY_LONG)
     return
 
 
@@ -165,7 +166,7 @@ def batch_download() -> None:
     else:
         download_video(decision, download_mode, download_object_list)
 
-    time.sleep(DELAY_SHORT)
+    time.sleep(DELAY_LONG)
     return
 
 

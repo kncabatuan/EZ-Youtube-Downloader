@@ -66,7 +66,7 @@ Open Notepad or any text file editor
 -----Step 2----- (IMPORTANT!)
 
 Copy-paste the URLs of the videos into the text file.
-Ensure that there is only ONE URL per line
+ONLY ONE URL per line is allowed, otherwise, only the first detected will be downloaded
 
 -----Step 3----- (IMPORTANT!)
 
