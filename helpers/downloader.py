@@ -164,7 +164,7 @@ class Download:
             elif self.file_type == "audio":
                 opts["noplaylist"] = True
                 opts["format"] = "bestaudio[abr>128]/bestaudio/best"
-                opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
+                opts["outtmpl"] = str(self.filepath / "%(title)s [audio].%(ext)s")
                 opts["postprocessors"] = [
                     {
                         "key": "FFmpegExtractAudio",

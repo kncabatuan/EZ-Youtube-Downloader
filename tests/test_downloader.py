@@ -70,7 +70,7 @@ def test_opts_builder():
     assert isinstance(opts2["logger"], downloader.MyLogger)
     assert opts2["noplaylist"] == True
     assert opts2["format"] == "bestaudio[abr>128]/bestaudio/best"
-    assert opts2["outtmpl"] == str(test_obj2.filepath / "%(title)s.%(ext)s")
+    assert opts2["outtmpl"] == str(test_obj2.filepath / "%(title)s [audio].%(ext)s")
     assert opts2["postprocessors"] == [
         {
             "key": "FFmpegExtractAudio",
