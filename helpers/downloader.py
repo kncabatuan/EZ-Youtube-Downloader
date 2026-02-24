@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Any
+import copy
 import re
 import shutil
 import sys
@@ -138,37 +139,45 @@ class Download:
         else:
             raise ValueError
 
-    def opts_builder(self) -> dict:
+    def opts_builder(
+        self, use_extractor_args: bool = False, for_title_only: bool = True
+    ) -> dict:
         """
         Builds options for downloading using YoutubeDL
 
         Returns:
             dict: The updated options (started from base opts) depending on download mode and type
         """
-        opts = Download.BASE_OPTS.copy()
+        opts = copy.deepcopy(Download.BASE_OPTS)
 
         if self.ffmpeg_location is None:
             pass
         else:
             opts["ffmpeg_location"] = str(self.ffmpeg_location)
 
-        if self.file_type == "video":
-            opts["noplaylist"] = True
-            opts["format"] = "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
-            opts["merge_output_format"] = "mp4"
-            opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
+        if use_extractor_args:
+            opts["extractor_args"] = {
+                "youtube": {"player_client": ["android", "mweb", "tv", "ios"]}
+            }
 
-        elif self.file_type == "audio":
-            opts["noplaylist"] = True
-            opts["format"] = "bestaudio/best"
-            opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
-            opts["postprocessors"] = [
-                {
-                    "key": "FFmpegExtractAudio",
-                    "preferredcodec": "mp3",
-                    "preferredquality": "192",
-                }
-            ]
+        if not for_title_only:
+            if self.file_type == "video":
+                opts["noplaylist"] = True
+                opts["format"] = "bestvideo[height<=1080]+bestaudio/best[height<=1080]"
+                opts["merge_output_format"] = "mp4"
+                opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
+
+            elif self.file_type == "audio":
+                opts["noplaylist"] = True
+                opts["format"] = "bestaudio[abr>128]/bestaudio/best"
+                opts["outtmpl"] = str(self.filepath / "%(title)s.%(ext)s")
+                opts["postprocessors"] = [
+                    {
+                        "key": "FFmpegExtractAudio",
+                        "preferredcodec": "mp3",
+                        "preferredquality": "192",
+                    }
+                ]
 
         return opts
 
@@ -185,15 +194,22 @@ class Download:
         Raises:
             ValueError: If caller not in set tuple (not applicable)
         """
-        if not caller in ("set_title", "download_vid"):
+        if not caller in (
+            "set_title",
+            "set_title_failed_once",
+            "download_vid",
+            "download_vid_failed_once",
+        ):
             raise ValueError
 
-        if caller in ("set_title"):
-            with yt_dlp.YoutubeDL(Download.BASE_OPTS) as ydl:  # type: ignore[arg-type]
-                return ydl
+        if caller == "set_title":
+            return yt_dlp.YoutubeDL(Download.BASE_OPTS)  # type: ignore[arg-type]
+        elif caller == "set_title_failed_once":
+            return yt_dlp.YoutubeDL(self.opts_builder(use_extractor_args=True))  # type: ignore[arg-type]
+        elif caller == "download_vid":
+            return yt_dlp.YoutubeDL(self.opts_builder(for_title_only=False))  # type: ignore[arg-type]
         else:
-            with yt_dlp.YoutubeDL(self.opts_builder()) as ydl:  # type: ignore[arg-type]
-                return ydl
+            return yt_dlp.YoutubeDL(self.opts_builder(use_extractor_args=True, for_title_only=False))  # type: ignore[arg-type]
 
     def set_title(self) -> None:
         """
@@ -209,11 +225,18 @@ class Download:
             )
             if "title" not in info.keys():
                 raise ValueError
-            self.title = info["title"]
-        except yt_dlp.utils.ExtractorError:
-            raise
-        except yt_dlp.utils.DownloadError:
-            raise
+        except (yt_dlp.utils.ExtractorError, yt_dlp.utils.DownloadError):
+            caller = "set_title_failed_once"
+            try:
+                info = self.ytdlp_handler(caller).extract_info(
+                    self.url, download=False, process=False
+                )
+                if "title" not in info.keys():
+                    raise ValueError
+            except (yt_dlp.utils.ExtractorError, yt_dlp.utils.DownloadError):
+                raise
+
+        self.title = info["title"]
 
     def set_path(self) -> None:
         """
@@ -267,9 +290,17 @@ class Download:
             yt_dlp.utils.ExtractorError,
             yt_dlp.utils.DownloadError,
             yt_dlp.utils.PostProcessingError,
-            KeyboardInterrupt,
         ):
-            raise
+            caller = "download_vid_failed_once"
+            try:
+                self.ytdlp_handler(caller).download(self.url)
+            except (
+                yt_dlp.utils.ExtractorError,
+                yt_dlp.utils.DownloadError,
+                yt_dlp.utils.PostProcessingError,
+                KeyboardInterrupt,
+            ):
+                raise
 
 
 class URL_List_File:
