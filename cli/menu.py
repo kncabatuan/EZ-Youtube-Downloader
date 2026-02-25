@@ -403,9 +403,10 @@ def print_exception(
         if request_error == True:
             print(
                 Fore.RED
-                + "\n\nAn OS-related error occurred! Also, make sure you have stable internet connection"
+                + "\n\nAn error occurred! Make sure you have stable internet connection"
             )
-        print(Fore.RED + "\n\nAn OS-related error occurred!")
+        else:
+            print(Fore.RED + "\n\nAn OS-related error occurred!")
     if _exception == "zipfile.BadZipFile":
         print(
             Fore.RED
