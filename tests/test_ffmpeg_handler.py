@@ -213,7 +213,7 @@ def test_get_zip_from_url_success(tmp_path):
     ) as mock_get:
         ffmpeg_handler.get_ffmpeg_zip_from_url(test_url, test_zip_file)
 
-    mock_get.assert_called_once_with(test_url, stream=True)
+    mock_get.assert_called_once_with(test_url, stream=True, timeout=10)
     assert test_zip_file.exists()
     assert test_zip_file.read_bytes() == b"testcontents"
 

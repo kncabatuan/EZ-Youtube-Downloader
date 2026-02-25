@@ -268,7 +268,7 @@ def download_video(
                 try:
                     objects.download_vid()
                 except FileExistsError:
-                    menu.print_exception("FileExistsError", objects.title)
+                    menu.print_exception("FileExistsError", filename=objects.title)
                     return
             else:
                 downloaded_titles = []
@@ -279,7 +279,9 @@ def download_video(
                             object.download_vid()
                             downloaded_titles.append(object.title)
                         except FileExistsError:
-                            menu.print_exception("FileExistsError", object.title)
+                            menu.print_exception(
+                                "FileExistsError", filename=object.title
+                            )
                             downloaded_titles.append(object.title)
                             continue
                     else:
@@ -330,12 +332,15 @@ def verify_ffmpeg() -> None:
                             try:
                                 ffmpeg_handler.download_ffmpeg()
                                 menu.print_dl_success("system_check")
+                                time.sleep(DELAY_SHORT)
                                 break
                             except PermissionError:
                                 menu.print_exception("PermissionError")
+                                time.sleep(DELAY_SHORT)
                                 menu.exit_program()
                             except OSError:
-                                menu.print_exception("OSError")
+                                menu.print_exception("OSError", request_error=True)
+                                time.sleep(DELAY_SHORT)
                                 menu.exit_program()
                             except requests.exceptions.RequestException:
                                 menu.print_exception("RequestException")

@@ -365,12 +365,15 @@ def print_dl_fail() -> None:
     print(Fore.RED + "\nDownload failed. Returning to Main Menu . . .")
 
 
-def print_exception(_exception: str, filename: str | None = None) -> None:
+def print_exception(
+    _exception: str, filename: str | None = None, request_error: bool | None = None
+) -> None:
     """
     Prints message depending on exception
 
     Args:
         filename (str|None): Name of the video. Used only if it is detected in the Downloads folder before download
+        request_error (bool): True if the call was from ffmpeg downloading, False by default  
     """
     if _exception == "FileExistsError":
         print(Fore.BLUE + f"\n{filename} is already in your downloads folder")
@@ -397,6 +400,11 @@ def print_exception(_exception: str, filename: str | None = None) -> None:
             + "\n\nSomething went wrong when trying to access the website. Make sure you have stable internet connection."
         )
     if _exception == "OSError":
+        if request_error == True:
+            print(
+                Fore.RED
+                + "\n\nAn OS-related error occurred! Also, make sure you have stable internet connection"
+            )
         print(Fore.RED + "\n\nAn OS-related error occurred!")
     if _exception == "zipfile.BadZipFile":
         print(
