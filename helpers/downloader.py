@@ -276,9 +276,12 @@ class Download:
             yt_dlp.utils.DownloadError: If download fails due to connection errors or link issues
             yt_dlp.utils.PostProcessingError: If conversion, if any, fails
             KeyboardInterrupt: If user uses Ctrl+C during the run
+            FileExistsError: If the file is already detected in Downloads folder
         """
         caller = "download_vid"
         try:
+            if self.check_if_file_exists(caller):
+                raise FileExistsError
             self.ytdlp_handler(caller).download(self.url)
         except (
             yt_dlp.utils.ExtractorError,
@@ -287,6 +290,8 @@ class Download:
         ):
             caller = "download_vid_failed_once"
             try:
+                if self.check_if_file_exists(caller):
+                    raise FileExistsError
                 self.ytdlp_handler(caller).download(self.url)
             except (
                 yt_dlp.utils.ExtractorError,
@@ -295,6 +300,27 @@ class Download:
                 KeyboardInterrupt,
             ):
                 raise
+
+    def check_if_file_exists(self, caller: str) -> bool:
+        """
+        Checks if the file already exists in the Downloads folder
+
+        Args:
+            caller (str): The calling function. Used to pass the correct args to YoutubeDL
+
+        Returns:
+            bool: True if the file exists, False otherwise
+        """
+        ydl = self.ytdlp_handler(caller)
+        info = ydl.extract_info(self.url, download=False)
+        filename_str = ydl.prepare_filename(info)
+
+        if self.file_type == "video":
+            filename = Path(filename_str).with_suffix(".mp4")
+        else:
+            filename = Path(filename_str).with_suffix(".mp3")
+
+        return True if filename.exists() else False
 
 
 class URL_List_File:

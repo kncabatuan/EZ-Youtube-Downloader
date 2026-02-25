@@ -265,14 +265,23 @@ def download_video(
             menu.print_starting_download("download")
             if download_mode == "single":
                 assert isinstance(objects, downloader.Download)
-                objects.download_vid()
+                try:
+                    objects.download_vid()
+                except FileExistsError:
+                    menu.print_exception("FileExistsError", objects.title)
+                    return
             else:
                 downloaded_titles = []
                 assert isinstance(objects, list)
                 for object in objects:
                     if object.title not in downloaded_titles:
-                        object.download_vid()
-                        downloaded_titles.append(object.title)
+                        try:
+                            object.download_vid()
+                            downloaded_titles.append(object.title)
+                        except FileExistsError:
+                            menu.print_exception("FileExistsError", object.title)
+                            downloaded_titles.append(object.title)
+                            continue
                     else:
                         continue
             menu.print_dl_success("download")

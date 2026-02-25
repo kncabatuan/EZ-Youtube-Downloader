@@ -364,8 +364,15 @@ def print_dl_fail() -> None:
     print(Fore.RED + "\nDownload failed. Returning to Main Menu . . .")
 
 
-def print_exception(_exception: str) -> None:
-    """Prints message depending on exception"""
+def print_exception(_exception: str, filename: str | None = None) -> None:
+    """
+    Prints message depending on exception
+
+    Args:
+        filename (str|None): Name of the video. Used only if it is detected in the Downloads folder before download
+    """
+    if _exception == "FileExistsError":
+        print(Fore.BLUE + f"\n{filename} is already in your downloads folder")
     if _exception == "ExtractorError":
         print(
             Fore.RED + "\nSomething went wrong when trying to extract metadata from URL"
