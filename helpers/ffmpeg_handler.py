@@ -7,9 +7,9 @@ import sys
 import zipfile
 
 # The root program directory
-if getattr(sys, 'frozen', False):
+if getattr(sys, "frozen", False):
     # Running as a frozen exe
-    local_app_data = os.getenv('LOCALAPPDATA')
+    local_app_data = os.getenv("LOCALAPPDATA")
     assert local_app_data is not None
     APPDATA_DIR = Path(local_app_data) / "EZYoutube"
     APPDATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -50,7 +50,11 @@ def find_ffmpeg_bin() -> Path:
 
     if ffmpeg_dir.exists() and any(ffmpeg_dir.iterdir()):
         for item in ffmpeg_dir.iterdir():
-            if item.is_dir() and "essentials" in item.name.lower() and any(item.iterdir()):
+            if (
+                item.is_dir()
+                and "essentials" in item.name.lower()
+                and any(item.iterdir())
+            ):
                 for sub_item in item.iterdir():
                     if sub_item.name == "bin" and any(sub_item.iterdir()):
                         ffmpeg_bin = sub_item
@@ -71,13 +75,13 @@ def find_ffmpeg_bin() -> Path:
 def check_ffmpeg_bin_files(ffmpeg_bin: Path) -> bool:
     """
     Handles checking of ffmpeg.exe integrity
-    
+
     Args:
         ffmpeg_bin (Path): Filepath of the bin folder that contains ffmpeg.exe
-        
+
     Returns:
         bool: True if ffmpeg.exe is detected and ran properly
-        
+
     Raises:
         FileNotFoundError: If relevant folder/files were not detected
         PermissionError: If the user does not have permission to access program directory
@@ -115,6 +119,9 @@ def download_ffmpeg() -> None:
     url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
     zip_file = APPDATA_DIR / "ffmpeg.zip"
 
+    if zip_file.exists():
+        zip_file.unlink()
+
     try:
         get_ffmpeg_zip_from_url(url, zip_file)
     except (PermissionError, OSError, requests.exceptions.RequestException):
@@ -140,23 +147,29 @@ def download_ffmpeg() -> None:
 def get_ffmpeg_zip_from_url(url: str, zip_file: Path) -> None:
     """
     Gets the ffmpeg zip file from ffmpeg site
-    
+
     Args:
         url (str): ffmpeg url
         zip_file (Path): The path of the zip file that will be created from downloading
-    
+
     Raises:
         PermissionError: If the user does not have permission to create a file in the program directory
         OSError: If other os-related error occurs
         requests.exceptions.RequestException: If an error from requests occurs
     """
-    
+
     response = requests.get(url, stream=True)
     response.raise_for_status()
+    total_size = int(response.headers.get("Content-Length", 0))
+    block_size = 8192  # 8 kb
+    downloaded = 0
     try:
         with open(zip_file, "wb") as f:
-            for chunk in response.iter_content(chunk_size=8192):
+            for chunk in response.iter_content(chunk_size=block_size):
                 f.write(chunk)
+                downloaded += len(chunk)
+                percent_done = (downloaded / total_size) * 100
+                print(f"\rDownloading ffmpeg: {percent_done:.2f}%", flush=True, end="")
     except (PermissionError, OSError):
         raise
 
@@ -164,10 +177,10 @@ def get_ffmpeg_zip_from_url(url: str, zip_file: Path) -> None:
 def make_target_folder(target_folder: Path) -> None:
     """
     Creates the target folder for extraction of the ffmpeg zip file
-    
+
     Args:
         target_folder (Path): The path of the target folder
-    
+
     Raises:
         PermissionError: If user does not have permission to create a folder in program directory
         OSError: If other os-related error occurs
@@ -176,7 +189,6 @@ def make_target_folder(target_folder: Path) -> None:
     if target_folder.exists():
         shutil.rmtree(target_folder, ignore_errors=True)
     target_folder.mkdir()
-
 
 
 def extract_to_target_folder(downloaded_zip: Path, folder_path: Path) -> None:

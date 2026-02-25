@@ -315,41 +315,48 @@ def verify_ffmpeg() -> None:
     global ffmpeg_bin_path
 
     while True:
-        menu.print_starting_program()
-        if ffmpeg_handler.check_ffmpeg():
-            break
-        else:
-            try:
-                ffmpeg_bin_path = ffmpeg_handler.find_ffmpeg_bin()
+        try:
+            menu.print_starting_program()
+            if ffmpeg_handler.check_ffmpeg():
                 break
-            except Exception:
-                match menu.get_dependency_decision():
-                    case "y":
-                        menu.print_starting_download("system_check")
-                        try:
-                            ffmpeg_handler.download_ffmpeg()
-                            menu.print_dl_success("system_check")
-                            break
-                        except PermissionError:
-                            menu.print_exception("PermissionError")
+            else:
+                try:
+                    ffmpeg_bin_path = ffmpeg_handler.find_ffmpeg_bin()
+                    break
+                except Exception:
+                    match menu.get_dependency_decision():
+                        case "y":
+                            menu.print_starting_download("system_check")
+                            try:
+                                ffmpeg_handler.download_ffmpeg()
+                                menu.print_dl_success("system_check")
+                                break
+                            except PermissionError:
+                                menu.print_exception("PermissionError")
+                                menu.exit_program()
+                            except OSError:
+                                menu.print_exception("OSError")
+                                menu.exit_program()
+                            except requests.exceptions.RequestException:
+                                menu.print_exception("RequestException")
+                                time.sleep(DELAY_SHORT)
+                                continue
+                            except zipfile.BadZipFile:
+                                menu.print_exception("zipfile.BadZipFile")
+                                time.sleep(DELAY_SHORT)
+                                continue
+                            except KeyboardInterrupt:
+                                menu.print_exception("KeyboardInterrupt")
+                                time.sleep(DELAY_SHORT)
+                                continue
+                        case "n":
+                            menu.print_dependency_message()
+                            time.sleep(DELAY_VERY_LONG)
                             menu.exit_program()
-                        except OSError:
-                            menu.print_exception("OSError")
+                        case "cancel" | "exit":
                             menu.exit_program()
-                        except requests.exceptions.RequestException:
-                            menu.print_exception("RequestException")
-                            time.sleep(DELAY_SHORT)
-                            continue
-                        except zipfile.BadZipFile:
-                            menu.print_exception("zipfile.BadZipFile")
-                            time.sleep(DELAY_SHORT)
-                            continue
-                    case "n":
-                        menu.print_dependency_message()
-                        time.sleep(DELAY_VERY_LONG)
-                        menu.exit_program()
-                    case "cancel" | "exit":
-                        menu.exit_program()
+        except KeyboardInterrupt:
+            menu.exit_program()
 
 
 if __name__ == "__main__":

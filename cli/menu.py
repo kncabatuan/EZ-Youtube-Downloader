@@ -321,7 +321,8 @@ def get_dependency_decision() -> str:
 
 def print_starting_program() -> None:
     """Prints message at program run"""
-    print(Fore.YELLOW + "\nStarting Program. . .")
+    print(Fore.WHITE + ("\n" + ("-" * COLUMNS)))
+    print(Fore.YELLOW + "\nStarting EZ Youtube v1.0 . . .")
     time.sleep(DELAY_SHORT)
     print(Fore.YELLOW + "\nChecking for dependencies. . .")
     time.sleep(DELAY_SHORT)
@@ -420,7 +421,7 @@ def print_starting_download(caller: str) -> None:
     if caller == "system_check":
         print(
             Fore.YELLOW
-            + "\nStarting download. Please be patient. This may take a while. . ."
+            + "\nStarting download. Please be patient. This may take a while. . .\n"
         )
     else:
         print(

@@ -81,6 +81,7 @@ Enter "proceed" once you are ready!
 
 # Prompt if ffmpeg is not detected in system
 MISSING_DEPENDENCY_PROMPT = """
+
 Oops! ffmpeg is not detected in your system!
 
 This program uses ffmpeg and cannot run without it.

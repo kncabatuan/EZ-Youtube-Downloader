@@ -9,7 +9,7 @@ import zipfile
 
 # Tests the checking of ffmpeg in the PATH
 def test_dependency_checking():
-    with patch("shutil.which", return_value = None):
+    with patch("shutil.which", return_value=None):
         assert ffmpeg_handler.check_ffmpeg() == False
 
 
@@ -25,7 +25,7 @@ def test_ffmpeg_bin_finding_valid(tmp_path):
     temp_exe_file.touch()
 
     with patch("helpers.ffmpeg_handler.APPDATA_DIR", temp_dir):
-        with patch("helpers.ffmpeg_handler.check_ffmpeg_bin_files", return_value = True):
+        with patch("helpers.ffmpeg_handler.check_ffmpeg_bin_files", return_value=True):
             ffmpeg_bin = ffmpeg_handler.find_ffmpeg_bin()
 
     assert ffmpeg_bin == temp_bin_path
@@ -42,7 +42,7 @@ def test_ffmpeg_bin_finding_invalid(tmp_path):
         temp_dir / "ffmpeg" / "test",
         temp_dir / "ffmpeg" / "ffmpeg-release-essentials",
         temp_dir / "ffmpeg" / "ffmpeg-release-essentials" / "test",
-        temp_dir / "ffmpeg" / "ffmpeg-release-essentials" / "bin"
+        temp_dir / "ffmpeg" / "ffmpeg-release-essentials" / "bin",
     ]
 
     for path in temp_invalid_bin_paths:
@@ -51,7 +51,7 @@ def test_ffmpeg_bin_finding_invalid(tmp_path):
         with patch("helpers.ffmpeg_handler.APPDATA_DIR", temp_dir):
             with pytest.raises(FileNotFoundError):
                 _ = ffmpeg_handler.find_ffmpeg_bin()
-        
+
         shutil.rmtree(path, ignore_errors=True)
 
 
@@ -68,8 +68,7 @@ def test_ffmpeg_exe_checking_valid(tmp_path):
 
     mock_results = Mock()
     mock_results = subprocess.CompletedProcess(
-        args=[str(temp_exe_path), "-version"],
-        returncode=0
+        args=[str(temp_exe_path), "-version"], returncode=0
     )
 
     with patch("helpers.ffmpeg_handler.subprocess.run", return_value=mock_results):
@@ -90,11 +89,13 @@ def test_ffmpeg_exe_checking_invalid(tmp_path):
     temp_exe_path = temp_bin_path / "ffmpeg.exe"
     temp_exe_path.touch()
 
-    with patch("helpers.ffmpeg_handler.subprocess.run", side_effect=subprocess.CalledProcessError(
-        returncode=1,
-        cmd=[str(temp_exe_path), "-version"]
-    )):
-        
+    with patch(
+        "helpers.ffmpeg_handler.subprocess.run",
+        side_effect=subprocess.CalledProcessError(
+            returncode=1, cmd=[str(temp_exe_path), "-version"]
+        ),
+    ):
+
         with pytest.raises(subprocess.CalledProcessError):
             ffmpeg_handler.check_ffmpeg_bin_files(temp_bin_path)
 
@@ -102,19 +103,19 @@ def test_ffmpeg_exe_checking_invalid(tmp_path):
 # Tests the behavior of download_ffmpeg function if all helper functions worked properly
 def test_ffmpeg_download_helper_behavior(tmp_path):
     test_url = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
-    
+
     temp_dir = tmp_path / "Temporary Directory"
     temp_dir.mkdir()
 
     test_zip_file = temp_dir / "ffmpeg.zip"
-    
+
     test_target_folder = temp_dir / "ffmpeg"
 
     with patch("helpers.ffmpeg_handler.APPDATA_DIR", temp_dir):
         with (
             patch("helpers.ffmpeg_handler.get_ffmpeg_zip_from_url") as mock_get,
             patch("helpers.ffmpeg_handler.make_target_folder") as mock_make,
-            patch("helpers.ffmpeg_handler.extract_to_target_folder") as mock_extract
+            patch("helpers.ffmpeg_handler.extract_to_target_folder") as mock_extract,
         ):
             ffmpeg_handler.download_ffmpeg()
 
@@ -134,7 +135,9 @@ def test_ffmpeg_download_raising_1(tmp_path):
         test_zip_file.touch()
 
         with patch("helpers.ffmpeg_handler.APPDATA_DIR", temp_dir):
-            with patch("helpers.ffmpeg_handler.get_ffmpeg_zip_from_url", side_effect=exception):
+            with patch(
+                "helpers.ffmpeg_handler.get_ffmpeg_zip_from_url", side_effect=exception
+            ):
                 with pytest.raises(exception):
                     ffmpeg_handler.download_ffmpeg()
 
@@ -152,8 +155,12 @@ def test_ffmpeg_download_raising_2(tmp_path):
         test_zip_file.touch()
 
         with patch("helpers.ffmpeg_handler.APPDATA_DIR", temp_dir):
-            with patch("helpers.ffmpeg_handler.get_ffmpeg_zip_from_url", return_value = None):
-                with patch("helpers.ffmpeg_handler.make_target_folder", side_effect=exception):
+            with patch(
+                "helpers.ffmpeg_handler.get_ffmpeg_zip_from_url", return_value=None
+            ):
+                with patch(
+                    "helpers.ffmpeg_handler.make_target_folder", side_effect=exception
+                ):
                     with pytest.raises(exception):
                         ffmpeg_handler.download_ffmpeg()
 
@@ -171,13 +178,20 @@ def test_ffmpeg_download_raising_3(tmp_path):
     exceptions = [OSError, PermissionError, zipfile.BadZipFile]
     for exception in exceptions:
         with patch("helpers.ffmpeg_handler.APPDATA_DIR", temp_dir):
-            with patch("helpers.ffmpeg_handler.get_ffmpeg_zip_from_url", return_value = None):
+            with patch(
+                "helpers.ffmpeg_handler.get_ffmpeg_zip_from_url", return_value=None
+            ):
                 test_target_folder = temp_dir / "ffmpeg"
 
-                with patch("helpers.ffmpeg_handler.make_target_folder", return_value = None):
+                with patch(
+                    "helpers.ffmpeg_handler.make_target_folder", return_value=None
+                ):
                     test_target_folder.mkdir(exist_ok=True)
 
-                    with patch("helpers.ffmpeg_handler.extract_to_target_folder", side_effect=exception):
+                    with patch(
+                        "helpers.ffmpeg_handler.extract_to_target_folder",
+                        side_effect=exception,
+                    ):
                         with pytest.raises(exception):
                             ffmpeg_handler.download_ffmpeg()
 
@@ -192,8 +206,11 @@ def test_get_zip_from_url_success(tmp_path):
     mock_response = Mock()
     mock_response.raise_for_status.return_value = None
     mock_response.iter_content.return_value = fake_content
+    mock_response.headers = {"Content-Length": "8"}
 
-    with patch("helpers.ffmpeg_handler.requests.get", return_value=mock_response) as mock_get:
+    with patch(
+        "helpers.ffmpeg_handler.requests.get", return_value=mock_response
+    ) as mock_get:
         ffmpeg_handler.get_ffmpeg_zip_from_url(test_url, test_zip_file)
 
     mock_get.assert_called_once_with(test_url, stream=True)
@@ -208,7 +225,8 @@ def test_get_zip_from_url_fail(tmp_path):
 
     mock_response = Mock()
     mock_response.raise_for_status.side_effect = requests.exceptions.RequestException
-    
+    mock_response.headers = {"Content-Length": "8"}
+
     with patch("helpers.ffmpeg_handler.requests.get", return_value=mock_response):
         with pytest.raises(requests.exceptions.RequestException):
             ffmpeg_handler.get_ffmpeg_zip_from_url(test_url, test_zip_file)
@@ -224,7 +242,7 @@ def test_get_zip_from_url_fail(tmp_path):
             with patch("builtins.open", side_effect=exception):
                 with pytest.raises(exception):
                     ffmpeg_handler.get_ffmpeg_zip_from_url(test_url, test_zip_file)
-                
+
                 assert not test_zip_file.exists()
 
 
@@ -232,11 +250,11 @@ def test_get_zip_from_url_fail(tmp_path):
 def test_extract_to_target_folder_success(tmp_path):
     temp_dir = tmp_path / "temp_dir"
     temp_dir.mkdir()
-    
+
     test_zip_file = temp_dir / "test_zip_file.zip"
     test_zip_file.touch()
 
-    test_target_folder = temp_dir/ "test_target_folder"
+    test_target_folder = temp_dir / "test_target_folder"
     test_target_folder.mkdir(exist_ok=True)
 
     mock_zip = MagicMock()
@@ -247,7 +265,9 @@ def test_extract_to_target_folder_success(tmp_path):
 
     mock_zip.extractall.side_effect = lambda _: fake_extracted_file.touch()
 
-    with patch("helpers.ffmpeg_handler.zipfile.ZipFile", return_value = mock_zip) as mock_zip_file:
+    with patch(
+        "helpers.ffmpeg_handler.zipfile.ZipFile", return_value=mock_zip
+    ) as mock_zip_file:
         ffmpeg_handler.extract_to_target_folder(test_zip_file, test_target_folder)
 
         test_target_zip = test_target_folder / test_zip_file.name
@@ -264,20 +284,24 @@ def test_extract_to_target_folder_success(tmp_path):
 def test_extract_to_target_folder_fail(tmp_path):
     temp_dir = tmp_path / "temp_dir"
     temp_dir.mkdir()
-    
+
     test_zip_file = temp_dir / "test_zip_file.zip"
     test_zip_file.touch()
 
-    test_target_folder = temp_dir/ "test_target_folder"
+    test_target_folder = temp_dir / "test_target_folder"
     test_target_folder.mkdir(exist_ok=True)
 
     exceptions = [PermissionError, OSError]
     for exception in exceptions:
         with patch("helpers.ffmpeg_handler.shutil.move", side_effect=exception):
             with pytest.raises(exception):
-                ffmpeg_handler.extract_to_target_folder(test_zip_file, test_target_folder)
+                ffmpeg_handler.extract_to_target_folder(
+                    test_zip_file, test_target_folder
+                )
 
-    with patch("helpers.ffmpeg_handler.zipfile.ZipFile", side_effect=zipfile.BadZipFile):
+    with patch(
+        "helpers.ffmpeg_handler.zipfile.ZipFile", side_effect=zipfile.BadZipFile
+    ):
         with pytest.raises(zipfile.BadZipFile):
             ffmpeg_handler.extract_to_target_folder(test_zip_file, test_target_folder)
 
