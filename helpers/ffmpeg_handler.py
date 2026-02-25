@@ -158,7 +158,7 @@ def get_ffmpeg_zip_from_url(url: str, zip_file: Path) -> None:
         requests.exceptions.RequestException: If an error from requests occurs
     """
 
-    response = requests.get(url, stream=True)
+    response = requests.get(url, stream=True, timeout=10)
     response.raise_for_status()
     total_size = int(response.headers.get("Content-Length", 0))
     block_size = 8192  # 8 kb
