@@ -388,7 +388,7 @@ def print_exception(
         )
         print(
             Fore.RED
-            + "\nIf internet is stable, possible issues are regional restriction, members-only content, or official music/VEVO videos."
+            + "\nIf internet is stable, possible issues are regional/age restriction, members-only content, or official music/VEVO videos."
         )
     if _exception == "KeyboardInterrupt":
         print(Fore.RED + "\n\nDownload has been interrupted")
