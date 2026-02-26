@@ -100,4 +100,11 @@ def test_url_list_file_validation(tmp_path):
         fake_file.rmdir()
 
         fake_file.touch()
+
+        test_errors = [PermissionError, OSError]
+        for error in test_errors:
+            with patch("pathlib.Path.open", side_effect=error):
+                with pytest.raises(error):
+                    menu.validate_url_list_file_input("proceed")
+
         assert menu.validate_url_list_file_input("proceed") == fake_file
