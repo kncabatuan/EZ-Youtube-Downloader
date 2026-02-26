@@ -14,7 +14,7 @@ Just download the executable, start saving your favorite videos or audio tracks 
 
 2. Extract it anywhere and double-click the `.exe` to run the program.
 
-⚡ Tip: If FFmpeg is missing, the program will want to set it up for you. Don't be scared, just enter "y", let it download, and you're golden.
+   ⚡ Tip: If FFmpeg is missing, the program will want to set it up for you. Don't be scared, just enter "y", let it download, and you're golden.
 
 3. Follow the on-screen prompts to:  
    - Choose between **single** or **batch** download
@@ -44,7 +44,7 @@ Note: If a video is downloaded in 360p resolution, it may be due to restrictions
 
 ---
 
-## 🧑‍💻 Running From Source
+## Running From Source
 
 If you want to work with the **source code**:  
 
@@ -52,7 +52,7 @@ If you want to work with the **source code**:
 git clone https://github.com/kncabatuan/EZ-Youtube-Downloader.git
 cd EZ-Youtube-Downloader
 pip install -r requirements.txt
-python ez_youtube.py
+python ez_youtube.py 
 ```   
 
 ## Tips
