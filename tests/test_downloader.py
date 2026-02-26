@@ -4,8 +4,8 @@ from unittest.mock import patch, Mock
 import pytest
 
 
-# Tests initialization of the Download class
 def test_download_init():
+    """Tests initialization of the Download class"""
     valid_url = "https://www.youtube.com/watch?v=testtesttes"
     valid_type = "video"
     valid_mode = "single"
@@ -21,8 +21,8 @@ def test_download_init():
         downloader.Download(invalid_url, valid_type, valid_mode)
 
 
-# Tests the extraction of the url based on the mode of download
 def test_url_extraction():
+    """Tests the extraction of the url based on the mode of download"""
     valid_url_1 = "https://www.youtube.com/watch?v=testtesttes&list=test&index=test"
     valid_url_2 = "www.youtube.com/watch?v=testtesttes"
     valid_type = "video"
@@ -35,8 +35,8 @@ def test_url_extraction():
     assert test_obj.url == "https://www.youtube.com/watch?v=testtesttes"
 
 
-# Tests the building of the options dictionary to pass into YoutubeDL
 def test_opts_builder():
+    """Tests the building of the options dictionary to pass into YoutubeDL"""
     valid_url = "https://www.youtube.com/watch?v=testtesttes&list=test&index=test"
     valid_types = ("video", "audio")
     mode = "single"
@@ -81,8 +81,8 @@ def test_opts_builder():
     ]
 
 
-# Tests the extraction of data by YoutubeDL using a valid youtube video URL
 def test_data_extraction():
+    """Tests the extraction of data by YoutubeDL using a valid youtube video URL"""
     valid_url = "https://www.youtube.com/watch?v=testtesttes"
     valid_type = "video"
     valid_mode = "single"
@@ -102,8 +102,8 @@ def test_data_extraction():
         assert test_obj.title == "Test Title"
 
 
-# Tests the actual downloading using YoutubeDL
 def test_download():
+    """Tests the actual downloading using YoutubeDL"""
     valid_url = "https://www.youtube.com/watch?v=testtesttes"
     valid_type = "video"
     valid_mode = "single"
@@ -124,8 +124,8 @@ def test_download():
         mock_instance.download.assert_called_once_with(valid_url)
 
 
-# Tests the printing of progress hook
 def test_hook_printing(capsys):
+    """Tests the printing of progress hook"""
     test_total_bytes = 100
     test_downloaded_bytes = 50
     test_filename = "test_title"
@@ -141,8 +141,8 @@ def test_hook_printing(capsys):
     assert captured.out == f"\r\x1b[KDownloading test_title: 50.00%"
 
 
-# Tests the setting of save path
 def test_set_path(tmp_path):
+    """Tests the setting of save path"""
     valid_url = "https://www.youtube.com/watch?v=testtesttes"
     valid_type = "video"
     valid_mode = "single"
@@ -166,9 +166,8 @@ def test_set_path(tmp_path):
         assert test_valid_obj.filepath == tmp_path / "Downloads"
 
 
-# Tests the checking if the .mp4 or .mp3 that will be downloaded is already existing in the downloads folder
 def test_file_existence_checking(tmp_path):
-
+    """Checks if the file to be downloaded already exists in the downloads folder"""
     valid_url = "https://www.youtube.com/watch?v=testtesttes"
     valid_type = "video"
     valid_mode = "single"

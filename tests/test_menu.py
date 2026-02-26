@@ -3,8 +3,8 @@ from unittest.mock import patch
 import pytest
 
 
-# Validates user choice in main menu
 def test_choice_validation():
+    """Validates user choice in main menu"""
     invalid_choices = ("", "0", "4", "-1", "test", "     ")
     for choice in invalid_choices:
         with pytest.raises(ValueError):
@@ -15,8 +15,8 @@ def test_choice_validation():
         assert menu.validate_choice(choice) == choice
 
 
-# Validates user input for URL. (UI level validation only)
 def test_url_validation():
+    """Validates user input for URL. (UI level validation only)"""
     invalid_url = (
         "",
         "     ",
@@ -51,8 +51,8 @@ def test_url_validation():
     assert menu.validate_url("cancel") == "cancel"
 
 
-# Validates user input in type of file
 def test_type_validation():
+    """Validates user input in type of file"""
     invalid_types = ("0", "3", "", "    ", "test", "123", "-1", "---")
 
     for _type in invalid_types:
@@ -60,13 +60,13 @@ def test_type_validation():
             menu.validate_type(_type)
 
     assert menu.validate_type("exit") == "exit"
-    assert menu.validate_url("cancel") == "cancel"
+    assert menu.validate_type("cancel") == "cancel"
     assert menu.validate_type("1") == "video"
     assert menu.validate_type("2") == "audio"
 
 
-# Validates the user input for yes or no decisions
 def test_decision_validation():
+    """Validates the user input for yes or no decisions"""
     invalid_decisions = ("", "      ", "test", "123", "---", "-a1")
 
     for decision in invalid_decisions:
@@ -79,8 +79,8 @@ def test_decision_validation():
         assert menu.validate_decision(decision) == decision
 
 
-# Validates user input for getting url list file depending on users action based on given steps
 def test_url_list_file_validation(tmp_path):
+    """Validates user input for getting url list file depending on users action based on given steps"""
     assert menu.validate_url_list_file_input("exit") == "exit"
     assert menu.validate_url_list_file_input("cancel") == "cancel"
 
