@@ -88,7 +88,7 @@ def validate_url(url: str) -> str:
         str: The validated URL, "exit", or "cancel"
 
     Raises:
-        ValueError: If input is empty, regex is not recognized in input, or input is not exit
+        ValueError: If input is empty, regex is not recognized in input, or input is not exit/cancel
     """
     pattern = r"^(?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/"
     if url.lower() not in ("exit", "cancel") and not re.search(pattern, url):
@@ -373,7 +373,7 @@ def print_exception(
 
     Args:
         filename (str|None): Name of the video. Used only if it is detected in the Downloads folder before download
-        request_error (bool): True if the call was from ffmpeg downloading, False by default  
+        request_error (bool): True if the call was from ffmpeg downloading, False by default
     """
     if _exception == "FileExistsError":
         print(Fore.BLUE + f"\n{filename} is already in your downloads folder")

@@ -178,7 +178,7 @@ def get_user_inputs(download_mode: str) -> tuple:
         download_mode (str): Mode of download to determine the return values
 
     Returns:
-        tuple: If single mode, returns url and file type. If batch mode, returns file type only
+        tuple: The url and file_type
     """
 
     file_type = menu.get_type()

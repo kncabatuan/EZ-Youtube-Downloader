@@ -139,8 +139,12 @@ class Download:
         """
         Builds options for downloading using YoutubeDL
 
+        Args:
+            use_extractor_args (bool): True if video/audio cannot be downloaded without extractor args, Default: False
+            for_title_only (bool): False if full opts need to be passed for download, Default: True
+
         Returns:
-            dict: The updated options (started from base opts) depending on download mode and type
+            dict: The updated options (started from base opts) depending on and type
         """
         opts = copy.deepcopy(Download.BASE_OPTS)
 
@@ -177,7 +181,7 @@ class Download:
 
     def ytdlp_handler(self, caller: str) -> yt_dlp.YoutubeDL:
         """
-        Creates YoutubeDL object based on caller function
+        Creates YoutubeDL object based on caller function, uses appropriate opts using opts builder
 
         Args:
             caller (str): Sets caller of this function to pass the correct options to YoutubeDL
@@ -187,6 +191,8 @@ class Download:
 
         Raises:
             ValueError: If caller not in set tuple (not applicable)
+            yt_dlp.utils.ExtractorError: If metadata extraction fails
+            yt_dlp.utils.DownloadError: If download fails
         """
         if not caller in (
             "set_title",
@@ -209,8 +215,12 @@ class Download:
         """
         Sets the title attribute of the Download object
 
+        Tries for a second time with extractor args if first attempt fails
+
         Raises:
             ValueError: If extraction of metadata fails
+            yt_dlp.utils.ExtractorError: If metadata extraction fails
+            yt_dlp.utils.DownloadError: If download fails
         """
         caller = "set_title"
         try:
@@ -252,7 +262,7 @@ class Download:
         try:
             test_file.touch()
             self.filepath = default_save_path
-        except PermissionError:
+        except (PermissionError, OSError):
             raise
         finally:
             if test_file.exists():
@@ -271,12 +281,14 @@ class Download:
         """
         Downloads the video/audio using YoutubeDL
 
+        Tries for a second time with extractor args if first attempt fails
+
         Raises:
+            FileExistsError: If the file is already detected in Downloads folder
             yt_dlp.utils.ExtractorError: If extraction of metadata fails
             yt_dlp.utils.DownloadError: If download fails due to connection errors or link issues
             yt_dlp.utils.PostProcessingError: If conversion, if any, fails
             KeyboardInterrupt: If user uses Ctrl+C during the run
-            FileExistsError: If the file is already detected in Downloads folder
         """
         caller = "download_vid"
         try:
