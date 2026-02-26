@@ -333,7 +333,7 @@ def verify_ffmpeg() -> None:
                                 ffmpeg_handler.download_ffmpeg()
                                 menu.print_dl_success("system_check")
                                 time.sleep(DELAY_SHORT)
-                                break
+                                continue
                             except PermissionError:
                                 menu.print_exception("PermissionError")
                                 time.sleep(DELAY_SHORT)
