@@ -112,7 +112,7 @@ def test_download():
     with patch("helpers.downloader.yt_dlp.YoutubeDL") as mock_ydl:
         mock_instance = Mock()
         mock_ydl.return_value = mock_instance
-        
+
         mock_instance.extract_info.return_value = {"title": "Test video"}
         mock_instance.prepare_filename.return_value = str(valid_filepath / "Test video")
 
@@ -164,7 +164,7 @@ def test_set_path(tmp_path):
 
         test_valid_obj.set_path()
         assert test_valid_obj.filepath == tmp_path / "Downloads"
-        
+
 
 # Tests the checking if the .mp4 or .mp3 that will be downloaded is already existing in the downloads folder
 def test_file_existence_checking(tmp_path):
@@ -178,12 +178,14 @@ def test_file_existence_checking(tmp_path):
     test_downloads_path.mkdir()
 
     test_valid_obj.filepath = test_downloads_path
-    
+
     mock_instance = Mock()
     with patch("helpers.downloader.Download.ytdlp_handler", return_value=mock_instance):
         fake_info = {"title": "test_title"}
         mock_instance.extract_info.return_value = fake_info
-        mock_instance.prepare_filename.return_value = str(test_downloads_path / "test_title.mp4")
+        mock_instance.prepare_filename.return_value = str(
+            test_downloads_path / "test_title.mp4"
+        )
 
         assert test_valid_obj.check_if_file_exists("download_vid") == False
 
