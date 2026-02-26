@@ -1,6 +1,6 @@
 # 🎬 EZ Youtube Downloader  
 
-An extremely easy-to-use **YouTube video/audio downloader** for everyone. 
+An extremely easy-to-use **YouTube video/audio downloader** for Windows. 
 
 Are you intimidated by the thought of using a terminal but find it cool? Are you tired of searching for a good online YouTube downloader that is not bogged down by malicious ads? Well, this program is for you!
 
@@ -24,7 +24,10 @@ Just download the executable, start saving your favorite videos or audio tracks 
    
 4. Done! Your video/audio is ready to enjoy. 🍿
 
-Note: If a video is downloaded in 360p resolution, it may be due to restrictions such as:
+Note: 
+- ⚠️ This program only works on **Windows OS**
+
+- If a video is downloaded in 360p resolution, it may be due to restrictions such as:
    - Geo-restrictions
    - Age restrictions 
    - Members-only content
