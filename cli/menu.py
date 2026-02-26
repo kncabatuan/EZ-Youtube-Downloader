@@ -310,7 +310,7 @@ def get_dependency_decision() -> str:
     while True:
         try:
             return validate_decision(
-                input(Fore.BLUE + prompts.MISSING_DEPENDENCY_PROMPT).strip()
+                input(Fore.BLUE + prompts.MISSING_DEPENDENCY_PROMPT).strip().lower()
             )
         except ValueError:
             print(
