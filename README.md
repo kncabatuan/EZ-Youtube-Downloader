@@ -66,6 +66,13 @@ Make sure Python 3.10+ is installed if running from source.
 
 If you want to improve my work, you are very welcome to do so! I'll be waiting for those pull requests 😃
 
+## Acknowledgements
+
+This project would not be possible without:
+
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp) – Used for extracting and downloading media.
+- [FFmpeg](https://ffmpeg.org/) – Used for media processing and conversion.
+
 ## ⚠ Disclaimer
 
 This tool is for educational and personal use only.  
