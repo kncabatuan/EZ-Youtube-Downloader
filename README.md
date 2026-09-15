@@ -76,14 +76,6 @@ Make sure Python 3.10+ is installed if running from source.
 ---
 
 
-## Contributing
-
-If you want to improve my work, you are very welcome to do so! I'll be waiting for those pull requests 😃
-
-
----
-
-
 ## Acknowledgements
 
 This project would not be possible without:
